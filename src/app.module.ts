@@ -7,6 +7,8 @@ import { EventModule } from './event/event.module';
 import { RsvpModule } from './rsvp/rsvp.module';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/guard/role.guard';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -18,8 +20,9 @@ import { RolesGuard } from './auth/guard/role.guard';
     EventModule,
     RsvpModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [
+    AppService,
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
