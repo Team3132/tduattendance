@@ -11,31 +11,56 @@ datasource db {
 }
 
 model User {
-  id                  String   @id
+  id                  String       @id
   firstName           String?
   lastName            String?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @default(now())
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @default(now())
   discordToken        String
   discordRefreshToken String
   RSVP                RSVP[]
+  Attendance          Attendance[]
 }
 
 model Event {
-  id          String   @id @default(cuid())
+  id          String       @id @default(cuid())
   description String?
   title       String
   startDate   DateTime
   endDate     DateTime
   RSVP        RSVP[]
+  Attendance  Attendance[]
+}
+
+enum RSVPStatus {
+  YES
+  NO
+  MAYBE
 }
 
 model RSVP {
-  id        String   @id @default(cuid())
+  id        String     @id @default(cuid())
   eventId   String
-  event     Event    @relation(fields: [eventId], references: [id])
+  event     Event      @relation(fields: [eventId], references: [id])
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  user      User       @relation(fields: [userId], references: [id])
+  status    RSVPStatus
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now())
+}
+
+enum AttendanceStatus {
+  ATTENDED
+  NOT_ATTENDED
+}
+
+model Attendance {
+  id        String           @id @default(cuid())
+  eventId   String
+  event     Event            @relation(fields: [eventId], references: [id])
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  status    AttendanceStatus @default(NOT_ATTENDED)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @default(now())
 }

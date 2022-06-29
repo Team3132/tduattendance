@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateRsvpDto } from './dto/create-rsvp.dto';
 import { UpdateRsvpDto } from './dto/update-rsvp.dto';
@@ -7,28 +8,45 @@ import { UpdateRsvpDto } from './dto/update-rsvp.dto';
 export class RsvpService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  create(createRsvpDto: CreateRsvpDto) {
-    return this.prismaService.rSVP.create({ data: createRsvpDto });
-  }
-
-  findAll() {
-    return this.prismaService.rSVP.findMany();
-  }
-
-  findOne(id: string) {
-    return this.prismaService.rSVP.findUnique({ where: { id } });
-  }
-
-  update(id: string, updateRsvpDto: UpdateRsvpDto) {
-    return this.prismaService.rSVP.update({
-      where: {
-        id,
-      },
-      data: updateRsvpDto,
+  createRSVP(data: Prisma.RSVPCreateInput) {
+    return this.prismaService.rSVP.create({
+      data,
     });
   }
 
-  remove(id: string) {
-    return this.prismaService.rSVP.delete({ where: { id } });
+  rsvps(params: {
+    skip?: number;
+    take?: number;
+    cursor?: Prisma.RSVPWhereUniqueInput;
+    where?: Prisma.RSVPWhereInput;
+    orderBy?: Prisma.RSVPOrderByWithRelationInput;
+  }) {
+    const { skip, take, cursor, where, orderBy } = params;
+    return this.prismaService.rSVP.findMany({
+      skip,
+      take,
+      cursor,
+      where,
+      orderBy,
+    });
+  }
+
+  rsvp(rsvpWhereUniqueInput: Prisma.RSVPWhereUniqueInput) {
+    return this.prismaService.rSVP.findUnique({ where: rsvpWhereUniqueInput });
+  }
+
+  updateRSVP(params: {
+    where: Prisma.RSVPWhereUniqueInput;
+    data: Prisma.RSVPUpdateInput;
+  }) {
+    const { data, where } = params;
+    return this.prismaService.rSVP.update({
+      data,
+      where,
+    });
+  }
+
+  deleteRSVP(where: Prisma.RSVPWhereUniqueInput) {
+    return this.prismaService.rSVP.delete({ where });
   }
 }

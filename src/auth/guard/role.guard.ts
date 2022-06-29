@@ -30,39 +30,39 @@ export class RolesGuard implements CanActivate {
         where: { id: user.id },
       });
 
-      type RefreshResponse = {
-        access_token: string;
-        /** 604800 */
-        expires_in: number;
-        refresh_token: string;
-        scope: 'guilds identify';
-        token_type: 'Bearer';
-      };
+      // type RefreshResponse = {
+      //   access_token: string;
+      //   /** 604800 */
+      //   expires_in: number;
+      //   refresh_token: string;
+      //   scope: 'guilds identify';
+      //   token_type: 'Bearer';
+      // };
 
-      const params = new URLSearchParams();
-      params.append(
-        'client_id',
-        this.configService.getOrThrow('DISCORD_CLIENT_ID'),
-      );
-      params.append(
-        'client_secret',
-        this.configService.getOrThrow('DISCORD_SECRET'),
-      );
-      params.append('grant_type', 'refresh_token');
-      params.append('refresh_token', prismaUser.discordRefreshToken);
+      // const params = new URLSearchParams();
+      // params.append(
+      //   'client_id',
+      //   this.configService.getOrThrow('DISCORD_CLIENT_ID'),
+      // );
+      // params.append(
+      //   'client_secret',
+      //   this.configService.getOrThrow('DISCORD_SECRET'),
+      // );
+      // params.append('grant_type', 'refresh_token');
+      // params.append('refresh_token', prismaUser.discordRefreshToken);
 
-      const { data } = await axios.post<RefreshResponse>(
-        'https://discord.com/api/oauth2/token',
-        params,
-      );
+      // const { data } = await axios.post<RefreshResponse>(
+      //   'https://discord.com/api/oauth2/token',
+      //   params,
+      // );
 
-      await this.prismaService.user.update({
-        where: { id: user.id },
-        data: {
-          discordRefreshToken: data.refresh_token,
-          discordToken: data.access_token,
-        },
-      });
+      // await this.prismaService.user.update({
+      //   where: { id: user.id },
+      //   data: {
+      //     discordRefreshToken: data.refresh_token,
+      //     discordToken: data.access_token,
+      //   },
+      // });
       const guildId = this.configService.getOrThrow('GUILD_ID');
       const {
         data: { roles: discordRoles },
@@ -70,7 +70,7 @@ export class RolesGuard implements CanActivate {
         `https://discord.com/api/users/@me/guilds/${guildId}/member`,
         {
           headers: {
-            Authorization: `Bearer ${data.access_token}`,
+            Authorization: `Bearer ${prismaUser.discordToken}`,
           },
         },
       );

@@ -48,9 +48,7 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   // console.log(document);
-  SwaggerModule.setup('api', app, document, {
-    customSiteTitle: "Seb's Blog API Reference",
-  });
+  SwaggerModule.setup('api', app, document, {});
 
   await app.listen(3000);
 }

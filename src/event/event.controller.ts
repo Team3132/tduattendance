@@ -14,7 +14,8 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { SessionGuard } from 'src/auth/guard/session.guard';
 import { Roles } from 'src/auth/decorators/DiscordRoleDecorator.decorator';
 import { ROLES } from 'src/constants';
-import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { Event } from './entities/event.entity';
 
 @ApiTags('Event')
 @ApiCookieAuth()
@@ -23,31 +24,40 @@ import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
-  @Roles([ROLES.MANAGEMENT])
+  @ApiOkResponse({ type: Event })
+  @Roles([ROLES.STUDENT])
   @Post()
   create(@Body() createEventDto: CreateEventDto) {
-    return this.eventService.create(createEventDto);
+    return this.eventService.createEvent(createEventDto);
   }
 
+  @ApiOkResponse({ type: [Event] })
   @Get()
   findAll() {
-    return this.eventService.findAll();
+    return this.eventService.events({});
   }
 
+  @ApiOkResponse({ type: Event })
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.eventService.findOne(id);
+    console.log(id);
+    return this.eventService.event({ id });
   }
 
-  @Roles([ROLES.MANAGEMENT])
+  @ApiOkResponse({ type: Event })
+  @Roles([ROLES.STUDENT])
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
-    return this.eventService.update(id, updateEventDto);
+    return this.eventService.updateEvent({
+      data: updateEventDto,
+      where: { id },
+    });
   }
 
-  @Roles([ROLES.MANAGEMENT])
+  @ApiOkResponse({ type: Event })
+  @Roles([ROLES.STUDENT])
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.eventService.remove(id);
+    return this.eventService.deleteEvent({ id });
   }
 }
