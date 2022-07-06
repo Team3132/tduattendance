@@ -1,10 +1,11 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Session, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { AuthService } from './auth.service';
 import { GetUser } from './decorators/GetUserDecorator.decorator';
 import { AuthStatusDto } from './dto/AuthStatus.dto';
 import { DiscordAuthGuard } from './guard/discord.guard';
+import { SessionGuard } from './guard/session.guard';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -38,5 +39,13 @@ export class AuthController {
   @Get('discord/callback')
   discordSigninCallback() {
     return '<script>window.close();</script >';
+  }
+
+  @UseGuards(SessionGuard)
+  @Get('logout')
+  async logout(@Session() session: Express.Request['session']) {
+    session.destroy(() => {
+      return;
+    });
   }
 }
