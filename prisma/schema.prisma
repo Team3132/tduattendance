@@ -15,7 +15,7 @@ model User {
   firstName           String?
   lastName            String?
   createdAt           DateTime     @default(now())
-  updatedAt           DateTime     @default(now())
+  updatedAt           DateTime     @default(now()) @updatedAt
   discordToken        String
   discordRefreshToken String
   RSVP                RSVP[]
@@ -47,7 +47,7 @@ model RSVP {
   user      User       @relation(fields: [userId], references: [id])
   status    RSVPStatus
   createdAt DateTime   @default(now())
-  updatedAt DateTime   @default(now())
+  updatedAt DateTime   @default(now()) @updatedAt
 }
 
 enum AttendanceStatus {
@@ -63,5 +63,5 @@ model Attendance {
   user      User             @relation(fields: [userId], references: [id])
   status    AttendanceStatus @default(NOT_ATTENDED)
   createdAt DateTime         @default(now())
-  updatedAt DateTime         @default(now())
+  updatedAt DateTime         @default(now()) @updatedAt
 }
