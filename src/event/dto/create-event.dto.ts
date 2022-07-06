@@ -1,12 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Event } from '@prisma/client';
 import {
+  IsBoolean,
   IsDateString,
   IsNotEmpty,
   IsOptional,
   IsString,
 } from 'class-validator';
 
+/**
+ * The data used to create an event
+ */
 export class CreateEventDto {
   @ApiProperty()
   @IsString()
@@ -21,4 +25,7 @@ export class CreateEventDto {
   @IsDateString()
   @ApiProperty()
   endDate: Date;
+  @IsBoolean()
+  @IsOptional()
+  allDay?: boolean;
 }

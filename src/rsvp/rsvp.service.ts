@@ -35,6 +35,10 @@ export class RsvpService {
     return this.prismaService.rSVP.findUnique({ where: rsvpWhereUniqueInput });
   }
 
+  firstRSVP(rsvpWhereFirstInput: Prisma.RSVPWhereInput) {
+    return this.prismaService.rSVP.findFirst({ where: rsvpWhereFirstInput });
+  }
+
   updateRSVP(params: {
     where: Prisma.RSVPWhereUniqueInput;
     data: Prisma.RSVPUpdateInput;
@@ -48,5 +52,18 @@ export class RsvpService {
 
   deleteRSVP(where: Prisma.RSVPWhereUniqueInput) {
     return this.prismaService.rSVP.delete({ where });
+  }
+
+  upsertRSVP(params: {
+    where: Prisma.RSVPWhereUniqueInput;
+    create: Prisma.RSVPCreateInput;
+    update: Prisma.RSVPUpdateInput;
+  }) {
+    const { where, update, create } = params;
+    return this.prismaService.rSVP.upsert({
+      where,
+      create,
+      update,
+    });
   }
 }

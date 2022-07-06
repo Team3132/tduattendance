@@ -8,6 +8,8 @@ import Redis from 'ioredis';
 import * as connectRedis from 'connect-redis';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import type { ClientOpts } from 'redis';
+import * as swStats from 'swagger-stats';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -17,6 +19,7 @@ async function bootstrap() {
   let redisClient = new Redis({
     host: config.get('REDIS_HOST'),
     port: parseInt(config.get('REDIS_PORT')),
+    db: 0,
   });
   const redisStore = connectRedis(session);
 
@@ -48,6 +51,18 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   // console.log(document);
+  app.use(
+    swStats.getMiddleware({
+      swaggerSpec: document,
+      onAuthenticate(req, username, password) {
+        return (
+          username === config.getOrThrow('STATS_USERNAME') &&
+          password === config.getOrThrow('STATS_PASSWORD')
+        );
+      },
+      authentication: true,
+    }),
+  );
   SwaggerModule.setup('api', app, document, {});
 
   await app.listen(3000);

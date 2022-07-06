@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { RSVP as PrismaRSVP, RSVPStatus } from '@prisma/client';
 
+/**
+ * The RSVP object.
+ */
 export class Rsvp implements PrismaRSVP {
   @ApiProperty()
   id: string;
@@ -8,7 +11,7 @@ export class Rsvp implements PrismaRSVP {
   eventId: string;
   @ApiProperty()
   userId: string;
-  @ApiProperty({ enum: RSVPStatus, name: 'RSVPStatus' })
+  @ApiProperty({ enum: RSVPStatus })
   status: RSVPStatus;
   @ApiProperty()
   createdAt: Date;

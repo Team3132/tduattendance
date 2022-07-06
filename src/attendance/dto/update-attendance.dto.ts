@@ -3,6 +3,9 @@ import { AttendanceStatus } from '@prisma/client';
 import { IsString, IsEnum, IsOptional } from 'class-validator';
 import { CreateAttendanceDto } from './create-attendance.dto';
 
+/**
+ * The data used to update an attendance
+ */
 export class UpdateAttendanceDto {
   @ApiProperty()
   @IsString()
@@ -13,7 +16,7 @@ export class UpdateAttendanceDto {
   @IsOptional()
   userId?: string;
   @IsEnum(AttendanceStatus)
-  @ApiProperty({ enum: AttendanceStatus, name: 'AttendanceStatus' })
+  @ApiProperty({ enum: AttendanceStatus })
   @IsOptional()
   status?: AttendanceStatus;
 }

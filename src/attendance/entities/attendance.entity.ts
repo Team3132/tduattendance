@@ -4,6 +4,9 @@ import {
   AttendanceStatus,
 } from '@prisma/client';
 
+/**
+ * The Attendance object
+ */
 export class Attendance implements PrismaAttendance {
   @ApiProperty()
   id: string;
@@ -11,7 +14,7 @@ export class Attendance implements PrismaAttendance {
   eventId: string;
   @ApiProperty()
   userId: string;
-  @ApiProperty({ enum: AttendanceStatus, name: 'AttendanceStatus' })
+  @ApiProperty({ enum: AttendanceStatus })
   status: AttendanceStatus;
   @ApiProperty()
   createdAt: Date;

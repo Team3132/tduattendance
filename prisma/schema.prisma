@@ -24,8 +24,9 @@ model User {
 
 model Event {
   id          String       @id @default(cuid())
-  description String?
+  description String       @default("")
   title       String
+  allDay      Boolean      @default(false)
   startDate   DateTime
   endDate     DateTime
   RSVP        RSVP[]

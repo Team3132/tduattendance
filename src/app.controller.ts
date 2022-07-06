@@ -6,6 +6,10 @@ import { ApiTags } from '@nestjs/swagger';
 export class AppController {
   constructor() {}
 
+  /**
+   * A simple hello world just for you.
+   * @returns "Hello World!"
+   */
   @Get('')
   helloWorld() {
     return 'Hello World!';

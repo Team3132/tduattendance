@@ -1,4 +1,10 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  Inject,
+  CACHE_MANAGER,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { REST } from '@discordjs/rest';
 import { RESTGetAPIGuildMemberResult, Routes } from 'discord-api-types/v10';
@@ -6,6 +12,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { ROLES } from 'src/constants';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -13,6 +20,7 @@ export class RolesGuard implements CanActivate {
     private reflector: Reflector,
     private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -30,55 +38,36 @@ export class RolesGuard implements CanActivate {
         where: { id: user.id },
       });
 
-      // type RefreshResponse = {
-      //   access_token: string;
-      //   /** 604800 */
-      //   expires_in: number;
-      //   refresh_token: string;
-      //   scope: 'guilds identify';
-      //   token_type: 'Bearer';
-      // };
-
-      // const params = new URLSearchParams();
-      // params.append(
-      //   'client_id',
-      //   this.configService.getOrThrow('DISCORD_CLIENT_ID'),
-      // );
-      // params.append(
-      //   'client_secret',
-      //   this.configService.getOrThrow('DISCORD_SECRET'),
-      // );
-      // params.append('grant_type', 'refresh_token');
-      // params.append('refresh_token', prismaUser.discordRefreshToken);
-
-      // const { data } = await axios.post<RefreshResponse>(
-      //   'https://discord.com/api/oauth2/token',
-      //   params,
-      // );
-
-      // await this.prismaService.user.update({
-      //   where: { id: user.id },
-      //   data: {
-      //     discordRefreshToken: data.refresh_token,
-      //     discordToken: data.access_token,
-      //   },
-      // });
-      const guildId = this.configService.getOrThrow('GUILD_ID');
-      const {
-        data: { roles: discordRoles },
-      } = await axios.get<RESTGetAPIGuildMemberResult>(
-        `https://discord.com/api/users/@me/guilds/${guildId}/member`,
-        {
-          headers: {
-            Authorization: `Bearer ${prismaUser.discordToken}`,
+      const cachedUser =
+        await this.cacheManager.get<RESTGetAPIGuildMemberResult>(
+          `discorduser/guild/${user.id}`,
+        );
+      if (cachedUser) {
+        // console.log('Used Cache');
+        return cachedUser.roles.some((discordRole) =>
+          apiRoles.some((apiRole) => apiRole === discordRole),
+        );
+      } else {
+        console.log('Getting Roles Again');
+        const guildId = this.configService.getOrThrow('GUILD_ID');
+        const { data } = await axios.get<RESTGetAPIGuildMemberResult>(
+          `https://discord.com/api/users/@me/guilds/${guildId}/member`,
+          {
+            headers: {
+              Authorization: `Bearer ${prismaUser.discordToken}`,
+            },
           },
-        },
-      );
+        );
+        await this.cacheManager.set<RESTGetAPIGuildMemberResult>(
+          `discorduser/guild/${user.id}`,
+          data,
+          { ttl: 3600 },
+        );
 
-      const hasRole = discordRoles.some((discordRole) =>
-        apiRoles.some((apiRole) => apiRole === discordRole),
-      );
-      return hasRole;
+        return data.roles.some((discordRole) =>
+          apiRoles.some((apiRole) => apiRole === discordRole),
+        );
+      }
     } catch (error) {
       console.log(error);
       return false;

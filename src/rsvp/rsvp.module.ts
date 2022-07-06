@@ -4,6 +4,7 @@ import { RsvpController } from './rsvp.controller';
 
 @Module({
   controllers: [RsvpController],
-  providers: [RsvpService]
+  providers: [RsvpService],
+  exports: [RsvpService],
 })
 export class RsvpModule {}
