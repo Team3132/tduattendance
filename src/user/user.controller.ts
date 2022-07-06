@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Session,
+  CACHE_MANAGER,
+  Inject,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -26,6 +28,7 @@ import { Attendance } from 'src/attendance/entities/attendance.entity';
 import { AttendanceService } from 'src/attendance/attendance.service';
 import { RsvpService } from 'src/rsvp/rsvp.service';
 import { Rsvp } from 'src/rsvp/entities/rsvp.entity';
+import { Cache } from 'cache-manager';
 
 /** The user controller for controlling the user status */
 @ApiTags('User')
@@ -37,6 +40,7 @@ export class UserController {
     private readonly userService: UserService,
     private readonly attendanceService: AttendanceService,
     private readonly rsvpService: RsvpService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   /**
@@ -49,6 +53,19 @@ export class UserController {
   @Get('me')
   me(@GetUser('id') id: string) {
     return this.userService.user({ id });
+  }
+
+  /**
+   * Get the currently authenticated user's avatar id
+   * @returns Avatar string
+   */
+  @ApiCookieAuth()
+  @ApiOkResponse({ type: String })
+  @UseGuards(SessionGuard)
+  @Get('me/avatar')
+  async userMeAvatar(@GetUser('id') userId: string) {
+    const { user } = await this.userService.discordProfile(userId);
+    return user.avatar;
   }
 
   /**
@@ -186,5 +203,17 @@ export class UserController {
   @Get(':id/attendance')
   userAttendance(@Param('id') userId: string) {
     return this.attendanceService.attendances({ where: { userId: userId } });
+  }
+
+  /**
+   * Get a user's discord avatar id
+   * @returns Avatar string
+   */
+  @ApiOkResponse({ type: String })
+  @Roles([ROLES.STUDENT])
+  @Get(':id/avatar')
+  async userAvatar(@Param('id') userId: string) {
+    const { user } = await this.userService.discordProfile(userId);
+    return user.avatar;
   }
 }
