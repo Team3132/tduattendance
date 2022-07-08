@@ -4,6 +4,7 @@ import { ScancodeController } from './scancode.controller';
 
 @Module({
   controllers: [ScancodeController],
-  providers: [ScancodeService]
+  providers: [ScancodeService],
+  exports: [ScancodeService],
 })
 export class ScancodeModule {}

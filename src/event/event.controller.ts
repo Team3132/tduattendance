@@ -29,6 +29,9 @@ import { AttendanceService } from '../attendance/attendance.service';
 import { GetUser } from '../auth/decorators/GetUserDecorator.decorator';
 import { UpdateOrCreateRSVP } from './dto/update-rsvp.dto';
 import { UpdateOrCreateAttendance } from './dto/update-attendance.dto';
+import { ScancodeService } from 'src/scancode/scancode.service';
+import { AttendanceStatus } from '@prisma/client';
+import { ScaninDto } from './dto/scanin.dto';
 
 @ApiTags('Event')
 @ApiCookieAuth()
@@ -39,6 +42,7 @@ export class EventController {
     private readonly eventService: EventService,
     private readonly rsvpService: RsvpService,
     private readonly attendanceService: AttendanceService,
+    private readonly scancodeService: ScancodeService,
   ) {}
 
   /**
@@ -222,6 +226,37 @@ export class EventController {
     return this.attendanceService.attendances({
       where: {
         eventId,
+      },
+    });
+  }
+
+  @ApiCreatedResponse({ type: Attendance })
+  @Post(':eventId/scanin')
+  async scaninEvent(
+    @Param('eventId') eventId: string,
+    @Body() { code }: ScaninDto,
+  ) {
+    const scancode = await this.scancodeService.scancode({ code });
+    const existingAttendance = await this.attendanceService.firstAttendance({
+      userId: scancode.userId,
+      eventId,
+    });
+    return this.attendanceService.upsertAttendance({
+      where: {
+        id: existingAttendance?.id ?? '',
+      },
+      create: {
+        event: { connect: { id: eventId } },
+        user: {
+          connect: { id: scancode.userId },
+        },
+        status: AttendanceStatus.ATTENDED,
+      },
+      update: {
+        status:
+          existingAttendance?.status !== AttendanceStatus.ATTENDED
+            ? AttendanceStatus.ATTENDED
+            : AttendanceStatus.NOT_ATTENDED,
       },
     });
   }
