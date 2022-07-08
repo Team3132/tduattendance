@@ -13,6 +13,7 @@ import { AttendanceModule } from './attendance/attendance.module';
 import type { ClientOpts } from 'redis';
 import { CalendarModule } from './calendar/calendar.module';
 import { DiscordModule } from './discord/discord.module';
+import { ScancodeModule } from './scancode/scancode.module';
 import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
@@ -34,6 +35,7 @@ import * as redisStore from 'cache-manager-redis-store';
     AttendanceModule,
     CalendarModule,
     DiscordModule,
+    ScancodeModule,
   ],
   controllers: [AppController],
   providers: [
