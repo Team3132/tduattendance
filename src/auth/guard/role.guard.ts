@@ -4,26 +4,30 @@ import {
   ExecutionContext,
   Inject,
   CACHE_MANAGER,
+  Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { REST } from '@discordjs/rest';
 import { RESTGetAPIGuildMemberResult, Routes } from 'discord-api-types/v10';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
-import { ROLES } from 'src/constants';
+import { ROLES } from '../../constants';
 import { Cache } from 'cache-manager';
+import { AuthService } from '../auth.service';
+import { DiscordService } from 'src/discord/discord.service';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    private readonly prismaService: PrismaService,
-    private readonly configService: ConfigService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+
+    private readonly authService: AuthService,
+    private readonly discordService: DiscordService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const logger = new Logger('RoleGuard');
     try {
       const apiRoles = this.reflector.get<ROLES[]>(
         'roles',
@@ -34,42 +38,14 @@ export class RolesGuard implements CanActivate {
       }
       const request = context.switchToHttp().getRequest();
       const user = request.user;
-      const prismaUser = await this.prismaService.user.findUnique({
-        where: { id: user.id },
-      });
+      const { roles: fetchedRoles } =
+        await this.discordService.getDiscordMemberDetails(user['id']);
 
-      const cachedUser =
-        await this.cacheManager.get<RESTGetAPIGuildMemberResult>(
-          `discorduser/guild/${user.id}`,
-        );
-      if (cachedUser) {
-        // console.log('Used Cache');
-        return cachedUser.roles.some((discordRole) =>
-          apiRoles.some((apiRole) => apiRole === discordRole),
-        );
-      } else {
-        console.log('Getting Roles Again');
-        const guildId = this.configService.getOrThrow('GUILD_ID');
-        const { data } = await axios.get<RESTGetAPIGuildMemberResult>(
-          `https://discord.com/api/users/@me/guilds/${guildId}/member`,
-          {
-            headers: {
-              Authorization: `Bearer ${prismaUser.discordToken}`,
-            },
-          },
-        );
-        await this.cacheManager.set<RESTGetAPIGuildMemberResult>(
-          `discorduser/guild/${user.id}`,
-          data,
-          { ttl: 3600 },
-        );
-
-        return data.roles.some((discordRole) =>
-          apiRoles.some((apiRole) => apiRole === discordRole),
-        );
-      }
+      return fetchedRoles.some((discordRole) =>
+        apiRoles.some((apiRole) => apiRole === discordRole),
+      );
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       return false;
     }
   }

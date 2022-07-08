@@ -11,6 +11,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AttendanceModule } from './attendance/attendance.module';
 import type { ClientOpts } from 'redis';
+import { CalendarModule } from './calendar/calendar.module';
+import { DiscordModule } from './discord/discord.module';
 import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
@@ -30,6 +32,8 @@ import * as redisStore from 'cache-manager-redis-store';
     EventModule,
     RsvpModule,
     AttendanceModule,
+    CalendarModule,
+    DiscordModule,
   ],
   controllers: [AppController],
   providers: [

@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../auth.service.js';
 import { ConfigService } from '@nestjs/config';
+import { Request } from 'express';
 
 @Injectable()
 export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
@@ -21,23 +22,24 @@ export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
       clientID: config.get('DISCORD_CLIENT_ID'),
       clientSecret: config.get('DISCORD_SECRET'),
       callbackURL: config.get('DISCORD_CALLBACK'),
-      scope: ['identify', 'guilds', 'guilds.members.read'],
+      scope: ['identify', 'guilds', 'guilds.members.read', 'email'],
     };
     super(options);
   }
 
   async validate(
-    req,
+    req: Request,
     accessToken: string,
     refreshToken: string,
     profile: Profile,
     done,
   ): Promise<any> {
     const user = await this.authService.validateDiscordUser(
-      accessToken,
       refreshToken,
+      accessToken,
       profile,
     );
+
     if (!user) {
       throw new UnauthorizedException(user);
     }

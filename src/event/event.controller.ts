@@ -12,9 +12,9 @@ import {
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
-import { SessionGuard } from 'src/auth/guard/session.guard';
-import { Roles } from 'src/auth/decorators/DiscordRoleDecorator.decorator';
-import { ROLES } from 'src/constants';
+import { SessionGuard } from '../auth/guard/session.guard';
+import { Roles } from '../auth/decorators/DiscordRoleDecorator.decorator';
+import { ROLES } from '../constants';
 import {
   ApiCookieAuth,
   ApiCreatedResponse,
@@ -22,11 +22,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Event } from './entities/event.entity';
-import { RsvpService } from 'src/rsvp/rsvp.service';
-import { Rsvp } from 'src/rsvp/entities/rsvp.entity';
-import { Attendance } from 'src/attendance/entities/attendance.entity';
-import { AttendanceService } from 'src/attendance/attendance.service';
-import { GetUser } from 'src/auth/decorators/GetUserDecorator.decorator';
+import { RsvpService } from '../rsvp/rsvp.service';
+import { Rsvp } from '../rsvp/entities/rsvp.entity';
+import { Attendance } from '../attendance/entities/attendance.entity';
+import { AttendanceService } from '../attendance/attendance.service';
+import { GetUser } from '../auth/decorators/GetUserDecorator.decorator';
 import { UpdateOrCreateRSVP } from './dto/update-rsvp.dto';
 import { UpdateOrCreateAttendance } from './dto/update-attendance.dto';
 

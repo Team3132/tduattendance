@@ -39,6 +39,8 @@
     "cookie-parser": "^1.4.6",
     "discord-api-types": "^0.35.0",
     "express-session": "^1.17.3",
+    "helmet": "^5.1.0",
+    "ical-generator": "^3.4.3",
     "ioredis": "^5.1.0",
     "passport": "^0.6.0",
     "passport-discord": "^0.1.4",
@@ -46,7 +48,8 @@
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "swagger-stats": "^0.99.2",
-    "swagger-ui-express": "^4.4.0"
+    "swagger-ui-express": "^4.4.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
@@ -57,11 +60,13 @@
     "@types/connect-redis": "^0.0.18",
     "@types/cookie-parser": "^1.4.3",
     "@types/express": "^4.17.13",
+    "@types/helmet": "^4.0.0",
     "@types/jest": "27.5.0",
     "@types/node": "^16.0.0",
     "@types/passport-discord": "^0.1.5",
     "@types/supertest": "^2.0.11",
     "@types/swagger-stats": "^0.95.5",
+    "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.0.1",

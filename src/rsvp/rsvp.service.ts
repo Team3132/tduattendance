@@ -1,13 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateRsvpDto } from './dto/create-rsvp.dto';
 import { UpdateRsvpDto } from './dto/update-rsvp.dto';
 
 @Injectable()
 export class RsvpService {
   constructor(private readonly prismaService: PrismaService) {}
-
+  private readonly logger = new Logger(RsvpService.name);
   createRSVP(data: Prisma.RSVPCreateInput) {
     return this.prismaService.rSVP.create({
       data,

@@ -1,12 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Event, Prisma } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 
 @Injectable()
 export class EventService {
   constructor(private readonly prismaService: PrismaService) {}
+  private readonly logger = new Logger(EventService.name);
+
   createEvent(data: Prisma.EventCreateInput) {
     return this.prismaService.event.create({
       data,

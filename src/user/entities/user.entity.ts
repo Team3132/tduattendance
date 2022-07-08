@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { User as PrismaUser } from '@prisma/client';
+import { Prisma, User as PrismaUser } from '@prisma/client';
 
 /**
  * The user object.
  */
-export class User {
+export class User implements PrismaUser {
   @ApiProperty()
   id: string;
   @ApiProperty()
@@ -16,7 +16,9 @@ export class User {
   @ApiProperty()
   updatedAt: Date;
   @ApiProperty()
-  discordToken: string;
-  @ApiProperty()
   discordRefreshToken: string;
+  @ApiProperty()
+  calendarSecret: string;
+  @ApiProperty()
+  email: string;
 }

@@ -10,25 +10,30 @@ import {
   Session,
   CACHE_MANAGER,
   Inject,
+  BadRequestException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { SessionGuard } from 'src/auth/guard/session.guard';
-import { GetUser } from 'src/auth/decorators/GetUserDecorator.decorator';
+import { SessionGuard } from '../auth/guard/session.guard';
+import { GetUser } from '../auth/decorators/GetUserDecorator.decorator';
 import {
   ApiCookieAuth,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { Roles } from 'src/auth/decorators/DiscordRoleDecorator.decorator';
-import { ROLES } from 'src/constants';
+import { Roles } from '../auth/decorators/DiscordRoleDecorator.decorator';
+import { ROLES } from '../constants';
 import { User } from './entities/user.entity';
-import { Attendance } from 'src/attendance/entities/attendance.entity';
-import { AttendanceService } from 'src/attendance/attendance.service';
-import { RsvpService } from 'src/rsvp/rsvp.service';
-import { Rsvp } from 'src/rsvp/entities/rsvp.entity';
+import { Attendance } from '../attendance/entities/attendance.entity';
+import { AttendanceService } from '../attendance/attendance.service';
+import { RsvpService } from '../rsvp/rsvp.service';
+import { Rsvp } from '../rsvp/entities/rsvp.entity';
 import { Cache } from 'cache-manager';
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime';
 
 /** The user controller for controlling the user status */
 @ApiTags('User')
@@ -102,7 +107,34 @@ export class UserController {
   @UseGuards(SessionGuard)
   @Patch('me')
   update(@GetUser('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.updateUser({ where: { id }, data: updateUserDto });
+    try {
+      return this.userService.updateUser({
+        where: { id },
+        data: updateUserDto,
+      });
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new BadRequestException('The email must be unique');
+        } else {
+          throw error;
+        }
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  /**
+   * Regenerates the calendar token of the signed in user.
+   * @returns User
+   */
+  @ApiOkResponse({ type: User })
+  @ApiCookieAuth()
+  @UseGuards(SessionGuard)
+  @Post('me/regenerateToken')
+  regenerateToken(@GetUser('id') id: string) {
+    return this.userService.regenerateCalendarSecret({ id });
   }
 
   /**
@@ -159,7 +191,35 @@ export class UserController {
   @Roles([ROLES.STUDENT])
   @Patch(':id')
   updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.updateUser({ where: { id }, data: updateUserDto });
+    try {
+      return this.userService.updateUser({
+        where: { id },
+        data: updateUserDto,
+      });
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new BadRequestException('The email must be unique');
+        } else {
+          throw error;
+        }
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  /**
+   * Regenerates the calendar token of the specified user.
+   * @returns User
+   */
+  @ApiCookieAuth()
+  @UseGuards(SessionGuard)
+  @ApiOkResponse({ type: User })
+  @Roles([ROLES.STUDENT])
+  @Post(':id/regenerateToken')
+  regenerateUserToken(@Param('id') id: string) {
+    return this.userService.regenerateCalendarSecret({ id });
   }
 
   /**

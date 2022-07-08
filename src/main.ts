@@ -6,14 +6,16 @@ import * as session from 'express-session';
 import * as passport from 'passport';
 import Redis from 'ioredis';
 import * as connectRedis from 'connect-redis';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import helmet from 'helmet';
 import type { ClientOpts } from 'redis';
 import * as swStats from 'swagger-stats';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
+  app.use(helmet());
   app.use(cookieParser(config.getOrThrow('COOKIE_SECRET')));
 
   let redisClient = new Redis({
@@ -41,6 +43,7 @@ async function bootstrap() {
       whitelist: true,
       stopAtFirstError: false,
       transform: true,
+      forbidNonWhitelisted: true,
     }),
   );
   const swaggerConfig = new DocumentBuilder()

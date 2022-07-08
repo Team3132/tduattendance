@@ -1,8 +1,15 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  CacheInterceptor,
+  Controller,
+  Get,
+  Request,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('App')
 @Controller()
+@UseInterceptors(CacheInterceptor)
 export class AppController {
   constructor() {}
 
@@ -12,6 +19,6 @@ export class AppController {
    */
   @Get('')
   helloWorld() {
-    return 'Hello World!';
+    return `Hello World!`;
   }
 }

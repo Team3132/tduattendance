@@ -1,6 +1,8 @@
-import { Controller, Get, Session, UseGuards } from '@nestjs/common';
+import { Controller, Get, Response, Session, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
+import { Response as ExpressResponse } from 'express';
+import { DiscordService } from 'src/discord/discord.service';
 import { AuthService } from './auth.service';
 import { GetUser } from './decorators/GetUserDecorator.decorator';
 import { AuthStatusDto } from './dto/AuthStatus.dto';
@@ -10,7 +12,10 @@ import { SessionGuard } from './guard/session.guard';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly discordService: DiscordService,
+  ) {}
   /**
    * Auth Status
    * @returns Session metadata (if it exists)
@@ -18,9 +23,19 @@ export class AuthController {
   @ApiOkResponse({ type: AuthStatusDto })
   @Get('status')
   async status(@GetUser() user: Express.User): Promise<AuthStatusDto> {
+    const getRoles = async () => {
+      if (!user) {
+        return [];
+      }
+      const discordUser = await this.discordService.getDiscordMemberDetails(
+        user['id'],
+      );
+      return discordUser.roles;
+    };
+
     return {
       isAuthenticated: !!user,
-      roles: !!user ? await this.authService.getRoles(user) : [],
+      roles: await getRoles(),
     };
   }
 
@@ -38,6 +53,7 @@ export class AuthController {
   @UseGuards(DiscordAuthGuard)
   @Get('discord/callback')
   discordSigninCallback() {
+    // res.redirect('back');
     return '<script>window.close();</script >';
   }
 

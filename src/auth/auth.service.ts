@@ -2,24 +2,32 @@ import {
   CACHE_MANAGER,
   Inject,
   Injectable,
+  InternalServerErrorException,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { Cache } from 'cache-manager';
-import { RESTGetAPIGuildMemberResult } from 'discord-api-types/v10';
+import {
+  RESTGetAPIGuildMemberResult,
+  RESTPostOAuth2RefreshTokenResult,
+} from 'discord-api-types/v10';
 import { Profile as DiscordProfile } from 'passport-discord';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { DiscordService } from 'src/discord/discord.service';
+import { PrismaService } from '../prisma/prisma.service';
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly discordService: DiscordService,
   ) {}
-  validateDiscordUser(
-    accessToken: string,
+  private readonly logger = new Logger(AuthService.name);
+
+  async validateDiscordUser(
     refreshToken: string,
+    access_token: string,
     user: DiscordProfile,
   ) {
     const { guilds } = user;
@@ -30,6 +38,27 @@ export class AuthService {
     )
       throw new UnauthorizedException('You are not in the TDU Discord Server');
 
+    this.logger.debug(`${user.username}#${user.discriminator} logged in!`);
+    const discordUser = await this.discordService.getDiscordMemberDetails(
+      user.id,
+      access_token,
+    );
+
+    const getName = (
+      nick: string,
+    ): { firstName: string; lastName: string | undefined } => {
+      const fullSplitName = nick.split(/(?=[A-Z])/);
+
+      return {
+        firstName: nick ? fullSplitName[0] : undefined,
+        lastName: nick
+          ? fullSplitName.length > 1
+            ? fullSplitName[1]
+            : undefined
+          : undefined,
+      };
+    };
+
     return this.prismaService.user.upsert({
       where: {
         id: user.id,
@@ -37,43 +66,12 @@ export class AuthService {
       create: {
         id: user.id,
         discordRefreshToken: refreshToken,
-        discordToken: accessToken,
+        email: user.email,
+        ...getName(discordUser?.nick),
       },
       update: {
         discordRefreshToken: refreshToken,
-        discordToken: accessToken,
       },
     });
-  }
-
-  async getRoles(user: any): Promise<string[]> {
-    const prismaUser = await this.prismaService.user.findUnique({
-      where: { id: user.id },
-    });
-
-    const cachedUser = await this.cacheManager.get<RESTGetAPIGuildMemberResult>(
-      `discorduser/guild/${user.id}`,
-    );
-    if (cachedUser) {
-      // console.log('Used Cache');
-      return cachedUser.roles;
-    } else {
-      console.log('Getting Roles Again');
-      const guildId = this.configService.getOrThrow('GUILD_ID');
-      const { data } = await axios.get<RESTGetAPIGuildMemberResult>(
-        `https://discord.com/api/users/@me/guilds/${guildId}/member`,
-        {
-          headers: {
-            Authorization: `Bearer ${prismaUser.discordToken}`,
-          },
-        },
-      );
-      await this.cacheManager.set<RESTGetAPIGuildMemberResult>(
-        `discorduser/guild/${user.id}`,
-        data,
-        { ttl: 3600 },
-      );
-      return data.roles;
-    }
   }
 }

@@ -1,22 +1,27 @@
-import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Prisma } from '@prisma/client';
 import axios from 'axios';
 import { Cache } from 'cache-manager';
+import { randomUUID } from 'crypto';
 import {
   APIGuildMember,
   RESTGetAPIGuildMemberResult,
 } from 'discord-api-types/v10';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { v4 as uuid } from 'uuid';
+import { AuthService } from 'src/auth/auth.service';
+import { DiscordService } from 'src/discord/discord.service';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly prismaService: PrismaService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    private readonly configService: ConfigService,
+    private readonly discordService: DiscordService,
+    private readonly authService: AuthService,
   ) {}
+  private readonly logger = new Logger(UserService.name);
 
   users(params: {
     skip?: number;
@@ -50,37 +55,23 @@ export class UserService {
     });
   }
 
+  regenerateCalendarSecret(where: Prisma.UserWhereUniqueInput) {
+    this.logger.log(
+      `User with id: ${where.id} calendar secret was regenerated.`,
+    );
+    return this.prismaService.user.update({
+      where,
+      data: {
+        calendarSecret: uuid(),
+      },
+    });
+  }
+
   deleteUser(where: Prisma.UserWhereUniqueInput) {
     return this.prismaService.user.delete({ where });
   }
 
   async discordProfile(userId: string): Promise<APIGuildMember> {
-    const prismaUser = await this.prismaService.user.findUnique({
-      where: { id: userId },
-    });
-
-    const cachedUser = await this.cacheManager.get<RESTGetAPIGuildMemberResult>(
-      `discorduser/guild/${userId}`,
-    );
-    if (cachedUser) {
-      return cachedUser;
-    } else {
-      console.log('Getting Roles Again');
-      const guildId = this.configService.getOrThrow('GUILD_ID');
-      const { data } = await axios.get<RESTGetAPIGuildMemberResult>(
-        `https://discord.com/api/users/@me/guilds/${guildId}/member`,
-        {
-          headers: {
-            Authorization: `Bearer ${prismaUser.discordToken}`,
-          },
-        },
-      );
-      await this.cacheManager.set<RESTGetAPIGuildMemberResult>(
-        `discorduser/guild/${userId}`,
-        data,
-        { ttl: 3600 },
-      );
-      return data;
-    }
+    return this.discordService.getDiscordMemberDetails(userId);
   }
 }

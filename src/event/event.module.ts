@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { EventService } from './event.service';
 import { EventController } from './event.controller';
-import { RsvpService } from 'src/rsvp/rsvp.service';
-import { RsvpModule } from 'src/rsvp/rsvp.module';
-import { AttendanceModule } from 'src/attendance/attendance.module';
-import { AttendanceService } from 'src/attendance/attendance.service';
+import { RsvpService } from '../rsvp/rsvp.service';
+import { RsvpModule } from '../rsvp/rsvp.module';
+import { AttendanceModule } from '../attendance/attendance.module';
+import { AttendanceService } from '../attendance/attendance.service';
 
 @Module({
   controllers: [EventController],
