@@ -62,7 +62,7 @@ export class AuthController {
    * Sign in using discord (callback)
    * @returns close window script
    */
-  @Redirect(`http://localhost:4000/calendar`)
+  @Redirect(`https://attendance.team3132.com/calendar`)
   @UseGuards(DiscordAuthGuard)
   @Get('discord/callback')
   discordSigninCallback() {
@@ -76,7 +76,7 @@ export class AuthController {
     @Res() res: Response,
   ) {
     session.destroy(() => {
-      res.redirect(`http://localhost:4000/`);
+      res.redirect(`https://attendance.team3132.com`);
     });
   }
 }
