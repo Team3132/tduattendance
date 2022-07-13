@@ -12,9 +12,12 @@ import { AppService } from './app.service';
 import { AttendanceModule } from './attendance/attendance.module';
 import type { ClientOpts } from 'redis';
 import { CalendarModule } from './calendar/calendar.module';
+import { DiscordModule as DiscordBotModule } from '@discord-nestjs/core';
 import { DiscordModule } from './discord/discord.module';
 import { ScancodeModule } from './scancode/scancode.module';
 import * as redisStore from 'cache-manager-redis-store';
+import { Intents } from 'discord.js';
+import { BotModule } from './bot/bot.module';
 
 @Module({
   imports: [
@@ -40,6 +43,23 @@ import * as redisStore from 'cache-manager-redis-store';
     CalendarModule,
     DiscordModule,
     ScancodeModule,
+    // DiscordBotModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   useFactory: (configService: ConfigService) => ({
+    //     token: configService.get('DISCORD_TOKEN'),
+    //     discordClientOptions: {
+    //       intents: [Intents.FLAGS.GUILDS],
+    //     },
+    //     registerCommandOptions: [
+    //       {
+    //         forGuild: configService.get('GUILD_ID'),
+    //         removeCommandsBefore: true,
+    //       },
+    //     ],
+    //   }),
+    //   inject: [ConfigService],
+    // }),
+    // BotModule,
   ],
   controllers: [AppController],
   providers: [
