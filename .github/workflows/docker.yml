@@ -25,5 +25,5 @@ jobs:
         uses: docker/build-push-action@v3
         id: docker_build
         with:
-          push: ${{ github.event.inputs.pushtoregistry }}
+          push: true
           tags: ghcr.io/sebasptsch/tduattendance:latest
