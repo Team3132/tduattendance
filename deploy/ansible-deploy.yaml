@@ -16,6 +16,8 @@
         restart_policy: unless-stopped
         networks:
           - name: tduattendance_network
+            aliases:
+              - redis
     # Redis
     - name: Deploy TDU Attendance Redis
       community.docker.docker_container:
@@ -25,6 +27,8 @@
         hostname: redis
         networks:
           - name: tduattendance_network
+            aliases:
+              - redis
     # Core
     - name: Deploy TDU Attendance Core
       community.docker.docker_container:
