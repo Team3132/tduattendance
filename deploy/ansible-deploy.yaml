@@ -15,7 +15,7 @@
           - ~/TDUAttendance/data:/var/lib/postgresql/data
         restart_policy: unless-stopped
         networks:
-          - tduattendance_network
+          - name: tduattendance_network
     # Redis
     - name: Deploy TDU Attendance Redis
       community.docker.docker_container:
@@ -24,7 +24,7 @@
         restart_policy: unless-stopped
         hostname: redis
         networks:
-          - tduattendance_network
+          - name: tduattendance_network
     # Core
     - name: Deploy TDU Attendance Core
       community.docker.docker_container:
@@ -36,4 +36,4 @@
         restart_policy: unless-stopped
         pull: true
         networks:
-          - tduattendance_network
+          - name: tduattendance_network
