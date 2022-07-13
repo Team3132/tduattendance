@@ -26,7 +26,7 @@ import { ROLES } from '../constants';
 @ApiTags('Attendance')
 @ApiCookieAuth()
 @UseGuards(SessionGuard)
-@Roles([ROLES.STUDENT])
+@Roles([ROLES.ADMIN])
 @Controller('attendance')
 export class AttendanceController {
   constructor(private readonly attendanceService: AttendanceService) {}

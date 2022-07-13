@@ -61,7 +61,7 @@ export class EventController {
    * @returns Event
    */
   @ApiOkResponse({ type: Event })
-  @Roles([ROLES.STUDENT])
+  @Roles([ROLES.ADMIN])
   @Post()
   create(@Body() createEventDto: CreateEventDto) {
     return this.eventService.createEvent(createEventDto);
@@ -83,7 +83,7 @@ export class EventController {
    * @returns Event
    */
   @ApiOkResponse({ type: Event })
-  @Roles([ROLES.STUDENT])
+  @Roles([ROLES.ADMIN])
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
     return this.eventService.updateEvent({
@@ -97,7 +97,7 @@ export class EventController {
    * @returns Event
    */
   @ApiOkResponse({ type: Event })
-  @Roles([ROLES.STUDENT])
+  @Roles([ROLES.ADMIN])
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.eventService.deleteEvent({ id });
@@ -108,7 +108,6 @@ export class EventController {
    * @returns RSVP
    */
   @ApiOkResponse({ type: Rsvp })
-  @UseGuards(SessionGuard)
   @Get(':eventId/rsvp')
   getEventRsvp(
     @Param('eventId') eventId: string,
