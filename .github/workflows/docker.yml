@@ -49,6 +49,7 @@ jobs:
         with:
           python-version: '3.x'
           cache: 'pip'
+          cache-dependency-path: 'deploy/requirements.txt'
       - name: Tailscale
         uses: tailscale/github-action@main
         with:
