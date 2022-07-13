@@ -1,7 +1,7 @@
 import { CacheModule, Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { EventModule } from './event/event.module';
 import { RsvpModule } from './rsvp/rsvp.module';
@@ -21,12 +21,16 @@ import * as redisStore from 'cache-manager-redis-store';
     AuthModule,
     PrismaModule,
     ConfigModule.forRoot({ isGlobal: true, cache: true }),
-    CacheModule.register<ClientOpts>({
+    CacheModule.registerAsync<ClientOpts>({
       isGlobal: true,
-      store: redisStore,
-      host: 'localhost',
-      port: 6379,
-      db: 1,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        store: redisStore,
+        host: configService.getOrThrow<string>('REDIS_HOST'),
+        port: 6379,
+        db: 1,
+      }),
     }),
     PrismaModule,
     UserModule,
