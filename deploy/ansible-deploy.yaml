@@ -17,7 +17,7 @@
         networks:
           - name: tduattendance_network
             aliases:
-              - redis
+              - postgres
     # Redis
     - name: Deploy TDU Attendance Redis
       community.docker.docker_container:
