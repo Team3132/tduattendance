@@ -2,12 +2,6 @@ name: ci
 
 on:
   workflow_dispatch:
-    inputs:
-      pushtoregistry:
-        description: 'Push the image on this run.'
-        default: false
-        required: false
-        type: boolean
 
 jobs:
   docker-build:
@@ -33,39 +27,3 @@ jobs:
         with:
           push: ${{ github.event.inputs.pushtoregistry }}
           tags: ghcr.io/sebasptsch/tduattendance:latest
-  deploy:
-    runs-on: ubuntu-latest
-    environment: 'Production'
-    needs: 'docker-build'
-    name: 'Deploy Image'
-    defaults:
-      run:
-        working-directory: deploy
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-          cache: 'pip'
-          cache-dependency-path: 'deploy/requirements.txt'
-      - name: Tailscale
-        uses: tailscale/github-action@main
-        with:
-          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
-      - name: Create Inventory
-        run: echo $ANSIBLE_INVENTORY >> inventory
-        env:
-          ANSIBLE_INVENTORY: ${{ secrets.ANSIBLE_INVENTORY }}
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_KEY }}
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}
-      - name: Install Dependancies
-        run: pip install -r requirements.txt
-      - name: Install Docker Galaxy
-        run: ansible-galaxy collection install community.docker
-      - name: Deploy
-        run: ansible-playbook ansible-deploy.yaml
