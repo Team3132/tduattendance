@@ -1,7 +1,15 @@
-import { Controller, Get, Response, Session, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Redirect,
+  Req,
+  Res,
+  Session,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
-import { Response as ExpressResponse } from 'express';
+import { Request, Response as ExpressResponse, Response } from 'express';
 import { DiscordService } from 'src/discord/discord.service';
 import { AuthService } from './auth.service';
 import { GetUser } from './decorators/GetUserDecorator.decorator';
@@ -50,18 +58,21 @@ export class AuthController {
    * Sign in using discord (callback)
    * @returns close window script
    */
+  @Redirect(`http://localhost:4000/calendar`)
   @UseGuards(DiscordAuthGuard)
   @Get('discord/callback')
   discordSigninCallback() {
     // res.redirect('back');
-    return '<script>window.close();</script >';
   }
 
   @UseGuards(SessionGuard)
   @Get('logout')
-  async logout(@Session() session: Express.Request['session']) {
+  async logout(
+    @Session() session: Express.Request['session'],
+    @Res() res: Response,
+  ) {
     session.destroy(() => {
-      return;
+      res.redirect(`http://localhost:4000/`);
     });
   }
 }
