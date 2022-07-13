@@ -10,6 +10,7 @@ import {
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { Request, Response as ExpressResponse, Response } from 'express';
+import { ROLES } from 'src/constants';
 import { DiscordService } from 'src/discord/discord.service';
 import { AuthService } from './auth.service';
 import { GetUser } from './decorators/GetUserDecorator.decorator';
@@ -40,10 +41,13 @@ export class AuthController {
       );
       return discordUser.roles;
     };
+    const roles = await getRoles();
+    const isAdmin = roles.includes(ROLES.ADMIN);
 
     return {
       isAuthenticated: !!user,
-      roles: await getRoles(),
+      roles,
+      isAdmin,
     };
   }
 
