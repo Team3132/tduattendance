@@ -14,12 +14,22 @@ import {
   InteractionReplyOptions,
   MessageEmbed,
 } from 'discord.js';
+import { AttendanceService } from 'src/attendance/attendance.service';
+import { EventService } from 'src/event/event.service';
+import { RsvpService } from 'src/rsvp/rsvp.service';
+import { ScancodeService } from 'src/scancode/scancode.service';
 
 @Command({
   name: 'ping',
   description: 'Pings the bot',
 })
 export class PingCommand implements DiscordCommand {
+  constructor(
+    private readonly eventService: EventService,
+    private readonly rsvpService: RsvpService,
+    private readonly attendanceService: AttendanceService,
+    private readonly scancodeService: ScancodeService,
+  ) {}
   handler(interaction: CommandInteraction) {
     const logger = new Logger(PingCommand.name);
 

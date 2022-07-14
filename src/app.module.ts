@@ -47,6 +47,7 @@ import { BotModule } from './bot/bot.module';
     //   imports: [ConfigModule],
     //   useFactory: (configService: ConfigService) => ({
     //     token: configService.get('DISCORD_TOKEN'),
+
     //     discordClientOptions: {
     //       intents: [Intents.FLAGS.GUILDS],
     //     },
@@ -54,6 +55,7 @@ import { BotModule } from './bot/bot.module';
     //       {
     //         forGuild: configService.get('GUILD_ID'),
     //         removeCommandsBefore: true,
+
     //       },
     //     ],
     //   }),

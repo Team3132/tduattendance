@@ -11,6 +11,7 @@ import { ScancodeModule } from 'src/scancode/scancode.module';
 @Module({
   controllers: [EventController],
   providers: [EventService, RsvpService, AttendanceService, ScancodeService],
+  exports: [EventService],
   imports: [RsvpModule, AttendanceModule, ScancodeModule],
 })
 export class EventModule {}

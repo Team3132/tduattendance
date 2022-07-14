@@ -4,6 +4,8 @@ services:
     hostname: postgres
     env_file: .env
     restart: unless-stopped
+    ports:
+      - 5432:5432
     networks:
       tduattendance:
     volumes:
@@ -12,6 +14,8 @@ services:
   redis:
     image: redis
     hostname: redis
+    ports:
+      - 6379:6379
     networks:
       tduattendance:
     restart: unless-stopped
