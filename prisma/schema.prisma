@@ -39,8 +39,8 @@ model Event {
   allDay      Boolean      @default(false)
   startDate   DateTime
   endDate     DateTime
-  RSVP        RSVP[]
-  Attendance  Attendance[]
+  RSVP        RSVP[]       @relation("EventOnRsvp")
+  Attendance  Attendance[] @relation("EventOnAttendance")
 }
 
 enum RSVPStatus {
@@ -52,9 +52,9 @@ enum RSVPStatus {
 model RSVP {
   id        String     @id @default(cuid())
   eventId   String
-  event     Event      @relation(fields: [eventId], references: [id])
+  event     Event      @relation(name: "EventOnRsvp", fields: [eventId], references: [id], onDelete: Cascade)
   userId    String
-  user      User       @relation(fields: [userId], references: [id])
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   status    RSVPStatus
   createdAt DateTime   @default(now())
   updatedAt DateTime   @default(now()) @updatedAt
@@ -68,9 +68,9 @@ enum AttendanceStatus {
 model Attendance {
   id        String           @id @default(cuid())
   eventId   String
-  event     Event            @relation(fields: [eventId], references: [id])
+  event     Event            @relation(name: "EventOnAttendance", fields: [eventId], references: [id], onDelete: Cascade)
   userId    String
-  user      User             @relation(fields: [userId], references: [id])
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   status    AttendanceStatus @default(NOT_ATTENDED)
   createdAt DateTime         @default(now())
   updatedAt DateTime         @default(now()) @updatedAt

@@ -137,7 +137,7 @@ export class EventController {
   @Roles([ROLES.ADMIN])
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.eventService.deleteEvent({ id });
+    return this.eventService.deleteEvent(id);
   }
 
   /**

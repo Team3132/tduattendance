@@ -52,7 +52,7 @@ export class EventsCommand implements DiscordCommand {
       new MessageEmbed()
         .setTitle(event.title)
         .setDescription(event.description)
-        .setURL(`http://localhost:4000/calendar/${event.id}/view`)
+        .setURL(`http://localhost:4000/event/${event.id}/view`)
         .addFields([
           { name: 'All Day', value: event.allDay ? 'Yes' : 'No' },
           {

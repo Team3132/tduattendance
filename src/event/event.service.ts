@@ -49,7 +49,7 @@ export class EventService {
     });
   }
 
-  deleteEvent(where: Prisma.EventWhereUniqueInput) {
-    return this.prismaService.event.delete({ where });
+  deleteEvent(id: Event['id']) {
+    return this.prismaService.event.delete({ where: { id } });
   }
 }
