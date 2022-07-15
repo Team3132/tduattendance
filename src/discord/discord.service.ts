@@ -76,12 +76,6 @@ export class DiscordService {
       `discorduser/guild/${userId}`,
     );
     if (cachedUser) {
-      // console.log('Used Cache');
-      this.logger.debug(
-        `Returned Cached Discord Guild Member ${
-          cachedUser.nick ?? cachedUser.user.username
-        }`,
-      );
       return cachedUser;
     } else {
       this.logger.debug(`Fetching Guild Member ${userId}`);
