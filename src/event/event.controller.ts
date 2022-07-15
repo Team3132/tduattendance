@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Put,
+  Query,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -32,6 +33,7 @@ import { UpdateOrCreateAttendance } from './dto/update-attendance.dto';
 import { ScancodeService } from 'src/scancode/scancode.service';
 import { AttendanceStatus } from '@prisma/client';
 import { ScaninDto } from './dto/scanin.dto';
+import { GetEventsDto } from './dto/get-events.dto';
 
 @ApiTags('Event')
 @ApiCookieAuth()
@@ -51,8 +53,43 @@ export class EventController {
    */
   @ApiOkResponse({ type: [Event] })
   @Get()
-  findAll() {
-    return this.eventService.events({});
+  findAll(@Query() eventsGet: GetEventsDto) {
+    const { from, to, take } = eventsGet;
+    return this.eventService.events({
+      take,
+      where: {
+        AND: [
+          {
+            OR: [
+              {
+                startDate: {
+                  lte: to,
+                },
+              },
+              {
+                endDate: {
+                  lte: to,
+                },
+              },
+            ],
+          },
+          {
+            OR: [
+              {
+                startDate: {
+                  gte: from,
+                },
+              },
+              {
+                endDate: {
+                  gte: from,
+                },
+              },
+            ],
+          },
+        ],
+      },
+    });
   }
 
   /**
