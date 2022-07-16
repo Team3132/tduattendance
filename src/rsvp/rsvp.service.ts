@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma, RSVPStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateRsvpDto } from './dto/create-rsvp.dto';
 import { UpdateRsvpDto } from './dto/update-rsvp.dto';
@@ -65,5 +65,43 @@ export class RsvpService {
       create,
       update,
     });
+  }
+
+  upsertManyRSVP(userId: string, eventIds: string[], status: RSVPStatus) {
+    return Promise.all(
+      eventIds.map(async (item) => {
+        const existing = await this.prismaService.rSVP.findFirst({
+          where: {
+            eventId: item,
+            userId,
+          },
+        });
+
+        if (existing) {
+          return this.prismaService.rSVP.update({
+            where: { id: existing.id },
+            data: {
+              status,
+            },
+          });
+        } else {
+          return this.prismaService.rSVP.create({
+            data: {
+              event: {
+                connect: {
+                  id: item,
+                },
+              },
+              user: {
+                connect: {
+                  id: userId,
+                },
+              },
+              status,
+            },
+          });
+        }
+      }),
+    );
   }
 }

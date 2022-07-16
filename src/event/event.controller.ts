@@ -34,6 +34,7 @@ import { ScancodeService } from 'src/scancode/scancode.service';
 import { AttendanceStatus } from '@prisma/client';
 import { ScaninDto } from './dto/scanin.dto';
 import { GetEventsDto } from './dto/get-events.dto';
+import { UpdateRangeRSVP } from './dto/update-rsvp-range';
 
 @ApiTags('Event')
 @ApiCookieAuth()
@@ -188,6 +189,57 @@ export class EventController {
   }
 
   /**
+   * Update RSVP Status of Events in range
+   */
+  @ApiCreatedResponse({ type: [Rsvp] })
+  @Post('rsvps')
+  async setEventsRsvp(
+    @Body() updateRangeRSVP: UpdateRangeRSVP,
+    @GetUser('id') userId: string,
+  ) {
+    const { from, to, status } = updateRangeRSVP;
+    const events = await this.eventService.events({
+      where: {
+        AND: [
+          {
+            OR: [
+              {
+                startDate: {
+                  lte: to,
+                },
+              },
+              {
+                endDate: {
+                  lte: to,
+                },
+              },
+            ],
+          },
+          {
+            OR: [
+              {
+                startDate: {
+                  gte: from,
+                },
+              },
+              {
+                endDate: {
+                  gte: from,
+                },
+              },
+            ],
+          },
+        ],
+      },
+    });
+    return this.rsvpService.upsertManyRSVP(
+      userId,
+      events.map((event) => event.id),
+      status,
+    );
+  }
+
+  /**
    * Get an event's asociated RSVPs
    * @returns List of RSVP
    */
@@ -251,6 +303,11 @@ export class EventController {
       },
     });
   }
+
+  /**
+   * Update your attendance status for multiple events
+   */
+  async setEventsAttendance() {}
 
   /**
    * Get an event's asociated attendances
