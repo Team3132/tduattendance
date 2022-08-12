@@ -31,7 +31,6 @@ async function bootstrap() {
       resave: false,
       cookie: {
         domain: 'team3132.com',
-        secure: process.env.NODE_ENV === 'production',
       },
       saveUninitialized: false,
       store: new redisStore({
