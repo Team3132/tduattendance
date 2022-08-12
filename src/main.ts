@@ -29,6 +29,9 @@ async function bootstrap() {
     session({
       secret: config.get('SESSION_SECRET'),
       resave: false,
+      cookie: {
+        domain: 'team3132.com',
+      },
       saveUninitialized: false,
       store: new redisStore({
         client: redisClient,

@@ -42,7 +42,7 @@
     "discord-api-types": "^0.35.0",
     "discord.js": "^13.8.1",
     "express-session": "^1.17.3",
-    "helmet": "^5.1.0",
+    "helmet": "^5.1.1",
     "ical-generator": "^3.4.3",
     "ioredis": "^5.1.0",
     "luxon": "^3.0.1",
