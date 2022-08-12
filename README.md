@@ -2,11 +2,11 @@
 
 ## Links
 
-- [Production]('https://attendance.team3132.com')
+- [Production](https://attendance.team3132.com)
 
 - [NestJS Readme](README_NESTJS.md)
-- [API Reference (Swagger)]('https://api.team3132.com/api')
-- [Frontend Repository]('https://github.com/Team3132/AttendanceFrontend')
+- [API Reference (Swagger)](https://api.team3132.com/api)
+- [Frontend Repository](https://github.com/Team3132/AttendanceFrontend)
 
 ## Description
 
