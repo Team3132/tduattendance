@@ -21,3 +21,7 @@ A project started to better coordinate both student and mentor attendance.
 ## Getting started
 
 If you want to familiarise yourself with how NestJS works in detail I would recommend watching [this video](https://www.youtube.com/watch?v=GHTA143_b-s). Though editing the codebase should not require too high a level of understanding.
+
+## Deployment
+
+Currently the project builds a docker container when the Github Action is manually triggered. This allows deployment to a variety of platforms pretty easily. At the moment I'm using [Cloudflare tunnels](https://www.cloudflare.com/products/tunnel/) on my server machine at home to link it the the `team3132.com` domain.
