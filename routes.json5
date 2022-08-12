@@ -1,8 +1,0 @@
-{
-  '/events': ['post', 'get'],
-  '/events/:id': ['get', 'put', 'delete'],
-  '/events/:id/rsvp': ['post', 'get'],
-  '/events/:id/rsvp/:rsvpId': ['put', 'delete'],
-  '/events/:id/attendance': ['post', 'get'],
-  '/events/:id/attendance/:attendanceId': ['put', 'delete'],
-}
