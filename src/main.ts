@@ -13,7 +13,17 @@ import type { ClientOpts } from 'redis';
 import * as swStats from 'swagger-stats';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    cors: {
+      origin: [
+        'https://attendance.team3132.com',
+        // 'https://sebasptsch.dev',
+      ],
+      allowedHeaders: 'X-Requested-With,Content-Type',
+      credentials: true,
+      methods: 'GET, POST, OPTIONS, PUT, PATCH, DELETE',
+    },
+  });
   const config = app.get(ConfigService);
   app.use(helmet());
   app.use(cookieParser(config.getOrThrow('COOKIE_SECRET')));
