@@ -9,11 +9,11 @@ import { CreateRsvpDto } from './create-rsvp.dto';
  */
 export class UpdateRsvpDto {
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   eventId?: string;
   @IsEnum(RSVPStatus)
-  @ApiProperty({ enum: RSVPStatus })
+  @ApiProperty({ enum: RSVPStatus, required: false })
   @IsOptional()
   status?: RSVPStatus;
 }

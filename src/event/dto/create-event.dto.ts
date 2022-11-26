@@ -12,7 +12,7 @@ import {
  * The data used to create an event
  */
 export class CreateEventDto {
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsString()
   @IsOptional()
   description?: string;
@@ -25,7 +25,7 @@ export class CreateEventDto {
   @IsDateString()
   @ApiProperty()
   endDate: Date;
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsBoolean()
   @IsOptional()
   allDay?: boolean;

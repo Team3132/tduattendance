@@ -9,13 +9,13 @@ import { User } from '../entities/user.entity';
 export class UpdateUserDto {
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   firstName?: string;
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   lastName?: string;
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsEmail()
   email?: string;

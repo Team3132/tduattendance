@@ -8,15 +8,15 @@ import {
 } from 'class-validator';
 
 export class GetEventsDto {
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsDateString()
   from?: string;
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsDateString()
   to?: string;
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsNumber()
   take?: number;

@@ -7,23 +7,23 @@ import { CreateEventDto } from './create-event.dto';
  * The data used to update an event
  */
 export class UpdateEventDto {
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsString()
   @IsOptional()
   description?: string;
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsString()
   @IsOptional()
   title?: string;
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsDateString()
   @IsOptional()
   startDate?: Date;
   @IsDateString()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   endDate?: Date;
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsBoolean()
   @IsOptional()
   allDay?: boolean;
