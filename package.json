@@ -13,8 +13,8 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
   },
   "dependencies": {
-    "@discord-nestjs/common": "^3.4.2",
-    "@discord-nestjs/core": "^3.6.0",
+    "@discord-nestjs/common": "^4.0.8",
+    "@discord-nestjs/core": "^4.3.1",
     "@discordjs/rest": "^0.5.0",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^2.1.0",
