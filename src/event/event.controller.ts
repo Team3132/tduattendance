@@ -17,6 +17,7 @@ import { SessionGuard } from '../auth/guard/session.guard';
 import { Roles } from '../auth/decorators/DiscordRoleDecorator.decorator';
 import { ROLES } from '../constants';
 import {
+  ApiBadRequestResponse,
   ApiCookieAuth,
   ApiCreatedResponse,
   ApiOkResponse,
@@ -246,5 +247,19 @@ export class EventController {
         eventId,
       },
     });
+  }
+
+  /**
+   * RSVP to an event by using a scancode
+   * @param eventId The event id
+   * @param scanin The scanin data (code)
+   * @returns RSVP
+   */
+  @ApiOkResponse({ type: Rsvp })
+  @ApiBadRequestResponse({ description: 'Invalid Scancode' })
+  @Post(':eventId/scanin')
+  scanin(@Param('eventId') eventId: string, @Body() scanin: ScaninDto) {
+    const { code } = scanin;
+    return this.rsvpService.scanin({ eventId, code });
   }
 }

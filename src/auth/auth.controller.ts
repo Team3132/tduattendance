@@ -7,7 +7,7 @@ import {
   Session,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { Request, Response as ExpressResponse, Response } from 'express';
 import { ROLES } from 'src/constants';
@@ -25,6 +25,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly discordService: DiscordService,
   ) {}
+
   /**
    * Auth Status
    * @returns Session metadata (if it exists)

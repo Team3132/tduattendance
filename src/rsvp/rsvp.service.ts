@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { Prisma, RSVPStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateRsvpDto } from './dto/create-rsvp.dto';
@@ -65,6 +65,65 @@ export class RsvpService {
       create,
       update,
     });
+  }
+
+  async scanin(params: { code: string; eventId: string }) {
+    const { code, eventId } = params;
+    const scancode = await this.prismaService.scancode.findUnique({
+      where: {
+        code,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    if (scancode) {
+      const rsvp = await this.prismaService.rSVP.findFirst({
+        where: {
+          eventId,
+          userId: scancode.userId,
+        },
+      });
+
+      if (rsvp) {
+        if (rsvp.status === RSVPStatus.ATTENDED) {
+          throw new BadRequestException('User has already scanned in');
+        } else {
+          const rsvpUpdate = await this.prismaService.rSVP.update({
+            where: {
+              id: rsvp.id,
+            },
+            data: {
+              status: RSVPStatus.ATTENDED,
+              user: {
+                connect: {
+                  id: scancode.userId,
+                },
+              },
+            },
+          });
+          return rsvpUpdate;
+        }
+      } else {
+        const rsvpCreate = await this.prismaService.rSVP.create({
+          data: {
+            status: RSVPStatus.ATTENDED,
+            user: {
+              connect: {
+                id: scancode.userId,
+              },
+            },
+            event: {
+              connect: {
+                id: eventId,
+              },
+            },
+          },
+        });
+        return rsvpCreate;
+      }
+    }
   }
 
   upsertManyRSVP(userId: string, eventIds: string[], status: RSVPStatus) {
