@@ -11,9 +11,16 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
 import type { ClientOpts } from 'redis';
 import * as swStats from 'swagger-stats';
+import express from 'express';
+import http from 'http';
+import https from 'https';
+import fs from 'fs';
+import { ExpressAdapter } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const server = express();
+
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
     cors: {
       origin: [
         'https://attendance.team3132.com',
@@ -28,7 +35,7 @@ async function bootstrap() {
   app.use(helmet());
   app.use(cookieParser(config.getOrThrow('COOKIE_SECRET')));
 
-  let redisClient = new Redis({
+  const redisClient = new Redis({
     host: config.get('REDIS_HOST'),
     port: parseInt(config.get('REDIS_PORT')),
     db: 0,
@@ -80,7 +87,17 @@ async function bootstrap() {
     }),
   );
   SwaggerModule.setup('api', app, document, {});
+  await app.init();
+  http.createServer(server).listen(3000);
 
-  await app.listen(3000);
+  const httpsEnabled = config.get('HTTPS') === 'true';
+
+  if (httpsEnabled) {
+    const httpsOptions = {
+      key: fs.readFileSync('./security/localhost.key'),
+      cert: fs.readFileSync('./security/localhost.crt'),
+    };
+    https.createServer(httpsOptions, server).listen(3443);
+  }
 }
 bootstrap();
