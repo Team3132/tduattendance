@@ -118,6 +118,7 @@ export class UserService {
       return outreachReport;
     } catch (error) {
       this.logger.error(error);
+      throw error;
     }
   }
 }
