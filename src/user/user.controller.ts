@@ -11,6 +11,7 @@ import {
   CACHE_MANAGER,
   Inject,
   BadRequestException,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -32,6 +33,8 @@ import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
 } from '@prisma/client/runtime';
+import { OutreachReport } from './dto/outreach-report.dto';
+import { GetOutreachReport } from './dto/outreach-report-get.dto';
 
 /** The user controller for controlling the user status */
 @ApiTags('User')
@@ -247,5 +250,16 @@ export class UserController {
   async userAvatar(@Param('id') userId: string) {
     const { user } = await this.userService.discordProfile(userId);
     return user.avatar;
+  }
+
+  @ApiOkResponse({ type: OutreachReport })
+  @Roles([ROLES.MENTOR])
+  @Get(':id/outreach')
+  async outreachReport(
+    @Param('id') userId: string,
+    @Query() params: GetOutreachReport,
+  ) {
+    const { from, to } = params;
+    return this.userService.outreachReport(userId, from, to);
   }
 }

@@ -31,14 +31,21 @@ model Scancode {
   userId    String
 }
 
+enum EventTypes {
+  Outreach
+  Regular
+  Social
+}
+
 model Event {
-  id          String   @id @default(cuid())
-  description String   @default("")
+  id          String     @id @default(cuid())
+  description String     @default("")
   title       String
-  allDay      Boolean  @default(false)
+  allDay      Boolean    @default(false)
   startDate   DateTime
   endDate     DateTime
-  RSVP        RSVP[]   @relation("EventOnRsvp")
+  type        EventTypes @default(Regular)
+  RSVP        RSVP[]     @relation("EventOnRsvp")
 }
 
 enum RSVPStatus {
