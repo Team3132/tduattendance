@@ -8,7 +8,7 @@ WORKDIR /home/node
 COPY package*.json ./
 COPY yarn.lock ./
 COPY prisma /home/node/prisma
-COPY security ./
+COPY security ./home/node/security
 RUN yarn install
 RUN npx prisma generate
 
