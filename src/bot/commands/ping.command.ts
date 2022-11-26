@@ -14,7 +14,6 @@ import {
   InteractionReplyOptions,
   MessageEmbed,
 } from 'discord.js';
-import { AttendanceService } from 'src/attendance/attendance.service';
 import { EventService } from 'src/event/event.service';
 import { RsvpService } from 'src/rsvp/rsvp.service';
 import { ScancodeService } from 'src/scancode/scancode.service';
@@ -27,7 +26,6 @@ export class PingCommand implements DiscordCommand {
   constructor(
     private readonly eventService: EventService,
     private readonly rsvpService: RsvpService,
-    private readonly attendanceService: AttendanceService,
     private readonly scancodeService: ScancodeService,
   ) {}
   handler(interaction: CommandInteraction) {

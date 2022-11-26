@@ -11,16 +11,15 @@ datasource db {
 }
 
 model User {
-  id                  String       @id
+  id                  String     @id
   firstName           String?
   lastName            String?
-  createdAt           DateTime     @default(now())
-  updatedAt           DateTime     @default(now()) @updatedAt
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @default(now()) @updatedAt
   discordRefreshToken String
-  calendarSecret      String       @unique @default(uuid())
-  email               String       @unique
+  calendarSecret      String     @unique @default(uuid())
+  email               String     @unique
   RSVP                RSVP[]
-  Attendance          Attendance[]
   Scancode            Scancode[]
 }
 
@@ -33,20 +32,20 @@ model Scancode {
 }
 
 model Event {
-  id          String       @id @default(cuid())
-  description String       @default("")
+  id          String   @id @default(cuid())
+  description String   @default("")
   title       String
-  allDay      Boolean      @default(false)
+  allDay      Boolean  @default(false)
   startDate   DateTime
   endDate     DateTime
-  RSVP        RSVP[]       @relation("EventOnRsvp")
-  Attendance  Attendance[] @relation("EventOnAttendance")
+  RSVP        RSVP[]   @relation("EventOnRsvp")
 }
 
 enum RSVPStatus {
   YES
   NO
   MAYBE
+  ATTENDED
 }
 
 model RSVP {
@@ -58,20 +57,4 @@ model RSVP {
   status    RSVPStatus
   createdAt DateTime   @default(now())
   updatedAt DateTime   @default(now()) @updatedAt
-}
-
-enum AttendanceStatus {
-  ATTENDED
-  NOT_ATTENDED
-}
-
-model Attendance {
-  id        String           @id @default(cuid())
-  eventId   String
-  event     Event            @relation(name: "EventOnAttendance", fields: [eventId], references: [id], onDelete: Cascade)
-  userId    String
-  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  status    AttendanceStatus @default(NOT_ATTENDED)
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @default(now()) @updatedAt
 }

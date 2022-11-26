@@ -9,7 +9,6 @@ import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/guard/role.guard';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AttendanceModule } from './attendance/attendance.module';
 import type { ClientOpts } from 'redis';
 import { CalendarModule } from './calendar/calendar.module';
 import { DiscordModule as DiscordBotModule } from '@discord-nestjs/core';
@@ -39,7 +38,6 @@ import { BotModule } from './bot/bot.module';
     UserModule,
     EventModule,
     RsvpModule,
-    AttendanceModule,
     CalendarModule,
     DiscordModule,
     ScancodeModule,

@@ -25,13 +25,9 @@ import {
 import { Event } from './entities/event.entity';
 import { RsvpService } from '../rsvp/rsvp.service';
 import { Rsvp } from '../rsvp/entities/rsvp.entity';
-import { Attendance } from '../attendance/entities/attendance.entity';
-import { AttendanceService } from '../attendance/attendance.service';
 import { GetUser } from '../auth/decorators/GetUserDecorator.decorator';
 import { UpdateOrCreateRSVP } from './dto/update-rsvp.dto';
-import { UpdateOrCreateAttendance } from './dto/update-attendance.dto';
 import { ScancodeService } from 'src/scancode/scancode.service';
-import { AttendanceStatus } from '@prisma/client';
 import { ScaninDto } from './dto/scanin.dto';
 import { GetEventsDto } from './dto/get-events.dto';
 import { UpdateRangeRSVP } from './dto/update-rsvp-range';
@@ -44,7 +40,6 @@ export class EventController {
   constructor(
     private readonly eventService: EventService,
     private readonly rsvpService: RsvpService,
-    private readonly attendanceService: AttendanceService,
     private readonly scancodeService: ScancodeService,
   ) {}
 
@@ -249,107 +244,6 @@ export class EventController {
     return this.rsvpService.rsvps({
       where: {
         eventId,
-      },
-    });
-  }
-
-  /**
-   * Get a user's attendance status for an event
-   * @returns Attendance
-   */
-  @ApiOkResponse({ type: Attendance })
-  @UseGuards(SessionGuard)
-  @Get(':eventId/attendance')
-  getEventAttendance(
-    @Param('eventId') eventId: string,
-    @GetUser('id') userId: string,
-  ) {
-    return this.attendanceService.firstAttendance({
-      eventId,
-      userId,
-    });
-  }
-
-  /**
-   * Set a user's attendance status for an event.
-   * @param setRSVPDto RSVP Status Data
-   * @returns Attendance
-   */
-  @ApiCreatedResponse({ type: Attendance })
-  @Post(':eventId/attendance')
-  async setEventAttendance(
-    @Param('eventId') eventId: string,
-    @GetUser('id') userId: string,
-    @Body() setRSVPDto: UpdateOrCreateAttendance,
-  ) {
-    const existingAttendance = await this.attendanceService.firstAttendance({
-      eventId,
-      userId,
-    });
-
-    return this.attendanceService.upsertAttendance({
-      where: {
-        id: existingAttendance?.id ?? '',
-      },
-      create: {
-        event: { connect: { id: eventId } },
-        user: {
-          connect: { id: userId },
-        },
-        ...setRSVPDto,
-      },
-      update: {
-        ...setRSVPDto,
-      },
-    });
-  }
-
-  /**
-   * Update your attendance status for multiple events
-   */
-  async setEventsAttendance() {}
-
-  /**
-   * Get an event's asociated attendances
-   * @returns List of attendance
-   */
-  @ApiOkResponse({ type: [Attendance] })
-  @Get(':eventId/attendances')
-  getEventAttendances(@Param('eventId') eventId: string) {
-    return this.attendanceService.attendances({
-      where: {
-        eventId,
-      },
-    });
-  }
-
-  @ApiCreatedResponse({ type: Attendance })
-  @Post(':eventId/scanin')
-  async scaninEvent(
-    @Param('eventId') eventId: string,
-    @Body() { code }: ScaninDto,
-  ) {
-    const scancode = await this.scancodeService.scancode({ code });
-    const existingAttendance = await this.attendanceService.firstAttendance({
-      userId: scancode.userId,
-      eventId,
-    });
-    return this.attendanceService.upsertAttendance({
-      where: {
-        id: existingAttendance?.id ?? '',
-      },
-      create: {
-        event: { connect: { id: eventId } },
-        user: {
-          connect: { id: scancode.userId },
-        },
-        status: AttendanceStatus.ATTENDED,
-      },
-      update: {
-        status:
-          existingAttendance?.status !== AttendanceStatus.ATTENDED
-            ? AttendanceStatus.ATTENDED
-            : AttendanceStatus.NOT_ATTENDED,
       },
     });
   }

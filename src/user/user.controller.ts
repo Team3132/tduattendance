@@ -25,8 +25,6 @@ import {
 import { Roles } from '../auth/decorators/DiscordRoleDecorator.decorator';
 import { ROLES } from '../constants';
 import { User } from './entities/user.entity';
-import { Attendance } from '../attendance/entities/attendance.entity';
-import { AttendanceService } from '../attendance/attendance.service';
 import { RsvpService } from '../rsvp/rsvp.service';
 import { Rsvp } from '../rsvp/entities/rsvp.entity';
 import { Cache } from 'cache-manager';
@@ -43,7 +41,6 @@ import {
 export class UserController {
   constructor(
     private readonly userService: UserService,
-    private readonly attendanceService: AttendanceService,
     private readonly rsvpService: RsvpService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
@@ -71,18 +68,6 @@ export class UserController {
   async userMeAvatar(@GetUser('id') userId: string) {
     const { user } = await this.userService.discordProfile(userId);
     return user.avatar;
-  }
-
-  /**
-   * Get the attendance of the logged in user.
-   * @returns
-   */
-  @ApiCookieAuth()
-  @UseGuards(SessionGuard)
-  @ApiOkResponse({ type: [Attendance] })
-  @Get('me/attendance')
-  meAttendance(@GetUser('id') id: string) {
-    return this.attendanceService.attendances({ where: { userId: id } });
   }
 
   /**
@@ -250,19 +235,6 @@ export class UserController {
         userId: userId,
       },
     });
-  }
-
-  /**
-   * Get a user's attendance
-   * @returns List of attendances
-   */
-  @ApiCookieAuth()
-  @UseGuards(SessionGuard)
-  @ApiOkResponse({ type: [Attendance] })
-  @Roles([ROLES.MENTOR])
-  @Get(':id/attendance')
-  userAttendance(@Param('id') userId: string) {
-    return this.attendanceService.attendances({ where: { userId: userId } });
   }
 
   /**
