@@ -8,6 +8,7 @@ WORKDIR /home/node
 COPY package*.json ./
 COPY yarn.lock ./
 COPY prisma /home/node/prisma
+COPY security ./
 RUN yarn install
 RUN npx prisma generate
 
@@ -28,5 +29,6 @@ COPY --from=builder --chown=node:node /home/node/prisma/ /home/node/prisma/
 COPY --from=builder --chown=node:node /home/node/package*.json ./
 COPY --from=builder --chown=node:node /home/node/node_modules/ ./node_modules/
 COPY --from=builder --chown=node:node /home/node/dist/ ./dist/
+COPY --from=builder --chown=node:node /home/node/security/ ./security/
 
 CMD npx prisma migrate deploy && node dist/main.js
