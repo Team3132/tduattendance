@@ -62,7 +62,11 @@ export class AuthController {
    * Sign in using discord (callback)
    * @returns close window script
    */
-  @Redirect(`https://attendance.team3132.com/calendar`)
+  @Redirect(
+    process.env.NODE_ENV === 'production'
+      ? 'https://attendance.team3132.com/calendar'
+      : 'https://localhost:4000/calendar',
+  )
   @UseGuards(DiscordAuthGuard)
   @Get('discord/callback')
   discordSigninCallback() {
@@ -76,7 +80,11 @@ export class AuthController {
     @Res() res: Response,
   ) {
     session.destroy(() => {
-      res.redirect(`https://attendance.team3132.com`);
+      res.redirect(
+        process.env.NODE_ENV === 'production'
+          ? 'https://attendance.team3132.com'
+          : 'https://localhost:4000',
+      );
     });
   }
 }

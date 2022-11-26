@@ -20,10 +20,14 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 async function bootstrap() {
   const server = express();
 
+  console.log('Node Env:', process.env.NODE_ENV);
+
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
     cors: {
       origin: [
-        'https://attendance.team3132.com',
+        process.env.NODE_ENV === 'production'
+          ? 'https://attendance.team3132.com'
+          : 'https://localhost:4000',
         // 'https://sebasptsch.dev',
       ],
       allowedHeaders: 'X-Requested-With,Content-Type',
@@ -31,7 +35,9 @@ async function bootstrap() {
       methods: 'GET, POST, OPTIONS, PUT, PATCH, DELETE',
     },
   });
+
   const config = app.get(ConfigService);
+
   app.use(helmet());
   app.use(cookieParser(config.getOrThrow('COOKIE_SECRET')));
 

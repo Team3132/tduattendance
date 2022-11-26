@@ -10,8 +10,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "node --enable-source-maps dist/main.js --inspect",
     "dev": "yarn tsup --watch",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "gen-certs": "openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout security/cert.key -out security/cert.pem -config security/req.cnf -sha256"
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
   },
   "dependencies": {
     "@discord-nestjs/common": "^3.4.2",
