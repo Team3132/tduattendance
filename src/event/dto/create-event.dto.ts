@@ -25,6 +25,7 @@ export class CreateEventDto {
   @IsDateString()
   @ApiProperty()
   endDate: Date;
+  @ApiProperty()
   @IsBoolean()
   @IsOptional()
   allDay?: boolean;
