@@ -40,7 +40,7 @@ async function bootstrap() {
       secret: config.get('SESSION_SECRET'),
       resave: false,
       cookie: {
-        domain: 'team3132.com',
+        domain: config.get('COOKIE_DOMAIN') ?? 'team3132.com',
       },
       saveUninitialized: false,
       store: new redisStore({
