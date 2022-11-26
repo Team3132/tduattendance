@@ -66,7 +66,6 @@ export class AuthService {
       create: {
         id: user.id,
         discordRefreshToken: refreshToken,
-        email: user.email,
         ...getName(discordUser?.nick ?? discordUser.user.username),
       },
       update: {

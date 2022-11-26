@@ -41,7 +41,18 @@ export class UserService {
   }
 
   user(userWhereUniqueInput: Prisma.UserWhereUniqueInput) {
-    return this.prismaService.user.findUnique({ where: userWhereUniqueInput });
+    return this.prismaService.user.findUnique({
+      where: userWhereUniqueInput,
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        calendarSecret: true,
+        createdAt: true,
+        updatedAt: true,
+        email: true,
+      },
+    });
   }
 
   updateUser(params: {
