@@ -4,7 +4,7 @@ import { Prisma, User as PrismaUser } from '@prisma/client';
 /**
  * The user object.
  */
-export class User implements PrismaUser {
+export class User implements Partial<PrismaUser> {
   @ApiProperty()
   id: string;
   @ApiProperty()
@@ -15,8 +15,6 @@ export class User implements PrismaUser {
   createdAt: Date;
   @ApiProperty()
   updatedAt: Date;
-  @ApiProperty()
-  discordRefreshToken: string;
   @ApiProperty()
   calendarSecret: string;
   @ApiProperty()
