@@ -81,8 +81,8 @@ export class UserService {
         where: {
           userId,
           createdAt: {
-            gte: new Date(from),
-            lte: new Date(to),
+            gte: from ? new Date(from) : undefined,
+            lte: to ? new Date(to) : undefined,
           },
           status: {
             in: 'ATTENDED',
