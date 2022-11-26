@@ -35,7 +35,7 @@ export class RsvpController {
    * @param createRsvpDto RSVP Create Data
    * @returns
    */
-  @Roles([ROLES.ADMIN])
+  @Roles([ROLES.MENTOR])
   @ApiOkResponse({ type: Rsvp })
   @Post()
   create(@Body() createRsvpDto: CreateRsvpDto, @GetUser('id') userId: string) {
@@ -54,7 +54,7 @@ export class RsvpController {
    * Get all RSVPs
    * @returns List of RSVP
    */
-  @Roles([ROLES.ADMIN])
+  @Roles([ROLES.MENTOR])
   @ApiOkResponse({ type: [Rsvp] })
   @Get()
   findAll() {
@@ -65,7 +65,7 @@ export class RsvpController {
    * Get a specific RSVP
    * @returns RSVP
    */
-  @Roles([ROLES.ADMIN])
+  @Roles([ROLES.MENTOR])
   @ApiOkResponse({ type: Rsvp })
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -77,7 +77,7 @@ export class RsvpController {
    * @param updateRsvpDto
    * @returns RSVP
    */
-  @Roles([ROLES.ADMIN])
+  @Roles([ROLES.MENTOR])
   @ApiOkResponse({ type: Rsvp })
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRsvpDto: UpdateRsvpDto) {
@@ -88,7 +88,7 @@ export class RsvpController {
    * Delete an RSVP
    * @returns RSVP
    */
-  @Roles([ROLES.ADMIN])
+  @Roles([ROLES.MENTOR])
   @ApiOkResponse({ type: Rsvp })
   @Delete(':id')
   remove(@Param('id') id: string) {

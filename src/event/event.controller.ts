@@ -99,7 +99,7 @@ export class EventController {
    * @returns Event
    */
   @ApiOkResponse({ type: Event })
-  @Roles([ROLES.ADMIN])
+  @Roles([ROLES.MENTOR])
   @Post()
   create(@Body() createEventDto: CreateEventDto) {
     return this.eventService.createEvent(createEventDto);
@@ -121,7 +121,7 @@ export class EventController {
    * @returns Event
    */
   @ApiOkResponse({ type: Event })
-  @Roles([ROLES.ADMIN])
+  @Roles([ROLES.MENTOR])
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
     return this.eventService.updateEvent({
@@ -135,7 +135,7 @@ export class EventController {
    * @returns Event
    */
   @ApiOkResponse({ type: Event })
-  @Roles([ROLES.ADMIN])
+  @Roles([ROLES.MENTOR])
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.eventService.deleteEvent(id);

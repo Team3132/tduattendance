@@ -42,7 +42,7 @@ export class AuthController {
       return discordUser.roles;
     };
     const roles = await getRoles();
-    const isAdmin = roles.includes(ROLES.ADMIN);
+    const isAdmin = roles.includes(ROLES.MENTOR);
 
     return {
       isAuthenticated: !!user,

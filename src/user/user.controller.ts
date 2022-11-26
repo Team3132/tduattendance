@@ -160,7 +160,7 @@ export class UserController {
   @ApiCookieAuth()
   @UseGuards(SessionGuard)
   @ApiOkResponse({ type: [User] })
-  @Roles([ROLES.ADMIN])
+  @Roles([ROLES.MENTOR])
   @Get()
   users() {
     return this.userService.users({});
@@ -174,7 +174,7 @@ export class UserController {
   @ApiCookieAuth()
   @UseGuards(SessionGuard)
   @ApiOkResponse({ type: User })
-  @Roles([ROLES.ADMIN])
+  @Roles([ROLES.MENTOR])
   @Get(':id')
   user(@Param('id') userId: string) {
     return this.userService.user({ id: userId });
@@ -188,7 +188,7 @@ export class UserController {
   @ApiCookieAuth()
   @UseGuards(SessionGuard)
   @ApiOkResponse({ type: User })
-  @Roles([ROLES.ADMIN])
+  @Roles([ROLES.MENTOR])
   @Patch(':id')
   updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     try {
@@ -216,7 +216,7 @@ export class UserController {
   @ApiCookieAuth()
   @UseGuards(SessionGuard)
   @ApiOkResponse({ type: User })
-  @Roles([ROLES.ADMIN])
+  @Roles([ROLES.MENTOR])
   @Post(':id/regenerateToken')
   regenerateUserToken(@Param('id') id: string) {
     return this.userService.regenerateCalendarSecret({ id });
@@ -229,7 +229,7 @@ export class UserController {
   @ApiOkResponse({ type: User })
   @ApiCookieAuth()
   @UseGuards(SessionGuard)
-  @Roles([ROLES.ADMIN])
+  @Roles([ROLES.MENTOR])
   @Delete(':id')
   removeUser(@Param('id') id: string) {
     return this.userService.deleteUser({ id });
@@ -242,7 +242,7 @@ export class UserController {
   @ApiCookieAuth()
   @UseGuards(SessionGuard)
   @ApiOkResponse({ type: [Rsvp] })
-  @Roles([ROLES.ADMIN])
+  @Roles([ROLES.MENTOR])
   @Get(':id/rsvp')
   userRSVPs(@Param('id') userId: string) {
     return this.rsvpService.rsvps({
@@ -259,7 +259,7 @@ export class UserController {
   @ApiCookieAuth()
   @UseGuards(SessionGuard)
   @ApiOkResponse({ type: [Attendance] })
-  @Roles([ROLES.ADMIN])
+  @Roles([ROLES.MENTOR])
   @Get(':id/attendance')
   userAttendance(@Param('id') userId: string) {
     return this.attendanceService.attendances({ where: { userId: userId } });
@@ -270,7 +270,7 @@ export class UserController {
    * @returns Avatar string
    */
   @ApiOkResponse({ type: String })
-  @Roles([ROLES.ADMIN])
+  @Roles([ROLES.MENTOR])
   @Get(':id/avatar')
   async userAvatar(@Param('id') userId: string) {
     const { user } = await this.userService.discordProfile(userId);
