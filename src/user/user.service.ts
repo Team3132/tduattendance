@@ -76,44 +76,48 @@ export class UserService {
   }
 
   async outreachReport(userId: string, from?: string, to?: string) {
-    const user = await this.user({ id: userId });
-    const rsvps = await this.prismaService.rSVP.findMany({
-      where: {
-        userId,
-        createdAt: {
-          gte: new Date(from),
-          lte: new Date(to),
-        },
-        status: {
-          in: 'ATTENDED',
-        },
-        event: {
-          type: {
-            in: 'Outreach',
+    try {
+      const rsvps = await this.prismaService.rSVP.findMany({
+        where: {
+          userId,
+          createdAt: {
+            gte: new Date(from),
+            lte: new Date(to),
+          },
+          status: {
+            in: 'ATTENDED',
+          },
+          event: {
+            type: {
+              in: 'Outreach',
+            },
           },
         },
-      },
-      select: {
-        event: {
-          select: {
-            startDate: true,
-            endDate: true,
+        select: {
+          event: {
+            select: {
+              startDate: true,
+              endDate: true,
+            },
           },
         },
-      },
-    });
-    const outreachReport = rsvps.reduce(
-      (acc, curr) => {
-        const { startDate, endDate } = curr.event;
-        const hours =
-          (endDate.getTime() - startDate.getTime()) / 1000 / 60 / 60;
-        acc.eventCount += 1;
-        acc.hourCount += hours;
-        return acc;
-      },
-      { eventCount: 0, hourCount: 0 },
-    );
+      });
 
-    return outreachReport;
+      const outreachReport = rsvps.reduce(
+        (acc, rsvp) => {
+          const { startDate, endDate } = rsvp.event;
+          const hours =
+            (endDate.getTime() - startDate.getTime()) / 1000 / 60 / 60;
+          acc.hourCount += hours;
+          acc.eventCount += 1;
+          return acc;
+        },
+        { eventCount: 0, hourCount: 0 },
+      );
+
+      return outreachReport;
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 }
