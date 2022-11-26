@@ -1,11 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
-import * as cookieParser from 'cookie-parser';
-import * as session from 'express-session';
-import * as passport from 'passport';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
+import passport from 'passport';
 import Redis from 'ioredis';
-import * as connectRedis from 'connect-redis';
+import connectRedis from 'connect-redis';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
