@@ -16,9 +16,11 @@ import http from 'http';
 import https from 'https';
 import fs from 'fs';
 import { ExpressAdapter } from '@nestjs/platform-express';
+import tracer from './tracer';
 
 async function bootstrap() {
   const server = express();
+  await tracer.start();
 
   console.log('Node Env:', process.env.NODE_ENV);
 
