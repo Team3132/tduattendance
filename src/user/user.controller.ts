@@ -258,8 +258,10 @@ export class UserController {
   async outreachReport(
     @Param('id') userId: string,
     @Query() params: GetOutreachReport,
+    @GetUser('id') id: string,
   ) {
     const { from, to } = params;
-    return this.userService.outreachReport(userId, from, to);
+    const userIdent = userId === 'me' ? id : userId;
+    return this.userService.outreachReport(userIdent, from, to);
   }
 }

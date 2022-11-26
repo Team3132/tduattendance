@@ -103,11 +103,10 @@ export class UserService {
         },
       });
 
-      const outreachReport = rsvps.reduce(
+      const { eventCount, hourCount } = rsvps.reduce(
         (acc, rsvp) => {
           const { startDate, endDate } = rsvp.event;
-          const hours =
-            (endDate.getTime() - startDate.getTime()) / 1000 / 60 / 60;
+          const hours = endDate.getTime() - startDate.getTime();
           acc.hourCount += hours;
           acc.eventCount += 1;
           return acc;
@@ -115,7 +114,7 @@ export class UserService {
         { eventCount: 0, hourCount: 0 },
       );
 
-      return outreachReport;
+      return { eventCount, hourCount: hourCount / 1000 / 60 / 60 };
     } catch (error) {
       this.logger.error(error);
       throw error;
