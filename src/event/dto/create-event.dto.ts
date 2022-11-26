@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Event } from '@prisma/client';
+import { Event, EventTypes } from '@prisma/client';
 import {
   IsBoolean,
   IsDateString,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -29,4 +30,8 @@ export class CreateEventDto {
   @IsBoolean()
   @IsOptional()
   allDay?: boolean;
+  @IsOptional()
+  @IsEnum(EventTypes)
+  @ApiProperty({ enum: EventTypes })
+  type?: EventTypes;
 }

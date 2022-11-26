@@ -1,6 +1,13 @@
 import { PartialType, PickType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsDateString, IsOptional, IsBoolean } from 'class-validator';
+import { EventTypes } from '@prisma/client';
+import {
+  IsString,
+  IsDateString,
+  IsOptional,
+  IsBoolean,
+  IsEnum,
+} from 'class-validator';
 import { CreateEventDto } from './create-event.dto';
 
 /**
@@ -27,4 +34,8 @@ export class UpdateEventDto {
   @IsBoolean()
   @IsOptional()
   allDay?: boolean;
+  @IsOptional()
+  @IsEnum(EventTypes)
+  @ApiProperty({ enum: EventTypes })
+  type?: EventTypes;
 }
