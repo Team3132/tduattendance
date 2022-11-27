@@ -1,6 +1,5 @@
 import { TransformPipe } from '@discord-nestjs/common';
 import { Command, DiscordCommand } from '@discord-nestjs/core';
-import { ApplicationCommandTypes } from 'discord.js/typings/enums';
 import {
   DiscordTransformedCommand,
   Payload,
@@ -9,11 +8,7 @@ import {
   UsePipes,
 } from '@discord-nestjs/core';
 import { Logger } from '@nestjs/common';
-import {
-  CommandInteraction,
-  InteractionReplyOptions,
-  MessageEmbed,
-} from 'discord.js';
+import { CommandInteraction, PermissionFlagsBits } from 'discord.js';
 import { EventService } from 'src/event/event.service';
 import { RsvpService } from 'src/rsvp/rsvp.service';
 import { ScancodeService } from 'src/scancode/scancode.service';
@@ -21,6 +16,7 @@ import { ScancodeService } from 'src/scancode/scancode.service';
 @Command({
   name: 'ping',
   description: 'Pings the bot',
+  // defaultMemberPermissions: [PermissionFlagsBits.Administrator],
 })
 export class PingCommand implements DiscordCommand {
   constructor(
@@ -33,11 +29,11 @@ export class PingCommand implements DiscordCommand {
 
     logger.log(`Bot pinged by ${interaction.user.username}`);
 
-    interaction.reply({
+    return {
       content: `Pong from JavaScript! Bot Latency ${Math.round(
         interaction.client.ws.ping,
       )}ms.`,
       ephemeral: true,
-    });
+    };
   }
 }

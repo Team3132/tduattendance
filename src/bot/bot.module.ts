@@ -5,23 +5,10 @@ import { RsvpModule } from 'src/rsvp/rsvp.module';
 import { RsvpService } from 'src/rsvp/rsvp.service';
 import { ScancodeModule } from 'src/scancode/scancode.module';
 import { ScancodeService } from 'src/scancode/scancode.service';
-import { EventsCommand } from './commands/events.command';
-
-import { PingCommand } from './commands/ping.command';
+import { BotGateway } from './bot.gateway';
 
 @Module({
-  imports: [
-    DiscordModule.forFeature(),
-    RsvpModule,
-    ScancodeModule,
-    EventService,
-  ],
-  providers: [
-    PingCommand,
-    EventsCommand,
-    RsvpService,
-    ScancodeService,
-    EventService,
-  ],
+  imports: [DiscordModule.forFeature()],
+  providers: [BotGateway],
 })
 export class BotModule {}

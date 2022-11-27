@@ -15,8 +15,9 @@ import { DiscordModule as DiscordBotModule } from '@discord-nestjs/core';
 import { DiscordModule } from './discord/discord.module';
 import { ScancodeModule } from './scancode/scancode.module';
 import * as redisStore from 'cache-manager-redis-store';
-import { Intents } from 'discord.js';
+import { GatewayIntentBits, Snowflake } from 'discord.js';
 import { BotModule } from './bot/bot.module';
+import { BotSlashCommands } from './bot/bot-slash-commands.module';
 
 @Module({
   imports: [
@@ -41,6 +42,26 @@ import { BotModule } from './bot/bot.module';
     CalendarModule,
     DiscordModule,
     ScancodeModule,
+    DiscordBotModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        token: configService.getOrThrow<string>('DISCORD_TOKEN'),
+        discordClientOptions: {
+          intents: [GatewayIntentBits.GuildMembers],
+        },
+        registerCommandOptions: [
+          {
+            forGuilds: configService.getOrThrow<Snowflake>('GUILD_ID'),
+            removeCommandsBefore: true,
+          },
+        ],
+        // registerCommandOptions: {
+        // forGuild: [configService.getOrThrow<Snowflake>('GUILD_ID')],
+        // },
+      }),
+    }),
+    BotSlashCommands,
     // DiscordBotModule.forRootAsync({
     //   imports: [ConfigModule],
     //   useFactory: (configService: ConfigService) => ({

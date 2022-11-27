@@ -1,6 +1,5 @@
 import { TransformPipe } from '@discord-nestjs/common';
 import { Command, DiscordCommand } from '@discord-nestjs/core';
-import { ApplicationCommandTypes } from 'discord.js/typings/enums';
 import {
   DiscordTransformedCommand,
   Payload,
@@ -9,17 +8,18 @@ import {
   UsePipes,
 } from '@discord-nestjs/core';
 import { Logger } from '@nestjs/common';
-import {
-  CommandInteraction,
-  InteractionReplyOptions,
-  MessageEmbed,
-} from 'discord.js';
 import { EventService } from 'src/event/event.service';
 import { RsvpService } from 'src/rsvp/rsvp.service';
 import { ScancodeService } from 'src/scancode/scancode.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Event } from '@prisma/client';
 import { DateTime } from 'luxon';
+import {
+  CommandInteraction,
+  EmbedBuilder,
+  InteractionReplyOptions,
+  MessagePayload,
+} from 'discord.js';
 
 @Command({
   name: 'events',
@@ -32,22 +32,24 @@ export class EventsCommand implements DiscordCommand {
     private readonly scancodeService: ScancodeService,
     private readonly prismaService: PrismaService,
   ) {}
-  async handler(interaction: CommandInteraction) {
+  async handler(
+    interaction: CommandInteraction,
+  ): Promise<string | InteractionReplyOptions | MessagePayload> {
     const logger = new Logger(EventsCommand.name);
 
     logger.log(`Bot pinged by ${interaction.user.username}`);
 
     const events = await this.eventService.events({
       take: 5,
-      where: {
-        startDate: {
-          gte: new Date(),
-        },
-      },
+      // where: {
+      //   endDate: {
+      //     gte: new Date(),
+      //   },
+      // },
     });
 
     const eventEmbed = (event: Event) =>
-      new MessageEmbed()
+      new EmbedBuilder()
         .setTitle(event.title)
         .setDescription(event.description)
         .setURL(`http://localhost:4000/event/${event.id}/view`)
@@ -62,10 +64,11 @@ export class EventsCommand implements DiscordCommand {
             value: `<t:${DateTime.fromJSDate(event.endDate).toSeconds()}:f>`,
           },
         ]);
-
-    interaction.reply({
+    logger.log(events);
+    return {
       embeds: events.map(eventEmbed),
       ephemeral: true,
-    });
+      content: `Here are the next 5 events`,
+    };
   }
 }
