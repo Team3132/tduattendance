@@ -13,6 +13,7 @@ import { CreateRsvpDto } from './dto/create-rsvp.dto';
 import { UpdateRsvpDto } from './dto/update-rsvp.dto';
 import {
   ApiCookieAuth,
+  ApiCreatedResponse,
   ApiOkResponse,
   ApiResponse,
   ApiTags,
@@ -36,9 +37,12 @@ export class RsvpController {
    * @returns
    */
   @Roles([ROLES.MENTOR])
-  @ApiOkResponse({ type: Rsvp })
+  @ApiCreatedResponse({ type: Rsvp })
   @Post()
-  create(@Body() createRsvpDto: CreateRsvpDto, @GetUser('id') userId: string) {
+  create(
+    @Body() createRsvpDto: CreateRsvpDto,
+    @GetUser('id') userId: Express.User['id'],
+  ) {
     return this.rsvpService.createRSVP({
       event: {
         connect: { id: createRsvpDto.eventId },
@@ -78,7 +82,7 @@ export class RsvpController {
    * @returns RSVP
    */
   @Roles([ROLES.MENTOR])
-  @ApiOkResponse({ type: Rsvp })
+  @ApiCreatedResponse({ type: Rsvp })
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRsvpDto: UpdateRsvpDto) {
     return this.rsvpService.updateRSVP({ where: { id }, data: updateRsvpDto });

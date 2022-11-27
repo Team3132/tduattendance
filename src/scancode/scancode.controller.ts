@@ -33,7 +33,7 @@ export class ScancodeController {
   @Post()
   @ApiCreatedResponse({ type: Scancode })
   async create(
-    @GetUser('id') userId: string,
+    @GetUser('id') userId: Express.User['id'],
     @Body() createScancodeDto: CreateScancodeDto,
   ) {
     try {
@@ -61,7 +61,7 @@ export class ScancodeController {
 
   @ApiOkResponse({ type: [Scancode] })
   @Get()
-  findAll(@GetUser('id') userId: string) {
+  findAll(@GetUser('id') userId: Express.User['id']) {
     return this.scancodeService.scancodes({
       where: {
         userId,
@@ -71,7 +71,10 @@ export class ScancodeController {
 
   @ApiOkResponse({ type: Scancode })
   @Delete(':id')
-  async remove(@Param('id') id: string, @GetUser('id') userId: string) {
+  async remove(
+    @Param('id') id: string,
+    @GetUser('id') userId: Express.User['id'],
+  ) {
     const scancode = await this.scancodeService.scancode({ code: id });
     if (scancode.userId !== userId) {
       throw new ForbiddenException();

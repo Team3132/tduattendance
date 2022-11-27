@@ -20,6 +20,7 @@ import { SessionGuard } from '../auth/guard/session.guard';
 import { GetUser } from '../auth/decorators/GetUserDecorator.decorator';
 import {
   ApiCookieAuth,
+  ApiCreatedResponse,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
@@ -59,7 +60,7 @@ export class UserController {
    */
   @ApiOkResponse({ type: User })
   @Get('me')
-  me(@GetUser('id') id: string) {
+  me(@GetUser('id') id: Express.User['id']) {
     return this.userService.user({ id });
   }
 
@@ -81,7 +82,7 @@ export class UserController {
    */
   @ApiOkResponse({ type: String })
   @Get('me/avatar')
-  async userMeAvatar(@GetUser('id') userId: string) {
+  async userMeAvatar(@GetUser('id') userId: Express.User['id']) {
     const { user } = await this.userService.discordProfile(userId);
     return user.avatar;
   }
@@ -104,7 +105,7 @@ export class UserController {
    */
   @ApiOkResponse({ type: [Rsvp] })
   @Get('me/rsvp')
-  meRSVP(@GetUser('id') id: string) {
+  meRSVP(@GetUser('id') id: Express.User['id']) {
     return this.rsvpService.rsvps({ where: { userId: id } });
   }
 
@@ -128,9 +129,12 @@ export class UserController {
    * @param updateUserDto
    * @returns
    */
-  @ApiOkResponse({ type: User })
+  @ApiCreatedResponse({ type: User })
   @Patch('me')
-  update(@GetUser('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  update(
+    @GetUser('id') id: Express.User['id'],
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
     try {
       return this.userService.updateUser({
         where: { id },
@@ -154,7 +158,7 @@ export class UserController {
    * @param updateUserDto New user info.
    * @returns User
    */
-  @ApiOkResponse({ type: User })
+  @ApiCreatedResponse({ type: User })
   @Roles([ROLES.MENTOR])
   @Patch(':id')
   updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
@@ -180,9 +184,9 @@ export class UserController {
    * Regenerates the calendar token of the signed in user.
    * @returns User
    */
-  @ApiOkResponse({ type: User })
+  @ApiCreatedResponse({ type: User })
   @Post('me/regenerateToken')
-  regenerateToken(@GetUser('id') id: string) {
+  regenerateToken(@GetUser('id') id: Express.User['id']) {
     return this.userService.regenerateCalendarSecret({ id });
   }
 
@@ -190,7 +194,7 @@ export class UserController {
    * Regenerates the calendar token of the specified user.
    * @returns User
    */
-  @ApiOkResponse({ type: User })
+  @ApiCreatedResponse({ type: User })
   @Roles([ROLES.MENTOR])
   @Post(':id/regenerateToken')
   regenerateUserToken(@Param('id') id: string) {
@@ -204,7 +208,7 @@ export class UserController {
   @ApiOkResponse({ type: User })
   @Delete('me')
   async remove(
-    @GetUser('id') id: string,
+    @GetUser('id') id: Express.User['id'],
     @Session() session: Express.Request['session'],
   ) {
     const destroySession = new Promise<void>((res, rej) => {
@@ -252,7 +256,7 @@ export class UserController {
   @Get('me/outreach')
   async myOutreachReport(
     @Query() params: GetOutreachReport,
-    @GetUser('id') id: string,
+    @GetUser('id') id: Express.User['id'],
   ) {
     const { from, to } = params;
     return this.userService.outreachReport(id, from, to);
@@ -279,7 +283,7 @@ export class UserController {
    */
   @ApiOkResponse({ type: [Scancode] })
   @Get('me/scancodes')
-  async scancodes(@GetUser('id') id: string) {
+  async scancodes(@GetUser('id') id: Express.User['id']) {
     return this.scancodeService.scancodes({
       where: {
         userId: id,
@@ -306,10 +310,10 @@ export class UserController {
    * Create a scancode for the logged in user.
    * @returns Scancode
    */
-  @ApiOkResponse({ type: Scancode })
+  @ApiCreatedResponse({ type: Scancode })
   @Post('me/scancodes')
   async createScancode(
-    @GetUser('id') id: string,
+    @GetUser('id') id: Express.User['id'],
     @Body() body: CreateScancodeDto,
   ) {
     return this.scancodeService.createScancode({
@@ -326,7 +330,7 @@ export class UserController {
    * Create a scancode for the specified user.
    * @returns Scancode
    */
-  @ApiOkResponse({ type: Scancode })
+  @ApiCreatedResponse({ type: Scancode })
   @Roles([ROLES.MENTOR])
   @Post(':id/scancodes')
   async createUserScancode(
@@ -350,7 +354,7 @@ export class UserController {
   @ApiOkResponse({ type: Scancode })
   @Delete('me/scancodes/:scancodeId')
   async deleteScancode(
-    @GetUser('id') id: string,
+    @GetUser('id') id: Express.User['id'],
     @Param('scancodeId') scancodeId: string,
   ) {
     const scancode = await this.scancodeService.scancode({

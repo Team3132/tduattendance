@@ -9,6 +9,7 @@ import {
   UseGuards,
   Put,
   Query,
+  BadGatewayException,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -94,7 +95,7 @@ export class EventController {
    * @param createEventDto The event creation data
    * @returns Event
    */
-  @ApiOkResponse({ type: Event })
+  @ApiCreatedResponse({ type: Event })
   @Roles([ROLES.MENTOR])
   @Post()
   create(@Body() createEventDto: CreateEventDto) {
@@ -145,7 +146,7 @@ export class EventController {
   @Get(':eventId/rsvp')
   getEventRsvp(
     @Param('eventId') eventId: string,
-    @GetUser('id') userId: string,
+    @GetUser('id') userId: Express.User['id'],
   ) {
     return this.rsvpService.firstRSVP({
       eventId,
@@ -162,7 +163,7 @@ export class EventController {
   @Post(':eventId/rsvp')
   async setEventRsvp(
     @Param('eventId') eventId: string,
-    @GetUser('id') userId: string,
+    @GetUser('id') userId: Express.User['id'],
     @Body() setRSVPDto: UpdateOrCreateRSVP,
   ) {
     const existingRSVP = await this.rsvpService.firstRSVP({ eventId, userId });
@@ -191,7 +192,7 @@ export class EventController {
   @Post('rsvps')
   async setEventsRsvp(
     @Body() updateRangeRSVP: UpdateRangeRSVP,
-    @GetUser('id') userId: string,
+    @GetUser('id') userId: Express.User['id'],
   ) {
     const { from, to, status } = updateRangeRSVP;
     const events = await this.eventService.events({
@@ -255,7 +256,7 @@ export class EventController {
    * @param scanin The scanin data (code)
    * @returns RSVP
    */
-  @ApiOkResponse({ type: Rsvp })
+  @ApiCreatedResponse({ type: Rsvp })
   @ApiBadRequestResponse({ description: 'Invalid Scancode' })
   @Post(':eventId/scanin')
   scanin(@Param('eventId') eventId: string, @Body() scanin: ScaninDto) {

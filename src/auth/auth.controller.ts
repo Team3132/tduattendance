@@ -57,7 +57,9 @@ export class AuthController {
    */
   @UseGuards(DiscordAuthGuard)
   @Get('discord')
-  discordSignin() {}
+  discordSignin() {
+    // Operation handled by the discord auth guard
+  }
 
   /**
    * Sign in using discord (callback)
