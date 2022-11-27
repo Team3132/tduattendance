@@ -55,11 +55,7 @@ export class CalendarService {
           };
         }),
       });
-      await this.cacheManager.set<ICalCalendarJSONData>(
-        'calendar',
-        calendar.toJSON(),
-        { ttl: 7200 },
-      );
+      await this.cacheManager.set('calendar', calendar.toJSON(), 7200);
       return calendar;
     }
   }

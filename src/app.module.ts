@@ -9,22 +9,19 @@ import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/guard/role.guard';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import type { ClientOpts } from 'redis';
 import { CalendarModule } from './calendar/calendar.module';
-import { DiscordModule as DiscordBotModule } from '@discord-nestjs/core';
 import { DiscordModule } from './discord/discord.module';
 import { ScancodeModule } from './scancode/scancode.module';
-import * as redisStore from 'cache-manager-redis-store';
-import { GatewayIntentBits, Snowflake } from 'discord.js';
-import { BotModule } from './bot/bot.module';
-import { BotSlashCommands } from './bot/bot-slash-commands.module';
+import { redisStore } from 'cache-manager-redis-store';
+import { StoreConfig } from 'cache-manager';
+import { RedisClientOptions } from 'redis';
 
 @Module({
   imports: [
     AuthModule,
     PrismaModule,
     ConfigModule.forRoot({ isGlobal: true, cache: true }),
-    CacheModule.registerAsync<ClientOpts>({
+    CacheModule.registerAsync<any>({
       isGlobal: true,
       imports: [ConfigModule],
       inject: [ConfigService],
