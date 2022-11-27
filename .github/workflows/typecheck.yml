@@ -19,5 +19,7 @@ jobs:
         run: yarn install
       - name: Generate
         run: yarn prisma generate
+      - name: Add Problem Matcher
+        run: echo "::add-matcher::.github/problem-matchers/tsc.json"
       - name: Test
         run: yarn tsc
