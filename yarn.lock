@@ -1921,15 +1921,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/cache-manager-redis-store@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@types/cache-manager-redis-store/-/cache-manager-redis-store-2.0.1.tgz#42cf1400a6dbf42d06fbcbd82e04b0a44856e50a"
-  integrity sha512-8QuccvcPieh1xM/5kReE76SfdcIdEB0ePc+54ah/NBuK2eG+6O50SX4WKoJX81UxGdW3sh/WlDaDNqjnqxWNsA==
-  dependencies:
-    "@types/cache-manager" "*"
-    "@types/redis" "^2.8.0"
-
-"@types/cache-manager@*", "@types/cache-manager@^4.0.1":
+"@types/cache-manager@^4.0.1":
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/@types/cache-manager/-/cache-manager-4.0.2.tgz#5e76dd9e7881c23f332c2f48e5f326bd05ba9ac9"
   integrity sha512-fT5FMdzsiSX0AbgnS5gDvHl2Nco0h5zYyjwDQy4yPC7Ww6DeGMVKPRqIZtg9HOXDV2kkc18SL1B0N8f0BecrCA==
