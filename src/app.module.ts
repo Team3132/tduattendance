@@ -26,16 +26,16 @@ import { ClientOpts } from 'redis';
     AuthModule,
     PrismaModule,
     ConfigModule.forRoot({ isGlobal: true, cache: true }),
-    CacheModule.registerAsync<ClientOpts>({
+    CacheModule.register({
       isGlobal: true,
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        store: redisStore,
-        host: configService.getOrThrow<string>('REDIS_HOST'),
-        port: 6379,
-        database: 1,
-      }),
-      inject: [ConfigService],
+      // imports: [ConfigModule],
+      // useFactory: async (configService: ConfigService) => ({
+      //   store: redisStore,
+      //   host: configService.getOrThrow<string>('REDIS_HOST'),
+      //   port: 6379,
+      //   database: 1,
+      // }),
+      // inject: [ConfigService],
     }),
     PrismaModule,
     UserModule,
