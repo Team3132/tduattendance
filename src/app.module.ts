@@ -42,45 +42,23 @@ import { BotSlashCommands } from './bot/bot-slash-commands.module';
     CalendarModule,
     DiscordModule,
     ScancodeModule,
-    DiscordBotModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        token: configService.getOrThrow<string>('DISCORD_TOKEN'),
-        discordClientOptions: {
-          intents: [GatewayIntentBits.GuildMembers],
-        },
-        registerCommandOptions: [
-          {
-            forGuilds: configService.getOrThrow<Snowflake>('GUILD_ID'),
-            removeCommandsBefore: true,
-          },
-        ],
-        // registerCommandOptions: {
-        // forGuild: [configService.getOrThrow<Snowflake>('GUILD_ID')],
-        // },
-      }),
-    }),
-    BotSlashCommands,
     // DiscordBotModule.forRootAsync({
     //   imports: [ConfigModule],
-    //   useFactory: (configService: ConfigService) => ({
-    //     token: configService.get('DISCORD_TOKEN'),
-
+    //   inject: [ConfigService],
+    //   useFactory: async (configService: ConfigService) => ({
+    //     token: configService.getOrThrow<string>('DISCORD_TOKEN'),
     //     discordClientOptions: {
-    //       intents: [Intents.FLAGS.GUILDS],
+    //       intents: [GatewayIntentBits.GuildMembers],
     //     },
     //     registerCommandOptions: [
     //       {
-    //         forGuild: configService.get('GUILD_ID'),
+    //         forGuilds: configService.getOrThrow<Snowflake>('GUILD_ID'),
     //         removeCommandsBefore: true,
-
     //       },
     //     ],
     //   }),
-    //   inject: [ConfigService],
     // }),
-    // BotModule,
+    // BotSlashCommands,
   ],
   controllers: [AppController],
   providers: [

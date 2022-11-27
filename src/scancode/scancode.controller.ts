@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   ForbiddenException,
+  ConflictException,
 } from '@nestjs/common';
 import { ScancodeService } from './scancode.service';
 import { CreateScancodeDto } from './dto/create-scancode.dto';
@@ -21,6 +22,7 @@ import {
 } from '@nestjs/swagger';
 import { SessionGuard } from 'src/auth/guard/session.guard';
 import { Scancode } from './entities/scancode.entity';
+import { Prisma } from '@prisma/client';
 
 @ApiTags('Scancode')
 @UseGuards(SessionGuard)
@@ -31,18 +33,31 @@ export class ScancodeController {
 
   @Post()
   @ApiCreatedResponse({ type: Scancode })
-  create(
+  async create(
     @GetUser('id') userId: string,
     @Body() createScancodeDto: CreateScancodeDto,
   ) {
-    return this.scancodeService.createScancode({
-      ...createScancodeDto,
-      user: {
-        connect: {
-          id: userId,
+    try {
+      const response = await this.scancodeService.createScancode({
+        ...createScancodeDto,
+        user: {
+          connect: {
+            id: userId,
+          },
         },
-      },
-    });
+      });
+      return response;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new ConflictException('Scancode already exists');
+        } else {
+          throw error;
+        }
+      } else {
+        throw error;
+      }
+    }
   }
 
   @ApiOkResponse({ type: [Scancode] })
