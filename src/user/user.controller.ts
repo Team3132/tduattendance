@@ -56,7 +56,7 @@ export class UserController {
    * @returns {User}
    */
   @ApiOperation({
-    summary: 'Get the currently authenticated user.',
+    description: 'Get the currently authenticated user.',
     operationId: 'getMe',
   })
   @ApiOkResponse({ type: User })
@@ -71,7 +71,7 @@ export class UserController {
    * @returns {User}
    */
   @ApiOperation({
-    summary: 'Get a specific user.',
+    description: 'Get a specific user.',
     operationId: 'getUser',
   })
   @ApiOkResponse({ type: User })
@@ -86,7 +86,7 @@ export class UserController {
    * @returns {string}
    */
   @ApiOperation({
-    summary: "Get the currently authenticated user's avatar id",
+    description: "Get the currently authenticated user's avatar id",
     operationId: 'getMeAvatar',
   })
   @ApiOkResponse({ type: String })
@@ -101,7 +101,7 @@ export class UserController {
    * @returns {string}
    */
   @ApiOperation({
-    summary: "Get a user's discord avatar id",
+    description: "Get a user's discord avatar id",
     operationId: 'getUserAvatar',
   })
   @ApiOkResponse({ type: String })
@@ -117,7 +117,7 @@ export class UserController {
    * @returns {Rsvp[]}
    */
   @ApiOperation({
-    summary: 'Get the RSVPs of the logged in user.',
+    description: 'Get the RSVPs of the logged in user.',
     operationId: 'getMeRSVPs',
   })
   @ApiOkResponse({ type: [Rsvp] })
@@ -131,7 +131,7 @@ export class UserController {
    * @returns {Rsvp[]}
    */
   @ApiOperation({
-    summary: "Get a user's RSVPs",
+    description: "Get a user's RSVPs",
     operationId: 'getUserRSVPs',
   })
   @ApiOkResponse({ type: [Rsvp] })
@@ -151,7 +151,7 @@ export class UserController {
    * @returns {User}
    */
   @ApiOperation({
-    summary: 'Edit the signed-in user.',
+    description: 'Edit the signed-in user.',
     operationId: 'editMe',
   })
   @ApiCreatedResponse({ type: User })
@@ -184,7 +184,7 @@ export class UserController {
    * @returns {User}
    */
   @ApiOperation({
-    summary: 'Edit a user.',
+    description: 'Edit a user.',
     operationId: 'editUser',
   })
   @ApiCreatedResponse({ type: User })
@@ -214,7 +214,7 @@ export class UserController {
    * @returns {User}
    */
   @ApiOperation({
-    summary: 'Regenerates the calendar token of the signed in user.',
+    description: 'Regenerates the calendar token of the signed in user.',
     operationId: 'regenerateMeCalendarToken',
   })
   @ApiCreatedResponse({ type: User })
@@ -228,7 +228,7 @@ export class UserController {
    * @returns {User}
    */
   @ApiOperation({
-    summary: 'Regenerates the calendar token of the specified user.',
+    description: 'Regenerates the calendar token of the specified user.',
     operationId: 'regenerateUserCalendarToken',
   })
   @ApiCreatedResponse({ type: User })
@@ -243,7 +243,7 @@ export class UserController {
    * @returns {User}
    */
   @ApiOperation({
-    summary: 'Delete the signed in user.',
+    description: 'Delete the signed in user.',
     operationId: 'deleteMe',
   })
   @ApiOkResponse({ type: User })
@@ -272,7 +272,7 @@ export class UserController {
    * @returns {User}
    */
   @ApiOperation({
-    summary: 'Delete a user.',
+    description: 'Delete a user.',
     operationId: 'deleteUser',
   })
   @ApiOkResponse({ type: User })
@@ -287,7 +287,7 @@ export class UserController {
    * @returns {User[]}
    */
   @ApiOperation({
-    summary: 'Get a list of all users.',
+    description: 'Get a list of all users.',
     operationId: 'getUsers',
   })
   @ApiOkResponse({ type: [User] })
@@ -302,7 +302,7 @@ export class UserController {
    * @returns {OutreachReport}
    */
   @ApiOperation({
-    summary: 'Get an outreach report of the logged in user.',
+    description: 'Get an outreach report of the logged in user.',
     operationId: 'getMeOutreachReport',
   })
   @ApiOkResponse({ type: OutreachReport })
@@ -320,7 +320,7 @@ export class UserController {
    * @returns {OutreachReport}
    */
   @ApiOperation({
-    summary: 'Get an outreach report of the specified user.',
+    description: 'Get an outreach report of the specified user.',
     operationId: 'getUserOutreachReport',
   })
   @ApiOkResponse({ type: OutreachReport })
@@ -339,7 +339,7 @@ export class UserController {
    * @returns {Scancode[]}
    */
   @ApiOperation({
-    summary: "Get a list of the logged in user's scancodes.",
+    description: "Get a list of the logged in user's scancodes.",
     operationId: 'getMeScancodes',
   })
   @ApiOkResponse({ type: [Scancode] })
@@ -357,7 +357,7 @@ export class UserController {
    * @returns {Scancode[]}
    */
   @ApiOperation({
-    summary: "Get a list of the specified user's scancodes.",
+    description: "Get a list of the specified user's scancodes.",
     operationId: 'getUserScancodes',
   })
   @ApiOkResponse({ type: [Scancode] })
@@ -376,7 +376,7 @@ export class UserController {
    * @returns  {Scancode}
    */
   @ApiOperation({
-    summary: 'Create a scancode for the logged in user.',
+    description: 'Create a scancode for the logged in user.',
     operationId: 'createMeScancode',
   })
   @ApiCreatedResponse({ type: Scancode })
@@ -400,7 +400,7 @@ export class UserController {
    * @returns {Scancode}
    */
   @ApiOperation({
-    summary: 'Create a scancode for the specified user.',
+    description: 'Create a scancode for the specified user.',
     operationId: 'createUserScancode',
   })
   @ApiCreatedResponse({ type: Scancode })
@@ -425,7 +425,7 @@ export class UserController {
    * @returns {Scancode}
    */
   @ApiOperation({
-    summary: 'Delete a scancode for the logged in user.',
+    description: 'Delete a scancode for the logged in user.',
     operationId: 'deleteMeScancode',
   })
   @ApiOkResponse({ type: Scancode })
@@ -452,7 +452,7 @@ export class UserController {
    * @returns {Scancode}
    */
   @ApiOperation({
-    summary: 'Delete a scancode for the specified user.',
+    description: 'Delete a scancode for the specified user.',
     operationId: 'deleteUserScancode',
   })
   @ApiOkResponse({ type: Scancode })

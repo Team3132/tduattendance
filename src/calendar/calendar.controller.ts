@@ -23,7 +23,7 @@ export class CalendarController {
    */
   @Get()
   @ApiOperation({
-    summary: 'Download calendar',
+    description: 'Download calendar',
     operationId: 'downloadCalendar',
   })
   @UseGuards(CalendarGuard)

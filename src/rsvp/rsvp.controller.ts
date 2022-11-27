@@ -37,7 +37,7 @@ export class RsvpController {
    * @returns {Rsvp}
    */
   @ApiOperation({
-    summary: 'Create an RSVP',
+    description: 'Create an RSVP',
     operationId: 'createRSVP',
   })
   @Roles([ROLES.MENTOR])
@@ -63,7 +63,7 @@ export class RsvpController {
    * @returns {Rsvp[]}
    */
   @ApiOperation({
-    summary: 'Get all RSVPs',
+    description: 'Get all RSVPs',
     operationId: 'getRSVPs',
   })
   @Roles([ROLES.MENTOR])
@@ -78,7 +78,7 @@ export class RsvpController {
    * @returns {Rsvp}
    */
   @ApiOperation({
-    summary: 'Get a specific RSVP',
+    description: 'Get a specific RSVP',
     operationId: 'getRSVP',
   })
   @Roles([ROLES.MENTOR])
@@ -94,7 +94,7 @@ export class RsvpController {
    * @returns {Rsvp}
    */
   @ApiOperation({
-    summary: 'Edit a specific RSVP',
+    description: 'Edit a specific RSVP',
     operationId: 'editRSVP',
   })
   @Roles([ROLES.MENTOR])
@@ -109,7 +109,7 @@ export class RsvpController {
    * @returns {Rsvp}
    */
   @ApiOperation({
-    summary: 'Delete an RSVP',
+    description: 'Delete an RSVP',
     operationId: 'deleteRSVP',
   })
   @Roles([ROLES.MENTOR])

@@ -52,7 +52,7 @@ export class EventController {
    * @returns {Event[]}
    */
   @ApiOkResponse({ type: [Event] })
-  @ApiOperation({ summary: 'Get all events', operationId: 'getEvents' })
+  @ApiOperation({ description: 'Get all events', operationId: 'getEvents' })
   @Get()
   findAll(@Query() eventsGet: GetEventsDto) {
     const { from, to, take } = eventsGet;
@@ -98,7 +98,10 @@ export class EventController {
    * @param createEventDto The event creation data
    * @returns {Event}
    */
-  @ApiOperation({ summary: 'Create a new event', operationId: 'createEvent' })
+  @ApiOperation({
+    description: 'Create a new event',
+    operationId: 'createEvent',
+  })
   @ApiCreatedResponse({ type: Event })
   @Roles([ROLES.MENTOR])
   @Post()
@@ -110,7 +113,10 @@ export class EventController {
    * Get a specific event
    * @returns {Event}
    */
-  @ApiOperation({ summary: 'Get a specific event', operationId: 'getEvent' })
+  @ApiOperation({
+    description: 'Get a specific event',
+    operationId: 'getEvent',
+  })
   @ApiOkResponse({ type: Event })
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -122,7 +128,7 @@ export class EventController {
    * @param updateEventDto Event Update Data
    * @returns {Event}
    */
-  @ApiOperation({ summary: 'Update an event', operationId: 'updateEvent' })
+  @ApiOperation({ description: 'Update an event', operationId: 'updateEvent' })
   @ApiOkResponse({ type: Event })
   @Roles([ROLES.MENTOR])
   @Patch(':id')
@@ -137,7 +143,7 @@ export class EventController {
    * Delete an event
    * @returns {Event}
    */
-  @ApiOperation({ summary: 'Delete an event', operationId: 'deleteEvent' })
+  @ApiOperation({ description: 'Delete an event', operationId: 'deleteEvent' })
   @ApiOkResponse({ type: Event })
   @Roles([ROLES.MENTOR])
   @Delete(':id')
@@ -150,7 +156,7 @@ export class EventController {
    * @returns {Rsvp}
    */
   @ApiOperation({
-    summary: "Get a user's rsvp status for an event",
+    description: "Get a user's rsvp status for an event",
     operationId: 'getEventRsvp',
   })
   @ApiOkResponse({ type: Rsvp })
@@ -171,7 +177,7 @@ export class EventController {
    * @returns {Rsvp}
    */
   @ApiOperation({
-    summary: "Set a logged in user's RSVP status for an event",
+    description: "Set a logged in user's RSVP status for an event",
     operationId: 'setEventRsvp',
   })
   @ApiCreatedResponse({ type: Rsvp })
@@ -205,7 +211,7 @@ export class EventController {
    * @returns {Rsvp[]}
    */
   @ApiOperation({
-    summary: 'Update RSVP Status of Events in range',
+    description: 'Update RSVP Status of Events in range',
     operationId: 'updateEventRsvpRange',
   })
   @ApiCreatedResponse({ type: [Rsvp] })
@@ -261,7 +267,7 @@ export class EventController {
    * @returns {Rsvp[]}
    */
   @ApiOperation({
-    summary: "Get an event's asociated RSVPs",
+    description: "Get an event's asociated RSVPs",
     operationId: 'getEventRsvps',
   })
   @ApiOkResponse({ type: [Rsvp] })
@@ -281,7 +287,7 @@ export class EventController {
    * @returns {Rsvp}
    */
   @ApiOperation({
-    summary: 'RSVP to an event by using a scancode',
+    description: 'RSVP to an event by using a scancode',
     operationId: 'scaninEvent',
   })
   @ApiCreatedResponse({ type: Rsvp })

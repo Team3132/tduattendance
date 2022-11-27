@@ -37,7 +37,7 @@ export class ScancodeController {
    */
   @Post()
   @ApiOperation({
-    summary: 'Get a scancode by code',
+    description: 'Get a scancode by code',
     operationId: 'getScancode',
   })
   @ApiCreatedResponse({ type: Scancode })
@@ -74,7 +74,7 @@ export class ScancodeController {
    */
   @ApiOkResponse({ type: [Scancode] })
   @ApiOperation({
-    summary: 'Get a list of all scancodes for the signed in user',
+    description: 'Get a list of all scancodes for the signed in user',
     operationId: 'getScancodes',
   })
   @Get()
@@ -92,7 +92,7 @@ export class ScancodeController {
    */
   @ApiOkResponse({ type: Scancode })
   @ApiOperation({
-    summary: 'Delete a scancode by code',
+    description: 'Delete a scancode by code',
     operationId: 'deleteScancode',
   })
   @Delete(':id')

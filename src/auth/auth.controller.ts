@@ -24,7 +24,7 @@ export class AuthController {
    * Auth Status
    * @returns {AuthStatusDto}
    */
-  @ApiOperation({ summary: 'Get auth status', operationId: 'authStatus' })
+  @ApiOperation({ description: 'Get auth status', operationId: 'authStatus' })
   @ApiOkResponse({ type: AuthStatusDto })
   @Get('status')
   async status(@GetUser() user: Express.User): Promise<AuthStatusDto> {
@@ -51,7 +51,7 @@ export class AuthController {
    * Sign in using discord
    */
   @ApiOperation({
-    summary: 'Sign in using discord',
+    description: 'Sign in using discord',
     operationId: 'discordSignin',
   })
   @UseGuards(DiscordAuthGuard)
@@ -65,7 +65,7 @@ export class AuthController {
    * @returns close window script
    */
   @ApiOperation({
-    summary: 'Sign in using discord (callback)',
+    description: 'Sign in using discord (callback)',
     operationId: 'discordSigninCallback',
   })
   @Redirect(
@@ -80,7 +80,7 @@ export class AuthController {
   }
 
   @ApiOperation({
-    summary: 'Sign out',
+    description: 'Sign out',
     operationId: 'signout',
   })
   @UseGuards(SessionGuard)

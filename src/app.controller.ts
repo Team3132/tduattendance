@@ -16,7 +16,7 @@ export class AppController {
    */
   @Get()
   @ApiOperation({
-    summary: 'A simple hello world just for you.',
+    description: 'A simple hello world just for you.',
     operationId: 'helloWorld',
   })
   @ApiOkResponse({ type: String })
