@@ -6,7 +6,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import axios from 'axios';
+import fetch from 'node-fetch';
 import { Cache } from 'cache-manager';
 import {
   RESTPostOAuth2RefreshTokenResult,
@@ -40,22 +40,24 @@ export class DiscordService {
         'DISCORD_CLIENT_ID',
       );
 
-      const {
-        data: { access_token, refresh_token, expires_in },
-      } = await axios.post<RESTPostOAuth2RefreshTokenResult>(
+      const nodeFetched = await fetch(
         `https://discord.com/api/v10/oauth2/token`,
-        new URLSearchParams({
-          client_id: discordclient,
-          client_secret: discordSecret,
-          grant_type: 'refresh_token',
-          refresh_token: prismaUser.discordRefreshToken,
-        }),
         {
+          method: 'POST',
+          body: new URLSearchParams({
+            client_id: discordclient,
+            client_secret: discordSecret,
+            grant_type: 'refresh_token',
+            refresh_token: prismaUser.discordRefreshToken,
+          }),
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
         },
       );
+
+      const { refresh_token, access_token, expires_in } =
+        (await nodeFetched.json()) as RESTPostOAuth2RefreshTokenResult;
 
       await this.cacheManager.set(
         `discorduser/${userId}/accesstoken`,
@@ -75,7 +77,6 @@ export class DiscordService {
     const cachedUser = await this.cacheManager.get<RESTGetAPIGuildMemberResult>(
       `discorduser/guild/${userId}`,
     );
-    console.log({ cachedUser });
     if (cachedUser) {
       return cachedUser;
     } else {
@@ -83,17 +84,18 @@ export class DiscordService {
 
       const token = initialToken ?? (await this.getDiscordToken(userId));
       const guildId = this.configService.getOrThrow('GUILD_ID');
-
-      const { data } = await axios.get<RESTGetAPIGuildMemberResult>(
-        `https://discord.com/api/users/@me/guilds/${guildId}/member`,
+      const nodeFetched = await fetch(
+        `https://discord.com/api/v10/users/@me/guilds/${guildId}/member`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         },
       );
+
+      const data =
+        (await nodeFetched.json()) as Promise<RESTGetAPIGuildMemberResult>;
       await this.cacheManager.set(`discorduser/guild/${userId}`, data, 3600);
-      console.log({ data });
       return data;
     }
   }

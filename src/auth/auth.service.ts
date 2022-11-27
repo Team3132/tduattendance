@@ -7,12 +7,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import axios from 'axios';
-import { Cache } from 'cache-manager';
-import {
-  RESTGetAPIGuildMemberResult,
-  RESTPostOAuth2RefreshTokenResult,
-} from 'discord-api-types/v10';
 import { Profile as DiscordProfile } from 'passport-discord';
 import { DiscordService } from 'src/discord/discord.service';
 import { PrismaService } from '../prisma/prisma.service';
