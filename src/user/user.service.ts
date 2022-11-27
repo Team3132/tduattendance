@@ -13,6 +13,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { v4 as uuid } from 'uuid';
 import { AuthService } from 'src/auth/auth.service';
 import { DiscordService } from 'src/discord/discord.service';
+import { ROLES } from 'src/constants';
 
 @Injectable()
 export class UserService {
@@ -84,6 +85,13 @@ export class UserService {
 
   async discordProfile(userId: string): Promise<APIGuildMember> {
     return this.discordService.getDiscordMemberDetails(userId);
+  }
+
+  async isMentor(userId: string) {
+    const discordProfile = await this.discordService.getDiscordMemberDetails(
+      userId,
+    );
+    return discordProfile.roles.includes(ROLES.MENTOR);
   }
 
   async outreachReport(userId: string, from?: string, to?: string) {

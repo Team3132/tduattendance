@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { ScancodeService } from './scancode.service';
 import { CreateScancodeDto } from './dto/create-scancode.dto';
-import { UpdateScancodeDto } from './dto/update-scancode.dto';
 import { GetUser } from 'src/auth/decorators/GetUserDecorator.decorator';
 import {
   ApiCookieAuth,

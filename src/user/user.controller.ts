@@ -12,6 +12,7 @@ import {
   Inject,
   BadRequestException,
   Query,
+  ForbiddenException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -35,6 +36,9 @@ import {
 } from '@prisma/client/runtime';
 import { OutreachReport } from './dto/outreach-report.dto';
 import { GetOutreachReport } from './dto/outreach-report-get.dto';
+import { Scancode } from 'src/scancode/entities/scancode.entity';
+import { ScancodeService } from 'src/scancode/scancode.service';
+import { CreateScancodeDto } from 'src/scancode/dto/create-scancode.dto';
 
 /** The user controller for controlling the user status */
 @ApiTags('User')
@@ -45,6 +49,7 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly rsvpService: RsvpService,
+    private readonly scancodeService: ScancodeService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
@@ -52,8 +57,6 @@ export class UserController {
    * Get the currently authenticated user.
    * @returns User
    */
-  @ApiCookieAuth()
-  @UseGuards(SessionGuard)
   @ApiOkResponse({ type: User })
   @Get('me')
   me(@GetUser('id') id: string) {
@@ -61,14 +64,36 @@ export class UserController {
   }
 
   /**
+   * Get a specific user.
+   * @param userId The actionable user.
+   * @returns List of Users
+   */
+  @ApiOkResponse({ type: User })
+  @Roles([ROLES.MENTOR])
+  @Get(':id')
+  user(@Param('id') userId: string) {
+    return this.userService.user({ id: userId });
+  }
+
+  /**
    * Get the currently authenticated user's avatar id
    * @returns Avatar string
    */
-  @ApiCookieAuth()
   @ApiOkResponse({ type: String })
-  @UseGuards(SessionGuard)
   @Get('me/avatar')
   async userMeAvatar(@GetUser('id') userId: string) {
+    const { user } = await this.userService.discordProfile(userId);
+    return user.avatar;
+  }
+
+  /**
+   * Get a user's discord avatar id
+   * @returns Avatar string
+   */
+  @ApiOkResponse({ type: String })
+  @Roles([ROLES.MENTOR])
+  @Get(':id/avatar')
+  async userAvatar(@Param('id') userId: string) {
     const { user } = await this.userService.discordProfile(userId);
     return user.avatar;
   }
@@ -77,12 +102,25 @@ export class UserController {
    * Get the RSVPs of the logged in user.
    * @returns RSVP
    */
-  @ApiCookieAuth()
-  @UseGuards(SessionGuard)
   @ApiOkResponse({ type: [Rsvp] })
   @Get('me/rsvp')
   meRSVP(@GetUser('id') id: string) {
     return this.rsvpService.rsvps({ where: { userId: id } });
+  }
+
+  /**
+   * Get a user's RSVPs
+   * @returns List of RSVP
+   */
+  @ApiOkResponse({ type: [Rsvp] })
+  @Roles([ROLES.MENTOR])
+  @Get(':id/rsvp')
+  userRSVPs(@Param('id') userId: string) {
+    return this.rsvpService.rsvps({
+      where: {
+        userId: userId,
+      },
+    });
   }
 
   /**
@@ -91,8 +129,6 @@ export class UserController {
    * @returns
    */
   @ApiOkResponse({ type: User })
-  @ApiCookieAuth()
-  @UseGuards(SessionGuard)
   @Patch('me')
   update(@GetUser('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     try {
@@ -114,67 +150,10 @@ export class UserController {
   }
 
   /**
-   * Regenerates the calendar token of the signed in user.
-   * @returns User
-   */
-  @ApiOkResponse({ type: User })
-  @ApiCookieAuth()
-  @UseGuards(SessionGuard)
-  @Post('me/regenerateToken')
-  regenerateToken(@GetUser('id') id: string) {
-    return this.userService.regenerateCalendarSecret({ id });
-  }
-
-  /**
-   * Delete the signed in user.
-   * @returns User
-   */
-  @ApiOkResponse({ type: User })
-  @ApiCookieAuth()
-  @UseGuards(SessionGuard)
-  @Delete('me')
-  remove(
-    @GetUser('id') id: string,
-    @Session() session: Express.Request['session'],
-  ) {
-    session.destroy((callback) => {});
-    return this.userService.deleteUser({ id });
-  }
-
-  /**
-   * Get a list of all users.
-   * @returns List of Users
-   */
-  @ApiCookieAuth()
-  @UseGuards(SessionGuard)
-  @ApiOkResponse({ type: [User] })
-  @Roles([ROLES.MENTOR])
-  @Get()
-  users() {
-    return this.userService.users({});
-  }
-
-  /**
-   * Get a specific user.
-   * @param userId The actionable user.
-   * @returns List of Users
-   */
-  @ApiCookieAuth()
-  @UseGuards(SessionGuard)
-  @ApiOkResponse({ type: User })
-  @Roles([ROLES.MENTOR])
-  @Get(':id')
-  user(@Param('id') userId: string) {
-    return this.userService.user({ id: userId });
-  }
-
-  /**
    * Edit a user.
    * @param updateUserDto New user info.
    * @returns User
    */
-  @ApiCookieAuth()
-  @UseGuards(SessionGuard)
   @ApiOkResponse({ type: User })
   @Roles([ROLES.MENTOR])
   @Patch(':id')
@@ -198,11 +177,19 @@ export class UserController {
   }
 
   /**
+   * Regenerates the calendar token of the signed in user.
+   * @returns User
+   */
+  @ApiOkResponse({ type: User })
+  @Post('me/regenerateToken')
+  regenerateToken(@GetUser('id') id: string) {
+    return this.userService.regenerateCalendarSecret({ id });
+  }
+
+  /**
    * Regenerates the calendar token of the specified user.
    * @returns User
    */
-  @ApiCookieAuth()
-  @UseGuards(SessionGuard)
   @ApiOkResponse({ type: User })
   @Roles([ROLES.MENTOR])
   @Post(':id/regenerateToken')
@@ -211,12 +198,35 @@ export class UserController {
   }
 
   /**
+   * Delete the signed in user.
+   * @returns User
+   */
+  @ApiOkResponse({ type: User })
+  @Delete('me')
+  async remove(
+    @GetUser('id') id: string,
+    @Session() session: Express.Request['session'],
+  ) {
+    const destroySession = new Promise<void>((res, rej) => {
+      session.destroy((callback) => {
+        if (callback) {
+          rej(callback);
+        } else {
+          res();
+        }
+      });
+    });
+
+    await destroySession;
+
+    return this.userService.deleteUser({ id });
+  }
+
+  /**
    * Delete a user.
    * @returns User
    */
   @ApiOkResponse({ type: User })
-  @ApiCookieAuth()
-  @UseGuards(SessionGuard)
   @Roles([ROLES.MENTOR])
   @Delete(':id')
   removeUser(@Param('id') id: string) {
@@ -224,44 +234,159 @@ export class UserController {
   }
 
   /**
-   * Get a user's RSVPs
-   * @returns List of RSVP
+   * Get a list of all users.
+   * @returns List of Users
    */
-  @ApiCookieAuth()
-  @UseGuards(SessionGuard)
-  @ApiOkResponse({ type: [Rsvp] })
+  @ApiOkResponse({ type: [User] })
   @Roles([ROLES.MENTOR])
-  @Get(':id/rsvp')
-  userRSVPs(@Param('id') userId: string) {
-    return this.rsvpService.rsvps({
-      where: {
-        userId: userId,
-      },
-    });
+  @Get()
+  users() {
+    return this.userService.users({});
   }
 
   /**
-   * Get a user's discord avatar id
-   * @returns Avatar string
+   * Get an outreach report of the logged in user.
+   * @returns OutreachReport
    */
-  @ApiOkResponse({ type: String })
-  @Roles([ROLES.MENTOR])
-  @Get(':id/avatar')
-  async userAvatar(@Param('id') userId: string) {
-    const { user } = await this.userService.discordProfile(userId);
-    return user.avatar;
+  @ApiOkResponse({ type: OutreachReport })
+  @Get('me/outreach')
+  async myOutreachReport(
+    @Query() params: GetOutreachReport,
+    @GetUser('id') id: string,
+  ) {
+    const { from, to } = params;
+    return this.userService.outreachReport(id, from, to);
   }
 
+  /**
+   * Get an outreach report of the specified user.
+   * @returns OutreachReport
+   */
   @ApiOkResponse({ type: OutreachReport })
   @Roles([ROLES.MENTOR])
   @Get(':id/outreach')
   async outreachReport(
     @Param('id') userId: string,
     @Query() params: GetOutreachReport,
-    @GetUser('id') id: string,
   ) {
     const { from, to } = params;
-    const userIdent = userId === 'me' ? id : userId;
-    return this.userService.outreachReport(userIdent, from, to);
+    return this.userService.outreachReport(userId, from, to);
+  }
+
+  /**
+   * Get a list of the logged in user's scancodes.
+   * @returns List of Scancodes
+   */
+  @ApiOkResponse({ type: [Scancode] })
+  @Get('me/scancodes')
+  async scancodes(@GetUser('id') id: string) {
+    return this.scancodeService.scancodes({
+      where: {
+        userId: id,
+      },
+    });
+  }
+
+  /**
+   * Get a list of the specified user's scancodes.
+   * @returns List of Scancodes
+   */
+  @ApiOkResponse({ type: [Scancode] })
+  @Roles([ROLES.MENTOR])
+  @Get(':id/scancodes')
+  async userScancodes(@Param('id') id: string) {
+    return this.scancodeService.scancodes({
+      where: {
+        userId: id,
+      },
+    });
+  }
+
+  /**
+   * Create a scancode for the logged in user.
+   * @returns Scancode
+   */
+  @ApiOkResponse({ type: Scancode })
+  @Post('me/scancodes')
+  async createScancode(
+    @GetUser('id') id: string,
+    @Body() body: CreateScancodeDto,
+  ) {
+    return this.scancodeService.createScancode({
+      ...body,
+      user: {
+        connect: {
+          id,
+        },
+      },
+    });
+  }
+
+  /**
+   * Create a scancode for the specified user.
+   * @returns Scancode
+   */
+  @ApiOkResponse({ type: Scancode })
+  @Roles([ROLES.MENTOR])
+  @Post(':id/scancodes')
+  async createUserScancode(
+    @Param('id') id: string,
+    @Body() body: CreateScancodeDto,
+  ) {
+    return this.scancodeService.createScancode({
+      ...body,
+      user: {
+        connect: {
+          id,
+        },
+      },
+    });
+  }
+
+  /**
+   * Delete a scancode for the logged in user.
+   * @returns Scancode.
+   */
+  @ApiOkResponse({ type: Scancode })
+  @Delete('me/scancodes/:scancodeId')
+  async deleteScancode(
+    @GetUser('id') id: string,
+    @Param('scancodeId') scancodeId: string,
+  ) {
+    const scancode = await this.scancodeService.scancode({
+      code: scancodeId,
+    });
+
+    if (scancode.userId !== id) {
+      throw new ForbiddenException();
+    }
+
+    return this.scancodeService.deleteScancode({
+      code: scancodeId,
+    });
+  }
+
+  /**
+   * Delete a scancode for the specified user.
+   * @returns Scancode.
+   */
+  @ApiOkResponse({ type: Scancode })
+  @Roles([ROLES.MENTOR])
+  @Delete(':id/scancodes/:scancodeId')
+  async deleteUserScancode(
+    @Param('id') id: string,
+    @Param('scancodeId') scancodeId: string,
+  ) {
+    const scancode = await this.scancodeService.scancode({
+      code: scancodeId,
+    });
+
+    if (scancode.userId !== id) {
+      throw new ForbiddenException();
+    }
+
+    return this.scancodeService.deleteScancode({
+      code: scancodeId,
+    });
   }
 }

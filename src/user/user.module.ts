@@ -7,10 +7,12 @@ import { AuthModule } from 'src/auth/auth.module';
 import { AuthService } from 'src/auth/auth.service';
 import { DiscordModule } from 'src/discord/discord.module';
 import { DiscordService } from 'src/discord/discord.service';
+import { ScancodeModule } from 'src/scancode/scancode.module';
+import { ScancodeService } from 'src/scancode/scancode.service';
 
 @Module({
-  imports: [RsvpModule, AuthModule],
+  imports: [RsvpModule, AuthModule, ScancodeModule],
   controllers: [UserController],
-  providers: [UserService, AuthService],
+  providers: [UserService, AuthService, ScancodeService],
 })
 export class UserModule {}
