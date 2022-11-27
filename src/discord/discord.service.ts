@@ -6,7 +6,6 @@ import {
   Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import fetch from 'node-fetch';
 import { Cache } from 'cache-manager';
 import {
   RESTPostOAuth2RefreshTokenResult,
@@ -39,6 +38,8 @@ export class DiscordService {
       const discordclient = await this.configService.getOrThrow<string>(
         'DISCORD_CLIENT_ID',
       );
+
+      const { default: fetch } = await import('node-fetch');
 
       const nodeFetched = await fetch(
         `https://discord.com/api/v10/oauth2/token`,
@@ -74,6 +75,7 @@ export class DiscordService {
   }
 
   async getDiscordMemberDetails(userId: string, initialToken?: string) {
+    const { default: fetch } = await import('node-fetch');
     const cachedUser = await this.cacheManager.get<RESTGetAPIGuildMemberResult>(
       `discorduser/guild/${userId}`,
     );
