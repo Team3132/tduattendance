@@ -2,17 +2,14 @@ import {
   Controller,
   Get,
   Redirect,
-  Req,
   Res,
   Session,
   UseGuards,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { User } from '@prisma/client';
-import { Request, Response as ExpressResponse, Response } from 'express';
+import { Response } from 'express';
 import { ROLES } from 'src/constants';
 import { DiscordService } from 'src/discord/discord.service';
-import { AuthService } from './auth.service';
 import { GetUser } from './decorators/GetUserDecorator.decorator';
 import { AuthStatusDto } from './dto/AuthStatus.dto';
 import { DiscordAuthGuard } from './guard/discord.guard';
@@ -21,15 +18,13 @@ import { SessionGuard } from './guard/session.guard';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly discordService: DiscordService,
-  ) {}
+  constructor(private readonly discordService: DiscordService) {}
 
   /**
    * Auth Status
-   * @returns Session metadata (if it exists)
+   * @returns {AuthStatusDto}
    */
+  @ApiOperation({ summary: 'Get auth status', operationId: 'authStatus' })
   @ApiOkResponse({ type: AuthStatusDto })
   @Get('status')
   async status(@GetUser() user: Express.User): Promise<AuthStatusDto> {
@@ -55,6 +50,10 @@ export class AuthController {
   /**
    * Sign in using discord
    */
+  @ApiOperation({
+    summary: 'Sign in using discord',
+    operationId: 'discordSignin',
+  })
   @UseGuards(DiscordAuthGuard)
   @Get('discord')
   discordSignin() {
@@ -65,6 +64,10 @@ export class AuthController {
    * Sign in using discord (callback)
    * @returns close window script
    */
+  @ApiOperation({
+    summary: 'Sign in using discord (callback)',
+    operationId: 'discordSigninCallback',
+  })
   @Redirect(
     process.env.NODE_ENV === 'production'
       ? 'https://attendance.team3132.com/calendar'
@@ -76,6 +79,10 @@ export class AuthController {
     // res.redirect('back');
   }
 
+  @ApiOperation({
+    summary: 'Sign out',
+    operationId: 'signout',
+  })
   @UseGuards(SessionGuard)
   @Get('logout')
   async logout(

@@ -22,6 +22,7 @@ import {
   ApiCookieAuth,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { Event } from './entities/event.entity';
@@ -33,6 +34,7 @@ import { ScancodeService } from 'src/scancode/scancode.service';
 import { ScaninDto } from './dto/scanin.dto';
 import { GetEventsDto } from './dto/get-events.dto';
 import { UpdateRangeRSVP } from './dto/update-rsvp-range';
+import { RSVP } from '@prisma/client';
 
 @ApiTags('Event')
 @ApiCookieAuth()
@@ -47,9 +49,10 @@ export class EventController {
 
   /**
    * Get all events
-   * @returns List of events
+   * @returns {Event[]}
    */
   @ApiOkResponse({ type: [Event] })
+  @ApiOperation({ summary: 'Get all events', operationId: 'getEvents' })
   @Get()
   findAll(@Query() eventsGet: GetEventsDto) {
     const { from, to, take } = eventsGet;
@@ -93,8 +96,9 @@ export class EventController {
   /**
    * Create a new event
    * @param createEventDto The event creation data
-   * @returns Event
+   * @returns {Event}
    */
+  @ApiOperation({ summary: 'Create a new event', operationId: 'createEvent' })
   @ApiCreatedResponse({ type: Event })
   @Roles([ROLES.MENTOR])
   @Post()
@@ -104,8 +108,9 @@ export class EventController {
 
   /**
    * Get a specific event
-   * @returns Event
+   * @returns {Event}
    */
+  @ApiOperation({ summary: 'Get a specific event', operationId: 'getEvent' })
   @ApiOkResponse({ type: Event })
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -115,8 +120,9 @@ export class EventController {
   /**
    * Update an event.
    * @param updateEventDto Event Update Data
-   * @returns Event
+   * @returns {Event}
    */
+  @ApiOperation({ summary: 'Update an event', operationId: 'updateEvent' })
   @ApiOkResponse({ type: Event })
   @Roles([ROLES.MENTOR])
   @Patch(':id')
@@ -129,8 +135,9 @@ export class EventController {
 
   /**
    * Delete an event
-   * @returns Event
+   * @returns {Event}
    */
+  @ApiOperation({ summary: 'Delete an event', operationId: 'deleteEvent' })
   @ApiOkResponse({ type: Event })
   @Roles([ROLES.MENTOR])
   @Delete(':id')
@@ -140,8 +147,12 @@ export class EventController {
 
   /**
    * Get a user's rsvp status for an event.
-   * @returns RSVP
+   * @returns {Rsvp}
    */
+  @ApiOperation({
+    summary: "Get a user's rsvp status for an event",
+    operationId: 'getEventRsvp',
+  })
   @ApiOkResponse({ type: Rsvp })
   @Get(':eventId/rsvp')
   getEventRsvp(
@@ -157,8 +168,12 @@ export class EventController {
   /**
    * Set a logged in user's RSVP status for an event.
    * @param setRSVPDto RSVP status
-   * @returns RSVP
+   * @returns {Rsvp}
    */
+  @ApiOperation({
+    summary: "Set a logged in user's RSVP status for an event",
+    operationId: 'setEventRsvp',
+  })
   @ApiCreatedResponse({ type: Rsvp })
   @Post(':eventId/rsvp')
   async setEventRsvp(
@@ -187,7 +202,12 @@ export class EventController {
 
   /**
    * Update RSVP Status of Events in range
+   * @returns {Rsvp[]}
    */
+  @ApiOperation({
+    summary: 'Update RSVP Status of Events in range',
+    operationId: 'updateEventRsvpRange',
+  })
   @ApiCreatedResponse({ type: [Rsvp] })
   @Post('rsvps')
   async setEventsRsvp(
@@ -238,8 +258,12 @@ export class EventController {
 
   /**
    * Get an event's asociated RSVPs
-   * @returns List of RSVP
+   * @returns {Rsvp[]}
    */
+  @ApiOperation({
+    summary: "Get an event's asociated RSVPs",
+    operationId: 'getEventRsvps',
+  })
   @ApiOkResponse({ type: [Rsvp] })
   @Get(':eventId/rsvps')
   getEventRsvps(@Param('eventId') eventId: string) {
@@ -254,8 +278,12 @@ export class EventController {
    * RSVP to an event by using a scancode
    * @param eventId The event id
    * @param scanin The scanin data (code)
-   * @returns RSVP
+   * @returns {Rsvp}
    */
+  @ApiOperation({
+    summary: 'RSVP to an event by using a scancode',
+    operationId: 'scaninEvent',
+  })
   @ApiCreatedResponse({ type: Rsvp })
   @ApiBadRequestResponse({ description: 'Invalid Scancode' })
   @Post(':eventId/scanin')

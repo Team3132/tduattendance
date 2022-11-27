@@ -17,6 +17,7 @@ import {
   ApiCookieAuth,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { SessionGuard } from 'src/auth/guard/session.guard';
@@ -30,7 +31,15 @@ import { Prisma } from '@prisma/client';
 export class ScancodeController {
   constructor(private readonly scancodeService: ScancodeService) {}
 
+  /**
+   * Create Scancode
+   * @returns {Scancode}
+   */
   @Post()
+  @ApiOperation({
+    summary: 'Get a scancode by code',
+    operationId: 'getScancode',
+  })
   @ApiCreatedResponse({ type: Scancode })
   async create(
     @GetUser('id') userId: Express.User['id'],
@@ -59,7 +68,15 @@ export class ScancodeController {
     }
   }
 
+  /**
+   * Get a list of all scancodes for the signed in user
+   * @returns {Scancode[]}
+   */
   @ApiOkResponse({ type: [Scancode] })
+  @ApiOperation({
+    summary: 'Get a list of all scancodes for the signed in user',
+    operationId: 'getScancodes',
+  })
   @Get()
   findAll(@GetUser('id') userId: Express.User['id']) {
     return this.scancodeService.scancodes({
@@ -69,7 +86,15 @@ export class ScancodeController {
     });
   }
 
+  /**
+   * Delete a scancode by code
+   * @returns {Scancode}
+   */
   @ApiOkResponse({ type: Scancode })
+  @ApiOperation({
+    summary: 'Delete a scancode by code',
+    operationId: 'deleteScancode',
+  })
   @Delete(':id')
   async remove(
     @Param('id') id: string,

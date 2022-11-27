@@ -22,7 +22,7 @@ import {
   ApiCookieAuth,
   ApiCreatedResponse,
   ApiOkResponse,
-  ApiSecurity,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { Roles } from '../auth/decorators/DiscordRoleDecorator.decorator';
@@ -31,10 +31,7 @@ import { User } from './entities/user.entity';
 import { RsvpService } from '../rsvp/rsvp.service';
 import { Rsvp } from '../rsvp/entities/rsvp.entity';
 import { Cache } from 'cache-manager';
-import {
-  PrismaClientKnownRequestError,
-  PrismaClientValidationError,
-} from '@prisma/client/runtime';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { OutreachReport } from './dto/outreach-report.dto';
 import { GetOutreachReport } from './dto/outreach-report-get.dto';
 import { Scancode } from 'src/scancode/entities/scancode.entity';
@@ -56,8 +53,12 @@ export class UserController {
 
   /**
    * Get the currently authenticated user.
-   * @returns User
+   * @returns {User}
    */
+  @ApiOperation({
+    summary: 'Get the currently authenticated user.',
+    operationId: 'getMe',
+  })
   @ApiOkResponse({ type: User })
   @Get('me')
   me(@GetUser('id') id: Express.User['id']) {
@@ -67,8 +68,12 @@ export class UserController {
   /**
    * Get a specific user.
    * @param userId The actionable user.
-   * @returns List of Users
+   * @returns {User}
    */
+  @ApiOperation({
+    summary: 'Get a specific user.',
+    operationId: 'getUser',
+  })
   @ApiOkResponse({ type: User })
   @Roles([ROLES.MENTOR])
   @Get(':id')
@@ -78,8 +83,12 @@ export class UserController {
 
   /**
    * Get the currently authenticated user's avatar id
-   * @returns Avatar string
+   * @returns {string}
    */
+  @ApiOperation({
+    summary: "Get the currently authenticated user's avatar id",
+    operationId: 'getMeAvatar',
+  })
   @ApiOkResponse({ type: String })
   @Get('me/avatar')
   async userMeAvatar(@GetUser('id') userId: Express.User['id']) {
@@ -89,8 +98,12 @@ export class UserController {
 
   /**
    * Get a user's discord avatar id
-   * @returns Avatar string
+   * @returns {string}
    */
+  @ApiOperation({
+    summary: "Get a user's discord avatar id",
+    operationId: 'getUserAvatar',
+  })
   @ApiOkResponse({ type: String })
   @Roles([ROLES.MENTOR])
   @Get(':id/avatar')
@@ -101,8 +114,12 @@ export class UserController {
 
   /**
    * Get the RSVPs of the logged in user.
-   * @returns RSVP
+   * @returns {Rsvp[]}
    */
+  @ApiOperation({
+    summary: 'Get the RSVPs of the logged in user.',
+    operationId: 'getMeRSVPs',
+  })
   @ApiOkResponse({ type: [Rsvp] })
   @Get('me/rsvp')
   meRSVP(@GetUser('id') id: Express.User['id']) {
@@ -111,8 +128,12 @@ export class UserController {
 
   /**
    * Get a user's RSVPs
-   * @returns List of RSVP
+   * @returns {Rsvp[]}
    */
+  @ApiOperation({
+    summary: "Get a user's RSVPs",
+    operationId: 'getUserRSVPs',
+  })
   @ApiOkResponse({ type: [Rsvp] })
   @Roles([ROLES.MENTOR])
   @Get(':id/rsvp')
@@ -127,8 +148,12 @@ export class UserController {
   /**
    * Edit the signed-in user.
    * @param updateUserDto
-   * @returns
+   * @returns {User}
    */
+  @ApiOperation({
+    summary: 'Edit the signed-in user.',
+    operationId: 'editMe',
+  })
   @ApiCreatedResponse({ type: User })
   @Patch('me')
   update(
@@ -156,8 +181,12 @@ export class UserController {
   /**
    * Edit a user.
    * @param updateUserDto New user info.
-   * @returns User
+   * @returns {User}
    */
+  @ApiOperation({
+    summary: 'Edit a user.',
+    operationId: 'editUser',
+  })
   @ApiCreatedResponse({ type: User })
   @Roles([ROLES.MENTOR])
   @Patch(':id')
@@ -182,8 +211,12 @@ export class UserController {
 
   /**
    * Regenerates the calendar token of the signed in user.
-   * @returns User
+   * @returns {User}
    */
+  @ApiOperation({
+    summary: 'Regenerates the calendar token of the signed in user.',
+    operationId: 'regenerateMeCalendarToken',
+  })
   @ApiCreatedResponse({ type: User })
   @Post('me/regenerateToken')
   regenerateToken(@GetUser('id') id: Express.User['id']) {
@@ -192,8 +225,12 @@ export class UserController {
 
   /**
    * Regenerates the calendar token of the specified user.
-   * @returns User
+   * @returns {User}
    */
+  @ApiOperation({
+    summary: 'Regenerates the calendar token of the specified user.',
+    operationId: 'regenerateUserCalendarToken',
+  })
   @ApiCreatedResponse({ type: User })
   @Roles([ROLES.MENTOR])
   @Post(':id/regenerateToken')
@@ -203,8 +240,12 @@ export class UserController {
 
   /**
    * Delete the signed in user.
-   * @returns User
+   * @returns {User}
    */
+  @ApiOperation({
+    summary: 'Delete the signed in user.',
+    operationId: 'deleteMe',
+  })
   @ApiOkResponse({ type: User })
   @Delete('me')
   async remove(
@@ -228,8 +269,12 @@ export class UserController {
 
   /**
    * Delete a user.
-   * @returns User
+   * @returns {User}
    */
+  @ApiOperation({
+    summary: 'Delete a user.',
+    operationId: 'deleteUser',
+  })
   @ApiOkResponse({ type: User })
   @Roles([ROLES.MENTOR])
   @Delete(':id')
@@ -239,8 +284,12 @@ export class UserController {
 
   /**
    * Get a list of all users.
-   * @returns List of Users
+   * @returns {User[]}
    */
+  @ApiOperation({
+    summary: 'Get a list of all users.',
+    operationId: 'getUsers',
+  })
   @ApiOkResponse({ type: [User] })
   @Roles([ROLES.MENTOR])
   @Get()
@@ -250,8 +299,12 @@ export class UserController {
 
   /**
    * Get an outreach report of the logged in user.
-   * @returns OutreachReport
+   * @returns {OutreachReport}
    */
+  @ApiOperation({
+    summary: 'Get an outreach report of the logged in user.',
+    operationId: 'getMeOutreachReport',
+  })
   @ApiOkResponse({ type: OutreachReport })
   @Get('me/outreach')
   async myOutreachReport(
@@ -264,8 +317,12 @@ export class UserController {
 
   /**
    * Get an outreach report of the specified user.
-   * @returns OutreachReport
+   * @returns {OutreachReport}
    */
+  @ApiOperation({
+    summary: 'Get an outreach report of the specified user.',
+    operationId: 'getUserOutreachReport',
+  })
   @ApiOkResponse({ type: OutreachReport })
   @Roles([ROLES.MENTOR])
   @Get(':id/outreach')
@@ -279,8 +336,12 @@ export class UserController {
 
   /**
    * Get a list of the logged in user's scancodes.
-   * @returns List of Scancodes
+   * @returns {Scancode[]}
    */
+  @ApiOperation({
+    summary: "Get a list of the logged in user's scancodes.",
+    operationId: 'getMeScancodes',
+  })
   @ApiOkResponse({ type: [Scancode] })
   @Get('me/scancodes')
   async scancodes(@GetUser('id') id: Express.User['id']) {
@@ -293,8 +354,12 @@ export class UserController {
 
   /**
    * Get a list of the specified user's scancodes.
-   * @returns List of Scancodes
+   * @returns {Scancode[]}
    */
+  @ApiOperation({
+    summary: "Get a list of the specified user's scancodes.",
+    operationId: 'getUserScancodes',
+  })
   @ApiOkResponse({ type: [Scancode] })
   @Roles([ROLES.MENTOR])
   @Get(':id/scancodes')
@@ -308,8 +373,12 @@ export class UserController {
 
   /**
    * Create a scancode for the logged in user.
-   * @returns Scancode
+   * @returns  {Scancode}
    */
+  @ApiOperation({
+    summary: 'Create a scancode for the logged in user.',
+    operationId: 'createMeScancode',
+  })
   @ApiCreatedResponse({ type: Scancode })
   @Post('me/scancodes')
   async createScancode(
@@ -328,8 +397,12 @@ export class UserController {
 
   /**
    * Create a scancode for the specified user.
-   * @returns Scancode
+   * @returns {Scancode}
    */
+  @ApiOperation({
+    summary: 'Create a scancode for the specified user.',
+    operationId: 'createUserScancode',
+  })
   @ApiCreatedResponse({ type: Scancode })
   @Roles([ROLES.MENTOR])
   @Post(':id/scancodes')
@@ -349,8 +422,12 @@ export class UserController {
 
   /**
    * Delete a scancode for the logged in user.
-   * @returns Scancode.
+   * @returns {Scancode}
    */
+  @ApiOperation({
+    summary: 'Delete a scancode for the logged in user.',
+    operationId: 'deleteMeScancode',
+  })
   @ApiOkResponse({ type: Scancode })
   @Delete('me/scancodes/:scancodeId')
   async deleteScancode(
@@ -372,8 +449,12 @@ export class UserController {
 
   /**
    * Delete a scancode for the specified user.
-   * @returns Scancode.
+   * @returns {Scancode}
    */
+  @ApiOperation({
+    summary: 'Delete a scancode for the specified user.',
+    operationId: 'deleteUserScancode',
+  })
   @ApiOkResponse({ type: Scancode })
   @Roles([ROLES.MENTOR])
   @Delete(':id/scancodes/:scancodeId')

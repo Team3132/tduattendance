@@ -15,7 +15,7 @@ import {
   ApiCookieAuth,
   ApiCreatedResponse,
   ApiOkResponse,
-  ApiResponse,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { SessionGuard } from '../auth/guard/session.guard';
@@ -34,8 +34,12 @@ export class RsvpController {
   /**
    * Create an RSVP
    * @param createRsvpDto RSVP Create Data
-   * @returns
+   * @returns {Rsvp}
    */
+  @ApiOperation({
+    summary: 'Create an RSVP',
+    operationId: 'createRSVP',
+  })
   @Roles([ROLES.MENTOR])
   @ApiCreatedResponse({ type: Rsvp })
   @Post()
@@ -56,8 +60,12 @@ export class RsvpController {
 
   /**
    * Get all RSVPs
-   * @returns List of RSVP
+   * @returns {Rsvp[]}
    */
+  @ApiOperation({
+    summary: 'Get all RSVPs',
+    operationId: 'getRSVPs',
+  })
   @Roles([ROLES.MENTOR])
   @ApiOkResponse({ type: [Rsvp] })
   @Get()
@@ -67,8 +75,12 @@ export class RsvpController {
 
   /**
    * Get a specific RSVP
-   * @returns RSVP
+   * @returns {Rsvp}
    */
+  @ApiOperation({
+    summary: 'Get a specific RSVP',
+    operationId: 'getRSVP',
+  })
   @Roles([ROLES.MENTOR])
   @ApiOkResponse({ type: Rsvp })
   @Get(':id')
@@ -79,8 +91,12 @@ export class RsvpController {
   /**
    * Edit a specific RSVP
    * @param updateRsvpDto
-   * @returns RSVP
+   * @returns {Rsvp}
    */
+  @ApiOperation({
+    summary: 'Edit a specific RSVP',
+    operationId: 'editRSVP',
+  })
   @Roles([ROLES.MENTOR])
   @ApiCreatedResponse({ type: Rsvp })
   @Patch(':id')
@@ -90,8 +106,12 @@ export class RsvpController {
 
   /**
    * Delete an RSVP
-   * @returns RSVP
+   * @returns {Rsvp}
    */
+  @ApiOperation({
+    summary: 'Delete an RSVP',
+    operationId: 'deleteRSVP',
+  })
   @Roles([ROLES.MENTOR])
   @ApiOkResponse({ type: Rsvp })
   @Delete(':id')

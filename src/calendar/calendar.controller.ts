@@ -7,7 +7,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { CalendarGuard } from 'src/auth/guard/calendar.guard';
 import { CalendarService } from './calendar.service';
@@ -16,7 +16,16 @@ import { CalendarService } from './calendar.service';
 @Controller('calendar')
 export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
+
+  /**
+   * Download calendar
+   * @returns iCal file
+   */
   @Get()
+  @ApiOperation({
+    summary: 'Download calendar',
+    operationId: 'downloadCalendar',
+  })
   @UseGuards(CalendarGuard)
   async calendar(@Res() res: Response) {
     const calendar = await this.calendarService.generateCalendar();
