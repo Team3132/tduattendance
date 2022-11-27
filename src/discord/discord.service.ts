@@ -75,6 +75,7 @@ export class DiscordService {
     const cachedUser = await this.cacheManager.get<RESTGetAPIGuildMemberResult>(
       `discorduser/guild/${userId}`,
     );
+    console.log({ cachedUser });
     if (cachedUser) {
       return cachedUser;
     } else {
@@ -92,7 +93,7 @@ export class DiscordService {
         },
       );
       await this.cacheManager.set(`discorduser/guild/${userId}`, data, 3600);
-
+      console.log({ data });
       return data;
     }
   }
