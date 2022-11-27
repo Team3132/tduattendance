@@ -1,4 +1,10 @@
-import { CacheModule, Module } from '@nestjs/common';
+import {
+  CacheModule,
+  CacheModuleAsyncOptions,
+  CacheModuleOptions,
+  CacheStore,
+  Module,
+} from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -12,8 +18,7 @@ import { AppService } from './app.service';
 import { CalendarModule } from './calendar/calendar.module';
 import { DiscordModule } from './discord/discord.module';
 import { ScancodeModule } from './scancode/scancode.module';
-import { redisStore } from 'cache-manager-redis-store';
-import { StoreConfig } from 'cache-manager';
+import { redisStore } from 'cache-manager-redis-yet';
 import { RedisClientOptions } from 'redis';
 
 @Module({
@@ -21,16 +26,25 @@ import { RedisClientOptions } from 'redis';
     AuthModule,
     PrismaModule,
     ConfigModule.forRoot({ isGlobal: true, cache: true }),
-    CacheModule.registerAsync<any>({
+    CacheModule.registerAsync<RedisClientOptions>({
       isGlobal: true,
       imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        const store = await redisStore({
+          socket: {
+            host: configService.getOrThrow<string>('REDIS_HOST'),
+            port: 6379,
+          },
+          database: 1,
+        });
+        return {
+          store: {
+            create: () => store,
+          },
+        };
+      },
+
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        store: redisStore,
-        host: configService.getOrThrow<string>('REDIS_HOST'),
-        port: 6379,
-        db: 1,
-      }),
     }),
     PrismaModule,
     UserModule,
