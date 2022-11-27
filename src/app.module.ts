@@ -18,23 +18,21 @@ import { AppService } from './app.service';
 import { CalendarModule } from './calendar/calendar.module';
 import { DiscordModule } from './discord/discord.module';
 import { ScancodeModule } from './scancode/scancode.module';
-import { redisStore } from 'cache-manager-redis-store';
-import { RedisClientOptions } from 'redis';
+import * as redisStore from 'cache-manager-redis-store';
+import { ClientOpts } from 'redis';
 
 @Module({
   imports: [
     AuthModule,
     PrismaModule,
     ConfigModule.forRoot({ isGlobal: true, cache: true }),
-    CacheModule.registerAsync<any>({
+    CacheModule.registerAsync<ClientOpts>({
       isGlobal: true,
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         store: redisStore,
-        socket: {
-          host: configService.getOrThrow<string>('REDIS_HOST'),
-          port: 6379,
-        },
+        host: configService.getOrThrow<string>('REDIS_HOST'),
+        port: 6379,
         database: 1,
       }),
       inject: [ConfigService],
