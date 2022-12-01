@@ -42,12 +42,12 @@ jobs:
       - name: Lint
         run: yarn lint
   build:
-      name: Build
-      runs-on: ubuntu-latest
-      permissions:
-        packages: write
-        contents: read
-      depends-on: [type-check, lint]
+    name: Build
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    needs: [type-check, lint]
     steps:
       - uses: actions/checkout@v3
       - name: Docker meta
