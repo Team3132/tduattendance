@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Cache } from 'cache-manager';
+import { RedisCache } from 'cache-manager-redis-yet';
 import {
   RESTPostOAuth2RefreshTokenResult,
   RESTGetAPIGuildMemberResult,
@@ -16,7 +17,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class DiscordService {
   constructor(
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    @Inject(CACHE_MANAGER) private cacheManager: RedisCache,
     private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,
   ) {}
@@ -77,6 +78,7 @@ export class DiscordService {
       `discorduser/guild/${userId}`,
     );
     if (cachedUser) {
+      this.logger.debug('cached user');
       return cachedUser;
     } else {
       this.logger.debug(`Fetching Guild Member ${userId}`);
@@ -95,6 +97,7 @@ export class DiscordService {
       const data =
         (await nodeFetched.json()) as Promise<RESTGetAPIGuildMemberResult>;
       await this.cacheManager.set(`discorduser/guild/${userId}`, data, 3600);
+      this.logger.debug('fetched user', data);
       return data;
     }
   }
