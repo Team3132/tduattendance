@@ -18,7 +18,6 @@ model User {
   updatedAt           DateTime   @default(now()) @updatedAt
   discordRefreshToken String
   calendarSecret      String     @unique @default(uuid())
-  email               String?    @unique
   RSVP                RSVP[]
   Scancode            Scancode[]
 }

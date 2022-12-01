@@ -17,6 +17,4 @@ export class User implements Partial<PrismaUser> {
   updatedAt: Date;
   @ApiProperty()
   calendarSecret: string;
-  @ApiProperty()
-  email: string;
 }

@@ -48,7 +48,6 @@ export class CalendarService {
               return {
                 name: `${rsvp.user.firstName} ${rsvp.user.lastName}`,
                 status,
-                email: rsvp.user.email,
               };
             }),
           };

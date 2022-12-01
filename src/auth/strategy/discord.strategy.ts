@@ -22,7 +22,7 @@ export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
       clientID: config.get('DISCORD_CLIENT_ID'),
       clientSecret: config.get('DISCORD_SECRET'),
       callbackURL: config.get('DISCORD_CALLBACK'),
-      scope: ['identify', 'guilds', 'guilds.members.read', 'email'],
+      scope: ['identify', 'guilds', 'guilds.members.read'],
     };
     super(options);
   }
