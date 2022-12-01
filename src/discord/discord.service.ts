@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Cache } from 'cache-manager';
+import { RedisCache } from 'cache-manager-redis-yet';
 import {
   RESTPostOAuth2RefreshTokenResult,
   RESTGetAPIGuildMemberResult,
@@ -18,7 +19,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class DiscordService {
   constructor(
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    @Inject(CACHE_MANAGER) private cacheManager: RedisCache,
     private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,
   ) {}
@@ -31,6 +32,7 @@ export class DiscordService {
     if (token) {
       return token;
     } else {
+      this.logger.debug(`Fetching Discord Token ${userId}`);
       const prismaUser = await this.prismaService.user.findUnique({
         where: { id: userId },
       });
@@ -88,10 +90,10 @@ export class DiscordService {
     );
 
     if (cachedUser) {
+      // this.logger.debug(`Returning Cached User ${userId}`);
       return cachedUser;
     } else {
       this.logger.debug(`Fetching Guild Member ${userId}`);
-      // /users/@me/guilds/${string}/member
       const guildId = this.configService.getOrThrow('GUILD_ID');
 
       const fetchDiscordUser = await fetch(
@@ -103,6 +105,12 @@ export class DiscordService {
           },
         },
       );
+
+      if (fetchDiscordUser.status !== 200) {
+        throw new InternalServerErrorException(
+          `Discord API returned ${fetchDiscordUser.status}`,
+        );
+      }
 
       const discordUser =
         (await fetchDiscordUser.json()) as RESTGetAPIGuildMemberResult;

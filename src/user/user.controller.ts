@@ -37,6 +37,7 @@ import { GetOutreachReport } from './dto/outreach-report-get.dto';
 import { Scancode } from 'src/scancode/entities/scancode.entity';
 import { ScancodeService } from 'src/scancode/scancode.service';
 import { CreateScancodeDto } from 'src/scancode/dto/create-scancode.dto';
+import { RedisCache } from 'cache-manager-redis-yet';
 
 /** The user controller for controlling the user status */
 @ApiTags('User')
@@ -48,7 +49,7 @@ export class UserController {
     private readonly userService: UserService,
     private readonly rsvpService: RsvpService,
     private readonly scancodeService: ScancodeService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    @Inject(CACHE_MANAGER) private cacheManager: RedisCache,
   ) {}
 
   /**

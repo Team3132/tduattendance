@@ -2,11 +2,12 @@ import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import ical, { ICalAttendeeStatus, ICalCalendarJSONData } from 'ical-generator';
 import type { Cache } from 'cache-manager';
+import { RedisCache } from 'cache-manager-redis-yet';
 @Injectable()
 export class CalendarService {
   constructor(
     private readonly prismaService: PrismaService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    @Inject(CACHE_MANAGER) private cacheManager: RedisCache,
   ) {}
   private readonly logger = new Logger(CalendarService.name);
   async generateCalendar() {
