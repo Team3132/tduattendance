@@ -6,7 +6,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Cache } from 'cache-manager';
+import type { Cache } from 'cache-manager';
 import {
   RESTPostOAuth2RefreshTokenResult,
   RESTGetAPIGuildMemberResult,

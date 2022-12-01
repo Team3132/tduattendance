@@ -7,7 +7,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { ROLES } from 'src/constants';
 import { DiscordService } from 'src/discord/discord.service';
 import { GetUser } from './decorators/GetUserDecorator.decorator';

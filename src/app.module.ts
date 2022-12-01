@@ -18,24 +18,51 @@ import { AppService } from './app.service';
 import { CalendarModule } from './calendar/calendar.module';
 import { DiscordModule } from './discord/discord.module';
 import { ScancodeModule } from './scancode/scancode.module';
-import * as redisStore from 'cache-manager-redis-store';
-import { ClientOpts } from 'redis';
+// import { RedisStore, redisStore } from 'cache-manager-redis-store';
+import { redisStore } from 'cache-manager-redis-yet';
+import {
+  RedisClientOptions,
+  RedisFunctions,
+  RedisModules,
+  RedisScripts,
+} from 'redis';
+import { Config } from 'cache-manager';
 
 @Module({
   imports: [
     AuthModule,
     PrismaModule,
     ConfigModule.forRoot({ isGlobal: true, cache: true }),
-    CacheModule.register({
+    CacheModule.registerAsync<RedisClientOptions>({
       isGlobal: true,
-      // imports: [ConfigModule],
-      // useFactory: async (configService: ConfigService) => ({
-      //   store: redisStore,
-      //   host: configService.getOrThrow<string>('REDIS_HOST'),
-      //   port: 6379,
-      //   database: 1,
-      // }),
-      // inject: [ConfigService],
+      imports: [ConfigModule],
+
+      useFactory: async (configService: ConfigService) => {
+        const store = await redisStore({
+          socket: {
+            host: configService.getOrThrow<string>('REDIS_HOST'),
+            port: 6379,
+          },
+          database: 1,
+        });
+
+        return {
+          store: {
+            create: () => store,
+          },
+        };
+      },
+
+      //   // return {
+      //   //   store: redisStore({
+      //   //     socket: {
+      //   //       host: configService.getOrThrow<string>('REDIS_HOST'),
+      //   //       port: 6379,
+      //   //     },
+      //   //     database: 1,
+      //   //   }),
+      //   // };
+      inject: [ConfigService],
     }),
     PrismaModule,
     UserModule,

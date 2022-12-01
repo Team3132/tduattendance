@@ -8,7 +8,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { CalendarGuard } from 'src/auth/guard/calendar.guard';
 import { CalendarService } from './calendar.service';
 

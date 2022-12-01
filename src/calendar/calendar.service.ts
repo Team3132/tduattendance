@@ -1,8 +1,7 @@
 import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import ical, { ICalAttendeeStatus, ICalCalendarJSONData } from 'ical-generator';
-import { RSVPStatus } from '@prisma/client';
-import { Cache } from 'cache-manager';
+import type { Cache } from 'cache-manager';
 @Injectable()
 export class CalendarService {
   constructor(

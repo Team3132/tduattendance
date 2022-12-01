@@ -23,6 +23,7 @@ import {
 import { SessionGuard } from 'src/auth/guard/session.guard';
 import { Scancode } from './entities/scancode.entity';
 import { Prisma } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
 
 @ApiTags('Scancode')
 @UseGuards(SessionGuard)
@@ -56,7 +57,7 @@ export class ScancodeController {
       });
       return response;
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
           throw new ConflictException('Scancode already exists');
         } else {
