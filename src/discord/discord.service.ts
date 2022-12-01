@@ -39,8 +39,6 @@ export class DiscordService {
         'DISCORD_CLIENT_ID',
       );
 
-      const { default: fetch } = await import('node-fetch');
-
       const nodeFetched = await fetch(
         `https://discord.com/api/v10/oauth2/token`,
         {
@@ -75,7 +73,6 @@ export class DiscordService {
   }
 
   async getDiscordMemberDetails(userId: string, initialToken?: string) {
-    const { default: fetch } = await import('node-fetch');
     const cachedUser = await this.cacheManager.get<RESTGetAPIGuildMemberResult>(
       `discorduser/guild/${userId}`,
     );

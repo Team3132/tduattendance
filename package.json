@@ -1,6 +1,6 @@
 {
   "name": "tduattendance",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "author": "",
   "private": true,
@@ -46,7 +46,6 @@
     "ioredis": "^5.1.0",
     "luxon": "^3.0.1",
     "nestjs-dynamic-providers": "^0.1.7",
-    "node-fetch": "^3.3.0",
     "passport": "^0.6.0",
     "passport-discord": "^0.1.4",
     "prom-client": "^14.0.1",
