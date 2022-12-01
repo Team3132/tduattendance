@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Cache } from 'cache-manager';
-import { RedisCache } from 'cache-manager-redis-yet';
 import {
   RESTPostOAuth2RefreshTokenResult,
   RESTGetAPIGuildMemberResult,
@@ -19,7 +18,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class DiscordService {
   constructor(
-    @Inject(CACHE_MANAGER) private cacheManager: RedisCache,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,
   ) {}
