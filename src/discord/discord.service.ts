@@ -44,7 +44,7 @@ export class DiscordService {
         'DISCORD_CLIENT_ID',
       );
 
-      const rest = new REST({ version: '10' });
+      const rest = new REST({ version: '10' }).setToken('fake token');
 
       const tokenExchangeResponse = (await rest.post(
         Routes.oauth2TokenExchange(),
