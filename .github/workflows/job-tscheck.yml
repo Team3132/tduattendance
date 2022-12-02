@@ -1,6 +1,8 @@
 on:
   workflow_call:
 
+name: Type Check
+
 jobs:
   type-check:
     name: Typecheck
