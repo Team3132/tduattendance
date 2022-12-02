@@ -20,4 +20,6 @@ export class Event implements PrismaEvent {
   allDay: boolean;
   @ApiProperty({ enum: EventTypes })
   type: EventTypes;
+  @ApiProperty()
+  secret: string;
 }

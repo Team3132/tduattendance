@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Prisma, User as PrismaUser } from '@prisma/client';
+import { Exclude } from 'class-transformer';
 
 /**
  * The user object.
@@ -16,5 +17,6 @@ export class User implements Partial<PrismaUser> {
   @ApiProperty()
   updatedAt: Date;
   @ApiProperty()
+  @Exclude()
   calendarSecret: string;
 }

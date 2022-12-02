@@ -10,6 +10,8 @@ import {
   Put,
   Query,
   BadGatewayException,
+  ClassSerializerInterceptor,
+  UseInterceptors,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -35,10 +37,12 @@ import { ScaninDto } from './dto/scanin.dto';
 import { GetEventsDto } from './dto/get-events.dto';
 import { UpdateRangeRSVP } from './dto/update-rsvp-range';
 import { RSVP } from '@prisma/client';
+import { EventResponse, EventResponseType } from './dto/event-response.dto';
 
 @ApiTags('Event')
 @ApiCookieAuth()
 @UseGuards(SessionGuard)
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('event')
 export class EventController {
   constructor(
@@ -51,12 +55,12 @@ export class EventController {
    * Get all events
    * @returns {Event[]}
    */
-  @ApiOkResponse({ type: [Event] })
+  @ApiOkResponse({ type: [EventResponseType] })
   @ApiOperation({ description: 'Get all events', operationId: 'getEvents' })
   @Get()
-  findAll(@Query() eventsGet: GetEventsDto) {
+  async findAll(@Query() eventsGet: GetEventsDto) {
     const { from, to, take } = eventsGet;
-    return this.eventService.events({
+    const events = await this.eventService.events({
       take,
       where: {
         AND: [
@@ -91,6 +95,8 @@ export class EventController {
         ],
       },
     });
+
+    return events.map((event) => new EventResponse(event));
   }
 
   /**
@@ -102,11 +108,12 @@ export class EventController {
     description: 'Create a new event',
     operationId: 'createEvent',
   })
-  @ApiCreatedResponse({ type: Event })
+  @ApiCreatedResponse({ type: EventResponseType })
   @Roles([ROLES.MENTOR])
   @Post()
-  create(@Body() createEventDto: CreateEventDto) {
-    return this.eventService.createEvent(createEventDto);
+  async create(@Body() createEventDto: CreateEventDto) {
+    const event = await this.eventService.createEvent(createEventDto);
+    return new EventResponse(event);
   }
 
   /**
@@ -117,10 +124,11 @@ export class EventController {
     description: 'Get a specific event',
     operationId: 'getEvent',
   })
-  @ApiOkResponse({ type: Event })
+  @ApiOkResponse({ type: EventResponseType })
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.eventService.event({ id });
+  async findOne(@Param('id') id: string) {
+    const event = await this.eventService.event({ id });
+    return new EventResponse(event);
   }
 
   /**
@@ -129,14 +137,18 @@ export class EventController {
    * @returns {Event}
    */
   @ApiOperation({ description: 'Update an event', operationId: 'updateEvent' })
-  @ApiOkResponse({ type: Event })
+  @ApiOkResponse({ type: EventResponseType })
   @Roles([ROLES.MENTOR])
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
-    return this.eventService.updateEvent({
+  async update(
+    @Param('id') id: string,
+    @Body() updateEventDto: UpdateEventDto,
+  ) {
+    const event = await this.eventService.updateEvent({
       data: updateEventDto,
       where: { id },
     });
+    return new EventResponse(event);
   }
 
   /**
@@ -144,11 +156,12 @@ export class EventController {
    * @returns {Event}
    */
   @ApiOperation({ description: 'Delete an event', operationId: 'deleteEvent' })
-  @ApiOkResponse({ type: Event })
+  @ApiOkResponse({ type: EventResponseType })
   @Roles([ROLES.MENTOR])
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.eventService.deleteEvent(id);
+  async remove(@Param('id') id: string) {
+    const event = await this.eventService.deleteEvent(id);
+    return new EventResponse(event);
   }
 
   /**
