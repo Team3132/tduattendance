@@ -7,6 +7,6 @@ on:
 
 jobs:
   type-check:
-    uses: ./.github/jobs/tscheck.yml
+    uses: ./.github/jobs/tscheck.yml@master
   lint:
-    uses: ./.github/jobs/eslint.yml
+    uses: ./.github/jobs/eslint.yml@master
