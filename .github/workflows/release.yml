@@ -6,9 +6,9 @@ on:
 
 jobs:
   type-check:
-    uses: ./.github/workflows/tscheck-job.yml@master
+    uses: ./.github/workflows/tscheck-job.yml
   lint:
-    uses: ./.github/workflows/eslint-job.yml@master
+    uses: ./.github/workflows/eslint-job.yml
   build:
     name: Build
     runs-on: ubuntu-latest
