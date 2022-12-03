@@ -191,6 +191,25 @@ export class EventController {
     };
   }
 
+  @ApiOperation({
+    description: 'Callback for a valid code (client input)',
+    operationId: 'scanintoEvent',
+  })
+  @ApiCreatedResponse({ type: Rsvp })
+  @Post(':eventId/token/callback')
+  async eventTokenPostCallback(
+    @Query('code') code: string,
+    @Param('eventId') eventId: string,
+    @GetUser('id') userId: string,
+  ) {
+    const rsvp = await this.eventService.verifyUserEventToken(
+      eventId,
+      userId,
+      code,
+    );
+    return rsvp;
+  }
+
   /**
    * Update an event.
    * @param updateEventDto Event Update Data
