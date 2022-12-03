@@ -16,20 +16,22 @@ import https from 'https';
 import fs from 'fs';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import tracer from './tracer';
+import { WsAdapter } from '@nestjs/platform-ws';
 
 async function bootstrap() {
-  const server = express();
+  // const server = express();
   await tracer.start();
 
   console.log('Node Env:', process.env.NODE_ENV);
 
-  const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
+  const app = await NestFactory.create(AppModule, {
     cors: {
       origin: [
-        process.env.NODE_ENV === 'production'
-          ? 'https://attendance.team3132.com'
-          : 'https://localhost:4000',
-        // 'https://sebasptsch.dev',
+        // process.env.NODE_ENV === 'production'
+        //   ? 'https://attendance.team3132.com'
+        //   : 'https://localhost:4000',
+        // // 'https://sebasptsch.dev',
+        '*',
       ],
       allowedHeaders: 'X-Requested-With,Content-Type',
       credentials: true,
@@ -93,18 +95,21 @@ async function bootstrap() {
       authentication: true,
     }),
   );
+  // app.useWebSocketAdapter(new WsAdapter(app));
   SwaggerModule.setup('api', app, document, {});
-  await app.init();
-  http.createServer(server).listen(3000);
 
-  const httpsEnabled = config.get('HTTPS') === 'true';
+  // await app.init();
+  await app.listen(3000);
+  // http.createServer(server).listen(3000);
 
-  if (httpsEnabled) {
-    const httpsOptions = {
-      key: fs.readFileSync('./security/localhost.key'),
-      cert: fs.readFileSync('./security/localhost.crt'),
-    };
-    https.createServer(httpsOptions, server).listen(3443);
-  }
+  // const httpsEnabled = config.get('HTTPS') === 'true';
+
+  // if (httpsEnabled) {
+  //   const httpsOptions = {
+  //     key: fs.readFileSync('./security/localhost.key'),
+  //     cert: fs.readFileSync('./security/localhost.crt'),
+  //   };
+  //   https.createServer(httpsOptions, server).listen(3443);
+  // }
 }
 bootstrap();

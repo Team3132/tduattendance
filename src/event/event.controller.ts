@@ -12,6 +12,8 @@ import {
   BadGatewayException,
   ClassSerializerInterceptor,
   UseInterceptors,
+  NotFoundException,
+  CacheInterceptor,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -23,6 +25,7 @@ import {
   ApiBadRequestResponse,
   ApiCookieAuth,
   ApiCreatedResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -38,6 +41,9 @@ import { GetEventsDto } from './dto/get-events.dto';
 import { UpdateRangeRSVP } from './dto/update-rsvp-range';
 import { RSVP } from '@prisma/client';
 import { EventResponse, EventResponseType } from './dto/event-response.dto';
+import { EventSecret } from './dto/event-secret.dto';
+import { ApiReponseTypeNotFound } from 'src/standard-error.entity';
+import { AuthenticatorService } from 'src/authenticator/authenticator.service';
 
 @ApiTags('Event')
 @ApiCookieAuth()
@@ -49,6 +55,7 @@ export class EventController {
     private readonly eventService: EventService,
     private readonly rsvpService: RsvpService,
     private readonly scancodeService: ScancodeService,
+    private readonly authenticatorService: AuthenticatorService,
   ) {}
 
   /**
@@ -124,17 +131,45 @@ export class EventController {
     description: 'Get a specific event',
     operationId: 'getEvent',
   })
+  @ApiNotFoundResponse({ type: ApiReponseTypeNotFound })
   @ApiOkResponse({ type: EventResponseType })
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const event = await this.eventService.event({ id });
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
     return new EventResponse(event);
+  }
+
+  /**
+   * Get a specific event secret
+   * @returns {EventSecret}
+   */
+  @ApiOperation({
+    description: 'Get a specific event secret',
+    operationId: 'getEventSecret',
+  })
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Roles([ROLES.MENTOR])
+  @ApiOkResponse({ type: EventSecret })
+  @ApiNotFoundResponse({ type: ApiReponseTypeNotFound })
+  @Get(':eventId/secret')
+  async getEventSecret(@Param('eventId') eventId: string) {
+    const event = await this.eventService.event({ id: eventId });
+    const token = this.authenticatorService.getToken(event.secret);
+    console.log({ token });
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    return new EventSecret(event);
   }
 
   /**
    * Update an event.
    * @param updateEventDto Event Update Data
-   * @returns {Event}
+   * @returns {EventResponseType}
    */
   @ApiOperation({ description: 'Update an event', operationId: 'updateEvent' })
   @ApiOkResponse({ type: EventResponseType })
@@ -153,7 +188,7 @@ export class EventController {
 
   /**
    * Delete an event
-   * @returns {Event}
+   * @returns {EventResponseType}
    */
   @ApiOperation({ description: 'Delete an event', operationId: 'deleteEvent' })
   @ApiOkResponse({ type: EventResponseType })

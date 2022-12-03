@@ -1,15 +1,25 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Event, Prisma } from '@prisma/client';
+import { AuthenticatorService } from 'src/authenticator/authenticator.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class EventService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly configService: ConfigService,
+    private readonly authenticatorService: AuthenticatorService,
+  ) {}
   private readonly logger = new Logger(EventService.name);
 
   createEvent(data: Prisma.EventCreateInput) {
+    const secret = this.authenticatorService.generateSecret();
     return this.prismaService.event.create({
-      data,
+      data: {
+        ...data,
+        secret,
+      },
     });
   }
 
@@ -33,6 +43,15 @@ export class EventService {
   event(eventWhereUniqueInput: Prisma.EventWhereUniqueInput): Promise<Event> {
     return this.prismaService.event.findUnique({
       where: eventWhereUniqueInput,
+    });
+  }
+
+  eventSecret(eventWhereUniqueInput: Prisma.EventWhereUniqueInput) {
+    return this.prismaService.event.findUnique({
+      where: eventWhereUniqueInput,
+      select: {
+        secret: true,
+      },
     });
   }
 
