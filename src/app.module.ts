@@ -27,6 +27,8 @@ import {
   RedisScripts,
 } from 'redis';
 import { Config } from 'cache-manager';
+import { AuthenticatorService } from './authenticator/authenticator.service';
+import { AuthenticatorModule } from './authenticator/authenticator.module';
 
 @Module({
   imports: [
@@ -75,6 +77,7 @@ import { Config } from 'cache-manager';
     CalendarModule,
     DiscordModule,
     ScancodeModule,
+    AuthenticatorModule,
     // DiscordBotModule.forRootAsync({
     //   imports: [ConfigModule],
     //   inject: [ConfigService],

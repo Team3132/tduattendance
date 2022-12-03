@@ -1,15 +1,32 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { Event, Prisma } from '@prisma/client';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Event, Prisma, RSVPStatus } from '@prisma/client';
+import { AuthenticatorService } from 'src/authenticator/authenticator.service';
+import { RsvpService } from 'src/rsvp/rsvp.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class EventService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly configService: ConfigService,
+    private readonly authenticatorService: AuthenticatorService,
+    private readonly rsvpService: RsvpService,
+  ) {}
   private readonly logger = new Logger(EventService.name);
 
   createEvent(data: Prisma.EventCreateInput) {
+    const secret = this.authenticatorService.generateSecret();
     return this.prismaService.event.create({
-      data,
+      data: {
+        ...data,
+        secret,
+      },
     });
   }
 
@@ -36,6 +53,15 @@ export class EventService {
     });
   }
 
+  eventSecret(eventWhereUniqueInput: Prisma.EventWhereUniqueInput) {
+    return this.prismaService.event.findUnique({
+      where: eventWhereUniqueInput,
+      select: {
+        secret: true,
+      },
+    });
+  }
+
   updateEvent(params: {
     where: Prisma.EventWhereUniqueInput;
     data: Prisma.EventUpdateInput;
@@ -49,5 +75,40 @@ export class EventService {
 
   deleteEvent(id: Event['id']) {
     return this.prismaService.event.delete({ where: { id } });
+  }
+
+  async verifyUserEventToken(eventId: string, userId: string, token: string) {
+    const event = await this.event({ id: eventId });
+    if (!event) throw new NotFoundException('No event found');
+
+    const isValid = this.authenticatorService.verifyToken(event.secret, token);
+    if (!isValid) throw new BadRequestException('Code not valid');
+
+    const rsvp = this.rsvpService.upsertRSVP({
+      where: {
+        eventId_userId: {
+          eventId,
+          userId,
+        },
+      },
+      update: {
+        status: RSVPStatus.ATTENDED,
+      },
+      create: {
+        status: RSVPStatus.ATTENDED,
+        event: {
+          connect: {
+            id: eventId,
+          },
+        },
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
+    });
+
+    return rsvp;
   }
 }
