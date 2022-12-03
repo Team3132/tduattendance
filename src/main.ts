@@ -27,11 +27,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: {
       origin: [
-        // process.env.NODE_ENV === 'production'
-        //   ? 'https://attendance.team3132.com'
-        //   : 'https://localhost:4000',
-        // // 'https://sebasptsch.dev',
-        '*',
+        process.env.NODE_ENV === 'production'
+          ? 'https://attendance.team3132.com'
+          : 'https://localhost:4000',
+        // 'https://sebasptsch.dev',
       ],
       allowedHeaders: 'X-Requested-With,Content-Type',
       credentials: true,
