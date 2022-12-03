@@ -257,9 +257,11 @@ export class EventController {
     @Param('eventId') eventId: string,
     @GetUser('id') userId: Express.User['id'],
   ) {
-    return this.rsvpService.firstRSVP({
-      eventId,
-      userId,
+    return this.rsvpService.rsvp({
+      eventId_userId: {
+        eventId,
+        userId,
+      },
     });
   }
 
@@ -277,23 +279,32 @@ export class EventController {
   async setEventRsvp(
     @Param('eventId') eventId: string,
     @GetUser('id') userId: Express.User['id'],
-    @Body() setRSVPDto: UpdateOrCreateRSVP,
+    @Body() { status }: UpdateOrCreateRSVP,
   ) {
-    const existingRSVP = await this.rsvpService.firstRSVP({ eventId, userId });
-
     return this.rsvpService.upsertRSVP({
       where: {
-        id: existingRSVP?.id ?? '',
+        eventId_userId: {
+          eventId,
+          userId,
+        },
       },
       create: {
-        event: { connect: { id: eventId } },
+        event: {
+          connect: { id: eventId },
+        },
         user: {
           connect: { id: userId },
         },
-        ...setRSVPDto,
+        status,
       },
       update: {
-        ...setRSVPDto,
+        event: {
+          connect: { id: eventId },
+        },
+        user: {
+          connect: { id: userId },
+        },
+        status,
       },
     });
   }

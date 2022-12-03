@@ -103,39 +103,26 @@ export class RsvpService {
 
   upsertManyRSVP(userId: string, eventIds: string[], status: RSVPStatus) {
     return Promise.all(
-      eventIds.map(async (item) => {
-        const existing = await this.prismaService.rSVP.findFirst({
+      eventIds.map((eventId) =>
+        this.prismaService.rSVP.upsert({
           where: {
-            eventId: item,
-            userId,
+            eventId_userId: {
+              eventId,
+              userId,
+            },
           },
-        });
-
-        if (existing) {
-          return this.prismaService.rSVP.update({
-            where: { id: existing.id },
-            data: {
-              status,
-            },
-          });
-        } else {
-          return this.prismaService.rSVP.create({
-            data: {
-              event: {
-                connect: {
-                  id: item,
-                },
-              },
-              user: {
-                connect: {
-                  id: userId,
-                },
-              },
-              status,
-            },
-          });
-        }
-      }),
+          update: {
+            eventId,
+            userId,
+            status,
+          },
+          create: {
+            eventId,
+            userId,
+            status,
+          },
+        }),
+      ),
     );
   }
 }
