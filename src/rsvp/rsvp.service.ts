@@ -1,8 +1,6 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { Prisma, RSVPStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateRsvpDto } from './dto/create-rsvp.dto';
-import { UpdateRsvpDto } from './dto/update-rsvp.dto';
 
 @Injectable()
 export class RsvpService {
@@ -69,61 +67,38 @@ export class RsvpService {
 
   async scanin(params: { code: string; eventId: string }) {
     const { code, eventId } = params;
+
     const scancode = await this.prismaService.scancode.findUnique({
       where: {
         code,
       },
-      include: {
-        user: true,
+      select: {
+        userId: true,
       },
     });
 
-    if (scancode) {
-      const rsvp = await this.prismaService.rSVP.findFirst({
-        where: {
-          eventId,
-          userId: scancode.userId,
-        },
-      });
+    if (!scancode) throw new BadRequestException('Not a valid code');
 
-      if (rsvp) {
-        if (rsvp.status === RSVPStatus.ATTENDED) {
-          throw new BadRequestException('User has already scanned in');
-        } else {
-          const rsvpUpdate = await this.prismaService.rSVP.update({
-            where: {
-              id: rsvp.id,
-            },
-            data: {
-              status: RSVPStatus.ATTENDED,
-              user: {
-                connect: {
-                  id: scancode.userId,
-                },
-              },
-            },
-          });
-          return rsvpUpdate;
-        }
-      } else {
-        const rsvpCreate = await this.prismaService.rSVP.create({
-          data: {
-            status: RSVPStatus.ATTENDED,
-            user: {
-              connect: {
-                id: scancode.userId,
-              },
-            },
-            event: {
-              connect: {
-                id: eventId,
-              },
-            },
-          },
-        });
-        return rsvpCreate;
-      }
-    }
+    const { userId } = scancode;
+
+    const rsvp = this.prismaService.rSVP.upsert({
+      where: {
+        eventId_userId: {
+          eventId,
+          userId,
+        },
+      },
+      update: {
+        status: RSVPStatus.ATTENDED,
+      },
+      create: {
+        status: RSVPStatus.ATTENDED,
+        eventId,
+        userId,
+      },
+    });
+
+    return rsvp;
   }
 
   upsertManyRSVP(userId: string, eventIds: string[], status: RSVPStatus) {

@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { authenticator } from 'otplib';
 
 @Injectable()
 export class AuthenticatorService {
-  constructor(private readonly configService: ConfigService) {}
-
   /**
    * Generates a unique secret (store in event)
    * @returns {string} The authenticator token

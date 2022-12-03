@@ -14,6 +14,9 @@ import {
   UseInterceptors,
   NotFoundException,
   CacheInterceptor,
+  BadRequestException,
+  Res,
+  Redirect,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -44,6 +47,7 @@ import { EventResponse, EventResponseType } from './dto/event-response.dto';
 import { EventSecret } from './dto/event-secret.dto';
 import { ApiReponseTypeNotFound } from 'src/standard-error.entity';
 import { AuthenticatorService } from 'src/authenticator/authenticator.service';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('Event')
 @ApiCookieAuth()
@@ -56,6 +60,7 @@ export class EventController {
     private readonly rsvpService: RsvpService,
     private readonly scancodeService: ScancodeService,
     private readonly authenticatorService: AuthenticatorService,
+    private readonly configService: ConfigService,
   ) {}
 
   /**
@@ -150,20 +155,40 @@ export class EventController {
     description: 'Get a specific event secret',
     operationId: 'getEventSecret',
   })
-  @UseInterceptors(ClassSerializerInterceptor)
   @Roles([ROLES.MENTOR])
   @ApiOkResponse({ type: EventSecret })
   @ApiNotFoundResponse({ type: ApiReponseTypeNotFound })
-  @Get(':eventId/secret')
+  @Get(':eventId/token')
   async getEventSecret(@Param('eventId') eventId: string) {
     const event = await this.eventService.event({ id: eventId });
-    const token = this.authenticatorService.getToken(event.secret);
-    console.log({ token });
     if (!event) {
       throw new NotFoundException('Event not found');
     }
 
     return new EventSecret(event);
+  }
+
+  /**
+   * Callback for the successful token
+   */
+  @ApiOperation({
+    description: 'Callback for a successful token',
+    operationId: 'getEventSecretCallback',
+  })
+  @Get(':eventId/token/callback')
+  @Redirect()
+  async eventTokenCallback(
+    @Query('code') code: string,
+    @Param('eventId') eventId: string,
+    @GetUser('id') userId: string,
+  ) {
+    await this.eventService.verifyUserEventToken(eventId, userId, code);
+    return {
+      url:
+        this.configService.get('NODE_ENV') === 'production'
+          ? `https://attendance.team3132.com/calendar`
+          : `https://localhost:4000/calendar`,
+    };
   }
 
   /**

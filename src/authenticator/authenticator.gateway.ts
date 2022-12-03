@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import {
   MessageBody,
   SubscribeMessage,
@@ -11,8 +11,12 @@ import {
 } from '@nestjs/websockets';
 import { from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-// import { Server } from 'socket.io';
-import type { Server } from 'ws';
+import { Server } from 'socket.io';
+import { Roles } from 'src/auth/decorators/DiscordRoleDecorator.decorator';
+import { RolesGuard } from 'src/auth/guard/role.guard';
+import { SessionGuard } from 'src/auth/guard/session.guard';
+import { ROLES } from 'src/constants';
+// import type { Server } from 'ws';
 
 @WebSocketGateway({
   cors: {
@@ -22,24 +26,25 @@ import type { Server } from 'ws';
 export class AuthenticatorGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
+  handleConnection(client: any, ...args: any[]) {
+    // throw new Error('Method not implemented.');
+  }
+  handleDisconnect(client: any) {
+    // throw new Error('Method not implemented.');
+  }
   logger = new Logger(AuthenticatorGateway.name);
 
   async afterInit(server: any) {
     // throw new Error('Method not implemented.');
     console.log({ server: server });
   }
-  handleConnection(client: any, ...args: any[]) {
-    this.logger.log('handleConnection');
-    // throw new Error('Method not implemented.');
-  }
-  handleDisconnect(client: any) {
-    this.logger.log('handleDisconnect');
-    // throw new Error('Method not implemented.');
-  }
 
   @WebSocketServer()
   server: Server;
 
+  // @UseGuards(SessionGuard)
+
+  @Roles([ROLES.MENTOR])
   @SubscribeMessage('events')
   findAll(@MessageBody() data: any): Observable<WsResponse<number>> {
     return from([1, 2, 3]).pipe(
