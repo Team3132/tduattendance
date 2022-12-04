@@ -25,11 +25,15 @@ import {
   ApiReponseTypeBadRequest,
   ApiReponseTypeForbidden,
 } from '../standard-error.entity';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly discordService: DiscordService) {}
+  constructor(
+    private readonly discordService: DiscordService,
+    private readonly configService: ConfigService,
+  ) {}
 
   /**
    * Auth Status
@@ -79,14 +83,13 @@ export class AuthController {
     description: 'Sign in using discord (callback)',
     operationId: 'discordSigninCallback',
   })
-  @Redirect(
-    process.env.NODE_ENV === 'production'
-      ? 'https://attendance.team3132.com/calendar'
-      : 'http://localhost:4000/calendar',
-  )
+  @Redirect()
   @UseGuards(DiscordAuthGuard)
   @Get('discord/callback')
   discordSigninCallback() {
+    return {
+      url: `${this.configService.getOrThrow('FRONTEND_URL')}/calendar`,
+    };
     // res.redirect('back');
   }
 
@@ -96,16 +99,10 @@ export class AuthController {
   })
   @UseGuards(SessionGuard)
   @Get('logout')
-  async logout(
-    @Session() session: Express.Request['session'],
-    @Res() res: Response,
-  ) {
-    session.destroy(() => {
-      res.redirect(
-        process.env.NODE_ENV === 'production'
-          ? 'https://attendance.team3132.com'
-          : 'http://localhost:4000',
-      );
-    });
+  @Redirect()
+  async logout(@Session() session: Express.Request['session']) {
+    session.destroy(() => null);
+
+    return { url: this.configService.getOrThrow('FRONTEND_URL') };
   }
 }

@@ -177,10 +177,7 @@ export class EventController {
   ) {
     await this.eventService.verifyUserEventToken(eventId, userId, code);
     return {
-      url:
-        this.configService.get('NODE_ENV') === 'production'
-          ? `https://attendance.team3132.com/calendar`
-          : `http://localhost:4000/calendar`,
+      url: `${this.configService.getOrThrow('FRONTEND_URL')}/calendar`,
     };
   }
 
