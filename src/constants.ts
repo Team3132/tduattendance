@@ -1,6 +1,9 @@
 /** Prod */
 export const ROLES = {
-  MENTOR: '605687041228800030',
+  MENTOR:
+    process.env.NODE_ENV === 'production'
+      ? '605687041228800030'
+      : '997106706616176690',
 };
 
 export type ROLE = keyof typeof ROLES;
