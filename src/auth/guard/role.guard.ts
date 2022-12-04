@@ -34,12 +34,10 @@ export class RolesGuard implements CanActivate {
       if (!apiRoles) {
         return true;
       }
-      const request = context.switchToHttp().getRequest();
-      const user = request.user;
-      const { roles: fetchedRoles } =
-        await this.discordService.getDiscordMemberDetails(user['id']);
+      const request: Express.Request = context.switchToHttp().getRequest();
+      const { roles } = request.user;
 
-      return fetchedRoles.some((discordRole) =>
+      return roles.some((discordRole) =>
         apiRoles.some((apiRole) => apiRole === discordRole),
       );
     } catch (error) {

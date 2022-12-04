@@ -39,21 +39,10 @@ export class AuthController {
   @ApiOkResponse({ type: AuthStatusDto })
   @Get('status')
   async status(@GetUser() user: Express.User): Promise<AuthStatusDto> {
-    const getRoles = async () => {
-      if (!user) {
-        return [];
-      }
-      const discordUser = await this.discordService.getDiscordMemberDetails(
-        user['id'],
-      );
-      return discordUser.roles;
-    };
-    const roles = await getRoles();
-    const isAdmin = roles.includes(ROLES.MENTOR);
+    const isAdmin = user.roles.includes(ROLES.MENTOR);
 
     return {
       isAuthenticated: !!user,
-      roles,
       isAdmin,
     };
   }

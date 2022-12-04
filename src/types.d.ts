@@ -4,7 +4,7 @@ import { User as PrismaUser } from '@prisma/client';
 
 declare global {
   namespace Express {
-    interface User extends PrismaUser {
+    interface User {
       id: string;
       firstName: string | null;
       lastName: string | null;
@@ -13,6 +13,7 @@ declare global {
       discordRefreshToken: string;
       calendarSecret: string;
       email: string | null;
+      roles: string[];
     }
   }
 }

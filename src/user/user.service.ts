@@ -85,13 +85,6 @@ export class UserService {
     return this.discordService.getDiscordMemberDetails(userId);
   }
 
-  async isMentor(userId: string) {
-    const discordProfile = await this.discordService.getDiscordMemberDetails(
-      userId,
-    );
-    return discordProfile.roles.includes(ROLES.MENTOR);
-  }
-
   async outreachReport(userId: string, from?: string, to?: string) {
     try {
       const rsvps = await this.prismaService.rSVP.findMany({
