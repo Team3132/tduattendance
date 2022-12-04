@@ -24,21 +24,15 @@ async function bootstrap() {
 
   console.log('Node Env:', process.env.NODE_ENV);
 
-  const app = await NestFactory.create(AppModule, {
-    cors: {
-      origin: [
-        process.env.NODE_ENV === 'production'
-          ? 'https://attendance.team3132.com'
-          : 'https://localhost:4000',
-        // 'https://sebasptsch.dev',
-      ],
-      allowedHeaders: 'X-Requested-With,Content-Type',
-      credentials: true,
-      methods: 'GET, POST, OPTIONS, PUT, PATCH, DELETE',
-    },
-  });
-
+  const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
+
+  app.enableCors({
+    origin: [config.getOrThrow('FRONTEND_URL')],
+    allowedHeaders: 'X-Requested-With,Content-Type',
+    credentials: true,
+    methods: 'GET, POST, OPTIONS, PUT, PATCH, DELETE',
+  });
 
   app.use(helmet());
   app.use(cookieParser(config.getOrThrow('COOKIE_SECRET')));
