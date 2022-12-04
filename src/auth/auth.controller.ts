@@ -82,7 +82,7 @@ export class AuthController {
   @Redirect(
     process.env.NODE_ENV === 'production'
       ? 'https://attendance.team3132.com/calendar'
-      : 'https://localhost:4000/calendar',
+      : 'http://localhost:4000/calendar',
   )
   @UseGuards(DiscordAuthGuard)
   @Get('discord/callback')
@@ -104,7 +104,7 @@ export class AuthController {
       res.redirect(
         process.env.NODE_ENV === 'production'
           ? 'https://attendance.team3132.com'
-          : 'https://localhost:4000',
+          : 'http://localhost:4000',
       );
     });
   }

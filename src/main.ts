@@ -29,7 +29,7 @@ async function bootstrap() {
       origin: [
         process.env.NODE_ENV === 'production'
           ? 'https://attendance.team3132.com'
-          : 'https://localhost:4000',
+          : 'http://localhost:4000',
         // 'https://sebasptsch.dev',
       ],
       allowedHeaders: 'X-Requested-With,Content-Type',

@@ -180,7 +180,7 @@ export class EventController {
       url:
         this.configService.get('NODE_ENV') === 'production'
           ? `https://attendance.team3132.com/calendar`
-          : `https://localhost:4000/calendar`,
+          : `http://localhost:4000/calendar`,
     };
   }
 
