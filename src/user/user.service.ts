@@ -50,6 +50,7 @@ export class UserService {
         calendarSecret: true,
         createdAt: true,
         updatedAt: true,
+        roles: true,
       },
     });
   }
