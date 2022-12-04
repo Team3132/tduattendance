@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { DiscordService } from '@discord/discord.service';
 import { PrismaService } from '@prisma/prisma.service';
-import { AuthService } from '@auth.service';
+import { AuthService } from '@auth/auth.service';
 
 @Injectable()
 export class CalendarGuard implements CanActivate {
