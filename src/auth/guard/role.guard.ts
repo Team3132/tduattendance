@@ -14,7 +14,7 @@ import { ConfigService } from '@nestjs/config';
 import { ROLES } from '../@/constants';
 import { Cache } from 'cache-manager';
 import { AuthService } from '@auth.service';
-import { DiscordService } from 'src/discord/discord.service';
+import { DiscordService } from '@discord/discord.service';
 
 @Injectable()
 export class RolesGuard implements CanActivate {

@@ -1,8 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
-import { DiscordService } from 'src/discord/discord.service';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { DiscordService } from '@discord/discord.service';
+import { PrismaService } from '@prisma/prisma.service';
 import { AuthService } from '@auth.service';
 
 @Injectable()

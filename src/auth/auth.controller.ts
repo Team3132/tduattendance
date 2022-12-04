@@ -15,8 +15,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import type { Response } from 'express';
-import { ROLES } from 'src/constants';
-import { DiscordService } from 'src/discord/discord.service';
+import { ROLES } from '@/constants';
+import { DiscordService } from '@discord/discord.service';
 import { GetUser } from './decorators/GetUserDecorator.decorator';
 import { AuthStatusDto } from './dto/AuthStatus.dto';
 import { DiscordAuthGuard } from './guard/discord.guard';

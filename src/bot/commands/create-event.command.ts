@@ -29,9 +29,9 @@ import {
   TextInputBuilder,
   TextInputStyle,
 } from 'discord.js';
-import { EventService } from 'src/event/event.service';
-import { RsvpService } from 'src/rsvp/rsvp.service';
-import { ScancodeService } from 'src/scancode/scancode.service';
+import { EventService } from '@event/event.service';
+import { RsvpService } from '@rsvp/rsvp.service';
+import { ScancodeService } from '@scancode/scancode.service';
 import { IsModalInteractionGuard } from '../guard/is-modal-interaction-guard';
 import { NewEventDto } from './dto/new-event.dto';
 
