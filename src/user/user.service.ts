@@ -10,9 +10,9 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { v4 as uuid } from 'uuid';
-import { AuthService } from 'src/auth/auth.service';
-import { DiscordService } from 'src/discord/discord.service';
-import { ROLES } from 'src/constants';
+import { AuthService } from '@auth/auth.service';
+import { DiscordService } from '@discord/discord.service';
+import { ROLES } from '@/constants';
 
 @Injectable()
 export class UserService {

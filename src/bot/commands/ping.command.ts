@@ -9,9 +9,9 @@ import {
 } from '@discord-nestjs/core';
 import { Logger } from '@nestjs/common';
 import { CommandInteraction, PermissionFlagsBits } from 'discord.js';
-import { EventService } from 'src/event/event.service';
-import { RsvpService } from 'src/rsvp/rsvp.service';
-import { ScancodeService } from 'src/scancode/scancode.service';
+import { EventService } from '@event/event.service';
+import { RsvpService } from '@rsvp/rsvp.service';
+import { ScancodeService } from '@scancode/scancode.service';
 
 @Command({
   name: 'ping',

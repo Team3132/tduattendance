@@ -1,4 +1,4 @@
-import { Logger, UseGuards } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import {
   MessageBody,
   SubscribeMessage,
@@ -12,10 +12,8 @@ import {
 import { from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Server } from 'socket.io';
-import { Roles } from 'src/auth/decorators/DiscordRoleDecorator.decorator';
-import { RolesGuard } from 'src/auth/guard/role.guard';
-import { SessionGuard } from 'src/auth/guard/session.guard';
-import { ROLES } from 'src/constants';
+import { Roles } from '@auth/decorators/DiscordRoleDecorator.decorator';
+import { ROLES } from '@/constants';
 // import type { Server } from 'ws';
 
 @WebSocketGateway({
