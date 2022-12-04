@@ -1,5 +1,5 @@
 import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '@prisma/prisma.service';
 import ical, { ICalAttendeeStatus, ICalCalendarJSONData } from 'ical-generator';
 import type { Cache } from 'cache-manager';
 import { RedisCache } from 'cache-manager-redis-yet';

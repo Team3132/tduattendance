@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { ScancodeService } from './scancode.service';
 import { CreateScancodeDto } from './dto/create-scancode.dto';
-import { GetUser } from 'src/auth/decorators/GetUserDecorator.decorator';
+import { GetUser } from '@auth/decorators/GetUserDecorator.decorator';
 import {
   ApiCookieAuth,
   ApiCreatedResponse,
@@ -20,7 +20,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { SessionGuard } from 'src/auth/guard/session.guard';
+import { SessionGuard } from '@auth/guard/session.guard';
 import { Scancode } from './entities/scancode.entity';
 import { Prisma } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';

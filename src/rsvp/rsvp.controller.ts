@@ -18,11 +18,11 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { SessionGuard } from '../auth/guard/session.guard';
-import { GetUser } from '../auth/decorators/GetUserDecorator.decorator';
+import { SessionGuard } from '@auth/guard/session.guard';
+import { GetUser } from '@auth/decorators/GetUserDecorator.decorator';
 import { Rsvp } from './entities/rsvp.entity';
-import { Roles } from '../auth/decorators/DiscordRoleDecorator.decorator';
-import { ROLES } from '../constants';
+import { Roles } from '@auth/decorators/DiscordRoleDecorator.decorator';
+import { ROLES } from '@/constants';
 
 @ApiTags('RSVP')
 @ApiCookieAuth()

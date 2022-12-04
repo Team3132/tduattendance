@@ -8,10 +8,10 @@ import {
   UsePipes,
 } from '@discord-nestjs/core';
 import { Logger } from '@nestjs/common';
-import { EventService } from 'src/event/event.service';
-import { RsvpService } from 'src/rsvp/rsvp.service';
-import { ScancodeService } from 'src/scancode/scancode.service';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { EventService } from '@event/event.service';
+import { RsvpService } from '@rsvp/rsvp.service';
+import { ScancodeService } from '@scancode/scancode.service';
+import { PrismaService } from '@prisma/prisma.service';
 import { Event } from '@prisma/client';
 import { DateTime } from 'luxon';
 import {
