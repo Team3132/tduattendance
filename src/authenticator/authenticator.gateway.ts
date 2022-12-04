@@ -34,7 +34,7 @@ export class AuthenticatorGateway
 
   async afterInit(server: any) {
     // throw new Error('Method not implemented.');
-    console.log({ server: server });
+    // console.log({ server: server });
   }
 
   @WebSocketServer()

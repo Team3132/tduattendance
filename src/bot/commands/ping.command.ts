@@ -19,11 +19,6 @@ import { ScancodeService } from '@scancode/scancode.service';
   // defaultMemberPermissions: [PermissionFlagsBits.Administrator],
 })
 export class PingCommand implements DiscordCommand {
-  constructor(
-    private readonly eventService: EventService,
-    private readonly rsvpService: RsvpService,
-    private readonly scancodeService: ScancodeService,
-  ) {}
   handler(interaction: CommandInteraction) {
     const logger = new Logger(PingCommand.name);
 

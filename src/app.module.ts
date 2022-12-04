@@ -21,17 +21,11 @@ import { ScancodeModule } from './scancode/scancode.module';
 // import { RedisStore, redisStore } from 'cache-manager-redis-store';
 import { DiscordModule as DiscordBotModule } from '@discord-nestjs/core';
 import { redisStore } from 'cache-manager-redis-yet';
-import {
-  RedisClientOptions,
-  RedisFunctions,
-  RedisModules,
-  RedisScripts,
-} from 'redis';
-import { Config } from 'cache-manager';
-import { AuthenticatorService } from './authenticator/authenticator.service';
+import { RedisClientOptions } from 'redis';
 import { AuthenticatorModule } from './authenticator/authenticator.module';
 import { GatewayIntentBits, Snowflake } from 'discord.js';
 import { BotSlashCommands } from './bot/bot-slash-commands.module';
+import { BotModule } from './bot/bot.module';
 
 @Module({
   imports: [
@@ -81,6 +75,7 @@ import { BotSlashCommands } from './bot/bot-slash-commands.module';
     DiscordModule,
     ScancodeModule,
     AuthenticatorModule,
+    BotModule,
     DiscordBotModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -93,6 +88,8 @@ import { BotSlashCommands } from './bot/bot-slash-commands.module';
           {
             forGuilds: configService.getOrThrow<Snowflake>('GUILD_ID'),
             removeCommandsBefore: true,
+            /** Remove to deploy commands */
+            allowFactory: () => true,
           },
         ],
       }),
