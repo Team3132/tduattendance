@@ -28,4 +28,19 @@ export class EventResponse implements Event {
   }
 }
 
-export class EventResponseType extends OmitType(EventResponse, ['secret']) {}
+export class EventResponseType implements Partial<Event> {
+  @ApiProperty()
+  id: string;
+  @ApiProperty()
+  description: string;
+  @ApiProperty()
+  title: string;
+  @ApiProperty()
+  startDate: Date;
+  @ApiProperty()
+  endDate: Date;
+  @ApiProperty()
+  allDay: boolean;
+  @ApiProperty({ enum: EventTypes })
+  type: EventTypes;
+}
