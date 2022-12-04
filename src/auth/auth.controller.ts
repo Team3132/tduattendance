@@ -39,11 +39,11 @@ export class AuthController {
   @ApiOkResponse({ type: AuthStatusDto })
   @Get('status')
   async status(@GetUser() user: Express.User): Promise<AuthStatusDto> {
-    const isAdmin = user.roles.includes(ROLES.MENTOR);
+    const isAdmin = user?.roles.includes(ROLES.MENTOR);
 
     return {
       isAuthenticated: !!user,
-      isAdmin,
+      isAdmin: !!isAdmin,
     };
   }
 
