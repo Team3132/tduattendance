@@ -19,20 +19,13 @@ import { ScancodeService } from '@scancode/scancode.service';
   // defaultMemberPermissions: [PermissionFlagsBits.Administrator],
 })
 export class PingCommand implements DiscordCommand {
-  constructor(
-    private readonly eventService: EventService,
-    private readonly rsvpService: RsvpService,
-    private readonly scancodeService: ScancodeService,
-  ) {}
   handler(interaction: CommandInteraction) {
     const logger = new Logger(PingCommand.name);
 
     logger.log(`Bot pinged by ${interaction.user.username}`);
 
     return {
-      content: `Pong from JavaScript! Bot Latency ${Math.round(
-        interaction.client.ws.ping,
-      )}ms.`,
+      content: `Pong! Bot Latency ${Math.round(interaction.client.ws.ping)}ms.`,
       ephemeral: true,
     };
   }
