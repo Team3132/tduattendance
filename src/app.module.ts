@@ -82,7 +82,7 @@ import { BotModule } from './bot/bot.module';
       useFactory: async (configService: ConfigService) => ({
         token: configService.getOrThrow<string>('DISCORD_TOKEN'),
         discordClientOptions: {
-          intents: [GatewayIntentBits.GuildMembers],
+          intents: [GatewayIntentBits.GuildMembers, GatewayIntentBits.Guilds],
         },
         registerCommandOptions: [
           {

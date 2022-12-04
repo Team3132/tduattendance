@@ -13,14 +13,18 @@ export class BotService {
 
   async getGuild() {
     const guildId = this.configService.getOrThrow<string>('GUILD_ID');
-    return (
-      this.client.guilds.cache.get(guildId) ?? this.client.guilds.fetch(guildId)
-    );
+    console.log(guildId);
+    const cachedGuild = this.client.guilds.cache.get(guildId);
+
+    if (!cachedGuild || !cachedGuild.available) {
+      return this.client.guilds.fetch(guildId);
+    } else {
+      return cachedGuild;
+    }
   }
 
   async getRoles() {
     const guild = await this.getGuild();
-    if (!guild.available) throw new Error("Guild isn't available");
     return guild.roles.cache.size ? guild.roles.cache : guild.roles.fetch();
   }
 }
