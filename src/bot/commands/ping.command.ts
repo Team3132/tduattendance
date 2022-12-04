@@ -30,9 +30,7 @@ export class PingCommand implements DiscordCommand {
     logger.log(`Bot pinged by ${interaction.user.username}`);
 
     return {
-      content: `Pong from JavaScript! Bot Latency ${Math.round(
-        interaction.client.ws.ping,
-      )}ms.`,
+      content: `Pong! Bot Latency ${Math.round(interaction.client.ws.ping)}ms.`,
       ephemeral: true,
     };
   }
