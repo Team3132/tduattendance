@@ -7,23 +7,18 @@ import {
   Param,
   Delete,
   UseGuards,
-  Put,
   Query,
-  BadGatewayException,
   ClassSerializerInterceptor,
   UseInterceptors,
   NotFoundException,
-  CacheInterceptor,
-  BadRequestException,
-  Res,
   Redirect,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
-import { SessionGuard } from '../auth/guard/session.guard';
-import { Roles } from '../auth/decorators/DiscordRoleDecorator.decorator';
-import { ROLES } from '../constants';
+import { SessionGuard } from '@auth/guard/session.guard';
+import { Roles } from '@auth/decorators/DiscordRoleDecorator.decorator';
+import { ROLES } from '@/constants';
 import {
   ApiBadRequestResponse,
   ApiCookieAuth,
@@ -33,20 +28,18 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { Event } from './entities/event.entity';
-import { RsvpService } from '../rsvp/rsvp.service';
-import { Rsvp } from '../rsvp/entities/rsvp.entity';
-import { GetUser } from '../auth/decorators/GetUserDecorator.decorator';
+import { RsvpService } from '@rsvp/rsvp.service';
+import { Rsvp } from '@rsvp/entities/rsvp.entity';
+import { GetUser } from '@auth/decorators/GetUserDecorator.decorator';
 import { UpdateOrCreateRSVP } from './dto/update-rsvp.dto';
-import { ScancodeService } from 'src/scancode/scancode.service';
+import { ScancodeService } from '@scancode/scancode.service';
 import { ScaninDto } from './dto/scanin.dto';
 import { GetEventsDto } from './dto/get-events.dto';
 import { UpdateRangeRSVP } from './dto/update-rsvp-range';
-import { RSVP } from '@prisma/client';
 import { EventResponse, EventResponseType } from './dto/event-response.dto';
 import { EventSecret } from './dto/event-secret.dto';
-import { ApiReponseTypeNotFound } from 'src/standard-error.entity';
-import { AuthenticatorService } from 'src/authenticator/authenticator.service';
+import { ApiReponseTypeNotFound } from '@/standard-error.entity';
+import { AuthenticatorService } from '@authenticator/authenticator.service';
 import { ConfigService } from '@nestjs/config';
 
 @ApiTags('Event')

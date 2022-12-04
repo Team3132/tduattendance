@@ -14,7 +14,7 @@ import {
   RESTGetAPIGuildMemberResult,
   Routes,
 } from 'discord-api-types/v10';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '@prisma/prisma.service';
 
 @Injectable()
 export class DiscordService {
