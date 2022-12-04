@@ -21,110 +21,166 @@
     @ApiDefaultResponse()
  */
 
-export class ApiReponseTypeBadRequest {
+import { ApiProperty } from '@nestjs/swagger';
+
+export class ApiResponseTypeBadRequest {
+  @ApiProperty()
   statusCode: 400;
+  @ApiProperty()
   message: string;
+  @ApiProperty()
   error: string;
 }
 
-export class ApiReponseTypeUnauthorized {
+export class ApiResponseTypeUnauthorized {
+  @ApiProperty()
   statusCode: 401;
+  @ApiProperty()
   message: string;
+  @ApiProperty()
   error: string;
 }
 
-export class ApiReponseTypeForbidden {
+export class ApiResponseTypeForbidden {
+  @ApiProperty()
   statusCode: 403;
+  @ApiProperty()
   message: string;
+  @ApiProperty()
   error: string;
 }
 
-export class ApiReponseTypeNotFound {
+export class ApiResponseTypeNotFound {
+  @ApiProperty()
   statusCode: 404;
+  @ApiProperty()
   message: string;
+  @ApiProperty()
   error: string;
 }
 
-export class ApiReponseTypeMethodNotAllowed {
+export class ApiResponseTypeMethodNotAllowed {
+  @ApiProperty()
   statusCode: 405;
+  @ApiProperty()
   message: string;
+  @ApiProperty()
   error: string;
 }
 
-export class ApiReponseTypeNotAcceptable {
+export class ApiResponseTypeNotAcceptable {
+  @ApiProperty()
   statusCode: 406;
+  @ApiProperty()
   message: string;
+  @ApiProperty()
   error: string;
 }
 
-export class ApiReponseTypeRequestTimeout {
+export class ApiResponseTypeRequestTimeout {
+  @ApiProperty()
   statusCode: 408;
+  @ApiProperty()
   message: string;
+  @ApiProperty()
   error: string;
 }
 
-export class ApiReponseTypeConflict {
+export class ApiResponseTypeConflict {
+  @ApiProperty()
   statusCode: 409;
+  @ApiProperty()
   message: string;
+  @ApiProperty()
   error: string;
 }
 
-export class ApiReponseTypeGone {
+export class ApiResponseTypeGone {
+  @ApiProperty()
   statusCode: 410;
+  @ApiProperty()
   message: string;
+  @ApiProperty()
   error: string;
 }
 
-export class ApiReponseTypePayloadTooLarge {
+export class ApiResponseTypePayloadTooLarge {
+  @ApiProperty()
   statusCode: 413;
+  @ApiProperty()
   message: string;
+  @ApiProperty()
   error: string;
 }
 
-export class ApiReponseTypeUnsupportedMediaType {
+export class ApiResponseTypeUnsupportedMediaType {
+  @ApiProperty()
   statusCode: 415;
+  @ApiProperty()
   message: string;
+  @ApiProperty()
   error: string;
 }
 
-export class ApiReponseTypeUnprocessableEntity {
+export class ApiResponseTypeUnprocessableEntity {
+  @ApiProperty()
   statusCode: 422;
+  @ApiProperty()
   message: string;
+  @ApiProperty()
   error: string;
 }
 
-export class ApiReponseTypeInternalServerError {
+export class ApiResponseTypeInternalServerError {
+  @ApiProperty()
   statusCode: 500;
+  @ApiProperty()
   message: string;
+  @ApiProperty()
   error: string;
 }
 
-export class ApiReponseTypeNotImplemented {
+export class ApiResponseTypeNotImplemented {
+  @ApiProperty()
   statusCode: 501;
+  @ApiProperty()
   message: string;
+  @ApiProperty()
   error: string;
 }
 
-export class ApiReponseTypeBadGateway {
+export class ApiResponseTypeBadGateway {
+  @ApiProperty()
   statusCode: 502;
+  @ApiProperty()
   message: string;
+  @ApiProperty()
   error: string;
 }
 
-export class ApiReponseTypeServiceUnavailable {
+export class ApiResponseTypeServiceUnavailable {
+  @ApiProperty()
   statusCode: 503;
+  @ApiProperty()
   message: string;
+  @ApiProperty()
   error: string;
 }
 
-export class ApiReponseTypeGatewayTimeout {
+export class ApiResponseTypeGatewayTimeout {
+  @ApiProperty()
   statusCode: 504;
+  @ApiProperty()
   message: string;
+  @ApiProperty()
   error: string;
 }
 
-export class ApiReponseTypeDefault {
+export class ApiResponseTypeDefault {
+  @ApiProperty()
   statusCode: number;
+  @ApiProperty()
   message: string;
+  @ApiProperty()
   error: string;
 }
