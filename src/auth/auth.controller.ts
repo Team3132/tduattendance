@@ -21,10 +21,6 @@ import { GetUser } from './decorators/GetUserDecorator.decorator';
 import { AuthStatusDto } from './dto/AuthStatus.dto';
 import { DiscordAuthGuard } from './guard/discord.guard';
 import { SessionGuard } from './guard/session.guard';
-import {
-  ApiReponseTypeBadRequest,
-  ApiReponseTypeForbidden,
-} from '../standard-error.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @ApiTags('Auth')
