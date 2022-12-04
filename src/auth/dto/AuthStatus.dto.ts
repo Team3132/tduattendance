@@ -7,7 +7,5 @@ export class AuthStatusDto {
   @ApiProperty()
   isAuthenticated: boolean;
   @ApiProperty()
-  roles: string[];
-  @ApiProperty()
   isAdmin: boolean;
 }

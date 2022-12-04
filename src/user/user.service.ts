@@ -50,6 +50,7 @@ export class UserService {
         calendarSecret: true,
         createdAt: true,
         updatedAt: true,
+        roles: true,
       },
     });
   }
@@ -83,13 +84,6 @@ export class UserService {
 
   async discordProfile(userId: string): Promise<APIGuildMember> {
     return this.discordService.getDiscordMemberDetails(userId);
-  }
-
-  async isMentor(userId: string) {
-    const discordProfile = await this.discordService.getDiscordMemberDetails(
-      userId,
-    );
-    return discordProfile.roles.includes(ROLES.MENTOR);
   }
 
   async outreachReport(userId: string, from?: string, to?: string) {

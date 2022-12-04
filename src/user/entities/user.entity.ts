@@ -19,4 +19,6 @@ export class User implements Partial<PrismaUser> {
   @ApiProperty()
   @Exclude()
   calendarSecret: string;
+  @ApiProperty()
+  roles: string[];
 }

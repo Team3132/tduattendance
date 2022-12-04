@@ -61,9 +61,11 @@ export class AuthService {
         id: user.id,
         discordRefreshToken: refreshToken,
         ...getName(discordUser?.nick ?? discordUser.user.username),
+        roles: discordUser.roles,
       },
       update: {
         discordRefreshToken: refreshToken,
+        roles: discordUser.roles,
       },
     });
   }

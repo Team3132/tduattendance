@@ -26,6 +26,7 @@ model User {
   discordRefreshToken String
   calendarSecret      String     @unique @default(uuid())
   defaultStatus       RSVPStatus @default(NO)
+  roles               String[]
   RSVP                RSVP[]
   Scancode            Scancode[]
 }
