@@ -40,7 +40,7 @@ export class RsvpController {
     description: 'Create an RSVP',
     operationId: 'createRSVP',
   })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @ApiCreatedResponse({ type: Rsvp })
   @Post()
   create(
@@ -66,7 +66,7 @@ export class RsvpController {
     description: 'Get all RSVPs',
     operationId: 'getRSVPs',
   })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @ApiOkResponse({ type: [Rsvp] })
   @Get()
   findAll() {
@@ -81,7 +81,7 @@ export class RsvpController {
     description: 'Get a specific RSVP',
     operationId: 'getRSVP',
   })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @ApiOkResponse({ type: Rsvp })
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -97,7 +97,7 @@ export class RsvpController {
     description: 'Edit a specific RSVP',
     operationId: 'editRSVP',
   })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @ApiCreatedResponse({ type: Rsvp })
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRsvpDto: UpdateRsvpDto) {
@@ -112,7 +112,7 @@ export class RsvpController {
     description: 'Delete an RSVP',
     operationId: 'deleteRSVP',
   })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @ApiOkResponse({ type: Rsvp })
   @Delete(':id')
   remove(@Param('id') id: string) {

@@ -114,7 +114,7 @@ export class EventController {
     operationId: 'createEvent',
   })
   @ApiCreatedResponse({ type: EventResponseType })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @Post()
   async create(@Body() createEventDto: CreateEventDto) {
     const event = await this.eventService.createEvent(createEventDto);
@@ -148,7 +148,7 @@ export class EventController {
     description: 'Get a specific event secret',
     operationId: 'getEventSecret',
   })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @ApiOkResponse({ type: EventSecret })
   @ApiNotFoundResponse({ type: ApiReponseTypeNotFound })
   @Get(':eventId/token')
@@ -210,7 +210,7 @@ export class EventController {
    */
   @ApiOperation({ description: 'Update an event', operationId: 'updateEvent' })
   @ApiOkResponse({ type: EventResponseType })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -229,7 +229,7 @@ export class EventController {
    */
   @ApiOperation({ description: 'Delete an event', operationId: 'deleteEvent' })
   @ApiOkResponse({ type: EventResponseType })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @Delete(':id')
   async remove(@Param('id') id: string) {
     const event = await this.eventService.deleteEvent(id);

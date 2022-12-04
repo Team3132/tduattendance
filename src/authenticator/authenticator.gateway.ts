@@ -42,7 +42,7 @@ export class AuthenticatorGateway
 
   // @UseGuards(SessionGuard)
 
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @SubscribeMessage('events')
   findAll(@MessageBody() data: any): Observable<WsResponse<number>> {
     return from([1, 2, 3]).pipe(

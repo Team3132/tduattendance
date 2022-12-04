@@ -76,7 +76,7 @@ export class UserController {
     operationId: 'getUser',
   })
   @ApiOkResponse({ type: User })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @Get(':id')
   user(@Param('id') userId: string) {
     return this.userService.user({ id: userId });
@@ -106,7 +106,7 @@ export class UserController {
     operationId: 'getUserAvatar',
   })
   @ApiOkResponse({ type: String })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @Get(':id/avatar')
   async userAvatar(@Param('id') userId: string) {
     const { user } = await this.userService.discordProfile(userId);
@@ -136,7 +136,7 @@ export class UserController {
     operationId: 'getUserRSVPs',
   })
   @ApiOkResponse({ type: [Rsvp] })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @Get(':id/rsvp')
   userRSVPs(@Param('id') userId: string) {
     return this.rsvpService.rsvps({
@@ -189,7 +189,7 @@ export class UserController {
     operationId: 'editUser',
   })
   @ApiCreatedResponse({ type: User })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @Patch(':id')
   updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     try {
@@ -233,7 +233,7 @@ export class UserController {
     operationId: 'regenerateUserCalendarToken',
   })
   @ApiCreatedResponse({ type: User })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @Post(':id/regenerateToken')
   regenerateUserToken(@Param('id') id: string) {
     return this.userService.regenerateCalendarSecret({ id });
@@ -277,7 +277,7 @@ export class UserController {
     operationId: 'deleteUser',
   })
   @ApiOkResponse({ type: User })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @Delete(':id')
   removeUser(@Param('id') id: string) {
     return this.userService.deleteUser({ id });
@@ -292,7 +292,7 @@ export class UserController {
     operationId: 'getUsers',
   })
   @ApiOkResponse({ type: [User] })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @Get()
   users() {
     return this.userService.users({});
@@ -325,7 +325,7 @@ export class UserController {
     operationId: 'getUserOutreachReport',
   })
   @ApiOkResponse({ type: OutreachReport })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @Get(':id/outreach')
   async outreachReport(
     @Param('id') userId: string,
@@ -362,7 +362,7 @@ export class UserController {
     operationId: 'getUserScancodes',
   })
   @ApiOkResponse({ type: [Scancode] })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @Get(':id/scancodes')
   async userScancodes(@Param('id') id: string) {
     return this.scancodeService.scancodes({
@@ -405,7 +405,7 @@ export class UserController {
     operationId: 'createUserScancode',
   })
   @ApiCreatedResponse({ type: Scancode })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @Post(':id/scancodes')
   async createUserScancode(
     @Param('id') id: string,
@@ -457,7 +457,7 @@ export class UserController {
     operationId: 'deleteUserScancode',
   })
   @ApiOkResponse({ type: Scancode })
-  @Roles([ROLES.MENTOR])
+  @Roles(['MENTOR'])
   @Delete(':id/scancodes/:scancodeId')
   async deleteUserScancode(
     @Param('id') id: string,
