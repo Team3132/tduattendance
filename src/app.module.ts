@@ -19,6 +19,7 @@ import { CalendarModule } from './calendar/calendar.module';
 import { DiscordModule } from './discord/discord.module';
 import { ScancodeModule } from './scancode/scancode.module';
 // import { RedisStore, redisStore } from 'cache-manager-redis-store';
+import { DiscordModule as DiscordBotModule } from '@discord-nestjs/core';
 import { redisStore } from 'cache-manager-redis-yet';
 import {
   RedisClientOptions,
@@ -29,6 +30,8 @@ import {
 import { Config } from 'cache-manager';
 import { AuthenticatorService } from './authenticator/authenticator.service';
 import { AuthenticatorModule } from './authenticator/authenticator.module';
+import { GatewayIntentBits, Snowflake } from 'discord.js';
+import { BotSlashCommands } from './bot/bot-slash-commands.module';
 
 @Module({
   imports: [
@@ -78,23 +81,23 @@ import { AuthenticatorModule } from './authenticator/authenticator.module';
     DiscordModule,
     ScancodeModule,
     AuthenticatorModule,
-    // DiscordBotModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   inject: [ConfigService],
-    //   useFactory: async (configService: ConfigService) => ({
-    //     token: configService.getOrThrow<string>('DISCORD_TOKEN'),
-    //     discordClientOptions: {
-    //       intents: [GatewayIntentBits.GuildMembers],
-    //     },
-    //     registerCommandOptions: [
-    //       {
-    //         forGuilds: configService.getOrThrow<Snowflake>('GUILD_ID'),
-    //         removeCommandsBefore: true,
-    //       },
-    //     ],
-    //   }),
-    // }),
-    // BotSlashCommands,
+    DiscordBotModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        token: configService.getOrThrow<string>('DISCORD_TOKEN'),
+        discordClientOptions: {
+          intents: [GatewayIntentBits.GuildMembers],
+        },
+        registerCommandOptions: [
+          {
+            forGuilds: configService.getOrThrow<Snowflake>('GUILD_ID'),
+            removeCommandsBefore: true,
+          },
+        ],
+      }),
+    }),
+    BotSlashCommands,
   ],
   controllers: [AppController],
   providers: [
