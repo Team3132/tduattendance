@@ -3,6 +3,12 @@ name: Release
 on:
   release:
     types: ['released']
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        required: true
+        description: The version to publish
 
 jobs:
   type-check:
