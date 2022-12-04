@@ -89,7 +89,7 @@ import { BotModule } from './bot/bot.module';
             forGuilds: configService.getOrThrow<Snowflake>('GUILD_ID'),
             removeCommandsBefore: true,
             /** Remove to deploy commands */
-            allowFactory: () => true,
+            // allowFactory: () => true,
           },
         ],
       }),

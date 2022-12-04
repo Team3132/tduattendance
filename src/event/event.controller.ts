@@ -38,7 +38,7 @@ import { GetEventsDto } from './dto/get-events.dto';
 import { UpdateRangeRSVP } from './dto/update-rsvp-range';
 import { EventResponse, EventResponseType } from './dto/event-response.dto';
 import { EventSecret } from './dto/event-secret.dto';
-import { ApiReponseTypeNotFound } from '@/standard-error.entity';
+import { ApiResponseTypeNotFound } from '@/standard-error.entity';
 import { AuthenticatorService } from '@authenticator/authenticator.service';
 import { ConfigService } from '@nestjs/config';
 
@@ -129,7 +129,7 @@ export class EventController {
     description: 'Get a specific event',
     operationId: 'getEvent',
   })
-  @ApiNotFoundResponse({ type: ApiReponseTypeNotFound })
+  @ApiNotFoundResponse({ type: ApiResponseTypeNotFound })
   @ApiOkResponse({ type: EventResponseType })
   @Get(':id')
   async findOne(@Param('id') id: string) {
@@ -150,7 +150,7 @@ export class EventController {
   })
   @Roles(['MENTOR'])
   @ApiOkResponse({ type: EventSecret })
-  @ApiNotFoundResponse({ type: ApiReponseTypeNotFound })
+  @ApiNotFoundResponse({ type: ApiResponseTypeNotFound })
   @Get(':eventId/token')
   async getEventSecret(@Param('eventId') eventId: string) {
     const event = await this.eventService.event({ id: eventId });
