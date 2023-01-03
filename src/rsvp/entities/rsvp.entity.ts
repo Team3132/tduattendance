@@ -17,4 +17,6 @@ export class Rsvp implements PrismaRSVP {
   createdAt: Date;
   @ApiProperty()
   updatedAt: Date;
+  @ApiProperty()
+  attended: boolean;
 }

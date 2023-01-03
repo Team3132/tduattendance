@@ -95,8 +95,8 @@ export class UserService {
             gte: from ? new Date(from) : undefined,
             lte: to ? new Date(to) : undefined,
           },
-          status: {
-            in: 'ATTENDED',
+          attended: {
+            equals: true,
           },
           event: {
             type: {

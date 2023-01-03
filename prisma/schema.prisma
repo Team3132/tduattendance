@@ -62,7 +62,7 @@ model RSVP {
   event     Event      @relation(name: "EventOnRsvp", fields: [eventId], references: [id], onDelete: Cascade)
   userId    String
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  status    RSVPStatus
+  status    RSVPStatus?
   attended  Boolean    @default(false)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @default(now()) @updatedAt

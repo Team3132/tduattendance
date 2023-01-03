@@ -89,10 +89,10 @@ export class RsvpService {
         },
       },
       update: {
-        status: RSVPStatus.ATTENDED,
+        attended: true,
       },
       create: {
-        status: RSVPStatus.ATTENDED,
+        attended: true,
         eventId,
         userId,
       },

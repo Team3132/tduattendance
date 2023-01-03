@@ -92,10 +92,10 @@ export class EventService {
         },
       },
       update: {
-        status: RSVPStatus.ATTENDED,
+        attended: true,
       },
       create: {
-        status: RSVPStatus.ATTENDED,
+        attended: true,
         event: {
           connect: {
             id: eventId,
