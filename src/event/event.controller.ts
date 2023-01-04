@@ -41,6 +41,7 @@ import { EventSecret } from './dto/event-secret.dto';
 import { ApiResponseTypeNotFound } from '@/standard-error.entity';
 import { AuthenticatorService } from '@authenticator/authenticator.service';
 import { ConfigService } from '@nestjs/config';
+import TokenCheckinDto from './dto/checkin-dto';
 
 @ApiTags('Event')
 @ApiCookieAuth()
@@ -188,10 +189,11 @@ export class EventController {
   @ApiCreatedResponse({ type: Rsvp })
   @Post(':eventId/token/callback')
   async eventTokenPostCallback(
-    @Body('code') code: string,
+    @Body() body: TokenCheckinDto,
     @Param('eventId') eventId: string,
     @GetUser('id') userId: string,
   ) {
+    const { code } = body;
     const rsvp = await this.eventService.verifyUserEventToken(
       eventId,
       userId,
