@@ -188,7 +188,7 @@ export class EventController {
   @ApiCreatedResponse({ type: Rsvp })
   @Post(':eventId/token/callback')
   async eventTokenPostCallback(
-    @Query('code') code: string,
+    @Body('code') code: string,
     @Param('eventId') eventId: string,
     @GetUser('id') userId: string,
   ) {
