@@ -24,6 +24,7 @@ import { SessionGuard } from '@auth/guard/session.guard';
 import { Scancode } from './entities/scancode.entity';
 import { Prisma } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
+import { ROLES } from '../constants';
 
 @ApiTags('Scancode')
 @UseGuards(SessionGuard)
@@ -97,12 +98,9 @@ export class ScancodeController {
     operationId: 'deleteScancode',
   })
   @Delete(':id')
-  async remove(
-    @Param('id') id: string,
-    @GetUser('id') userId: Express.User['id'],
-  ) {
+  async remove(@Param('id') id: string, @GetUser() user: Express.User) {
     const scancode = await this.scancodeService.scancode({ code: id });
-    if (scancode.userId !== userId) {
+    if (scancode.userId !== user.id && !user.roles.includes(ROLES.MENTOR)) {
       throw new ForbiddenException();
     }
     return this.scancodeService.deleteScancode({ code: id });
