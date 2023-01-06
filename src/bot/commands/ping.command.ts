@@ -16,7 +16,7 @@ import { ScancodeService } from '@scancode/scancode.service';
 @Command({
   name: 'ping',
   description: 'Pings the bot',
-  // defaultMemberPermissions: [PermissionFlagsBits.Administrator],
+  defaultMemberPermissions: [PermissionFlagsBits.SendMessages],
 })
 export class PingCommand implements DiscordCommand {
   handler(interaction: CommandInteraction) {
