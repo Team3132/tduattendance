@@ -36,6 +36,8 @@ export class EventService {
     cursor?: Prisma.EventWhereUniqueInput;
     where?: Prisma.EventWhereInput;
     orderBy?: Prisma.EventOrderByWithRelationInput;
+    include?: Prisma.EventInclude;
+    select?: Prisma.EventSelect;
   }) {
     const { skip, take, cursor, where, orderBy } = params;
     return this.prismaService.event.findMany({
