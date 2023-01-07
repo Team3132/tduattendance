@@ -14,7 +14,6 @@ import { PrismaService } from '../prisma/prisma.service';
 export class EventService {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly configService: ConfigService,
     private readonly authenticatorService: AuthenticatorService,
     private readonly rsvpService: RsvpService,
   ) {}

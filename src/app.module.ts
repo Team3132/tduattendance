@@ -26,12 +26,18 @@ import { AuthenticatorModule } from './authenticator/authenticator.module';
 import { GatewayIntentBits, Snowflake } from 'discord.js';
 import { BotSlashCommands } from './bot/bot-slash-commands.module';
 import { BotModule } from './bot/bot.module';
+import { GcalService } from './gcal/gcal.service';
+import { TaskService } from './task/task.service';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TaskModule } from './task/task.module';
+import { GcalModule } from './gcal/gcal.module';
 
 @Module({
   imports: [
     AuthModule,
     PrismaModule,
     ConfigModule.forRoot({ isGlobal: true, cache: true }),
+    ScheduleModule.forRoot(),
     // CacheModule.registerAsync<RedisClientOptions>({
     //   isGlobal: true,
     //   imports: [ConfigModule],
@@ -95,6 +101,8 @@ import { BotModule } from './bot/bot.module';
       }),
     }),
     BotSlashCommands,
+    TaskModule,
+    GcalModule,
   ],
   controllers: [AppController],
   providers: [
