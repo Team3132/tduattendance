@@ -12,7 +12,7 @@ export class Rsvp implements PrismaRSVP {
   @ApiProperty()
   userId: string;
   @ApiProperty({ enum: RSVPStatus })
-  status: RSVPStatus;
+  status: RSVPStatus | null;
   @ApiProperty()
   createdAt: Date;
   @ApiProperty()
