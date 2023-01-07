@@ -70,7 +70,7 @@ export class DiscordService {
       await this.cacheManager.set(
         `discorduser/${userId}/accesstoken`,
         access_token,
-        expires_in,
+        expires_in * 1000,
       );
 
       await this.prismaService.user.update({
@@ -118,7 +118,7 @@ export class DiscordService {
       await this.cacheManager.set(
         `discorduser/guild/${userId}`,
         discordUser,
-        3600,
+        3600 * 1000,
       );
 
       return discordUser;
