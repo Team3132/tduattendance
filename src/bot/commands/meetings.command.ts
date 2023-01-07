@@ -44,6 +44,9 @@ export class MeetingsCommand implements DiscordCommand {
           gte: new Date(),
         },
       },
+      orderBy: {
+        startDate: 'asc',
+      },
       include: {
         _count: {
           select: {
