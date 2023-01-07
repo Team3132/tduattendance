@@ -11,7 +11,7 @@ export class Rsvp implements PrismaRSVP {
   eventId: string;
   @ApiProperty()
   userId: string;
-  @ApiProperty({ enum: RSVPStatus, required: false })
+  @ApiProperty({ enum: RSVPStatus, nullable: true })
   status: RSVPStatus | null;
   @ApiProperty()
   createdAt: Date;
