@@ -12,7 +12,7 @@ export class TaskService {
   constructor(
     private readonly gcal: GcalService,
     private readonly db: PrismaService,
-    private readonly authenticatorService: AuthenticatorService
+    private readonly authenticatorService: AuthenticatorService,
   ) {}
 
   private readonly logger = new Logger(TaskService.name);
