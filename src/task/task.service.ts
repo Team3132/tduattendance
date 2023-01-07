@@ -16,7 +16,7 @@ export class TaskService {
   private readonly logger = new Logger(TaskService.name);
 
   // @Cron('45 * * * * *')
-  @Cron('0 0 * * *')
+  @Cron('0 21 * * *')
   async handleCron() {
     this.logger.debug('Called when the current second is 45');
     const events = await this.gcal.events();
