@@ -18,7 +18,7 @@ export class TaskService {
   private readonly logger = new Logger(TaskService.name);
 
   // @Cron('45 * * * * *')
-  @Cron('15 10 * * *')
+  @Cron('45 10 * * *')
   async handleCron() {
     this.logger.debug('Updating events');
     const events = await this.gcal.events();
@@ -41,6 +41,7 @@ export class TaskService {
             description: event.description,
           },
           create: {
+            id: event.id,
             title: event.summary,
             allDay: !event.start.dateTime && !event.end.dateTime,
             startDate:
