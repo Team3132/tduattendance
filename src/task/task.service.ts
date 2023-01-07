@@ -1,3 +1,4 @@
+import { AuthenticatorService } from '@/authenticator/authenticator.service';
 import { EventService } from '@/event/event.service';
 import { GcalService } from '@/gcal/gcal.service';
 import { PrismaService } from '@/prisma/prisma.service';
@@ -11,18 +12,20 @@ export class TaskService {
   constructor(
     private readonly gcal: GcalService,
     private readonly db: PrismaService,
+    private readonly authenticatorService: AuthenticatorService
   ) {}
 
   private readonly logger = new Logger(TaskService.name);
 
   // @Cron('45 * * * * *')
-  @Cron('0 21 * * *')
+  @Cron('15 10 * * *')
   async handleCron() {
-    this.logger.debug('Called when the current second is 45');
+    this.logger.debug('Updating events');
     const events = await this.gcal.events();
     const databaseEvents = await Promise.all(
-      events.items.map((event) =>
-        this.db.event.upsert({
+      events.items.map((event) => {
+        const secret = this.authenticatorService.generateSecret();
+        return this.db.event.upsert({
           where: {
             id: event.id,
           },
@@ -47,9 +50,10 @@ export class TaskService {
               event.end.dateTime ??
               DateTime.fromISO(event.end.date).endOf('day').toJSDate(),
             description: event.description,
+            secret,
           },
-        }),
-      ),
+        });
+      }),
     );
     this.logger.log(`${databaseEvents.length} events updated/created`);
   }
