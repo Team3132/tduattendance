@@ -49,7 +49,6 @@ export class UserController {
     private readonly userService: UserService,
     private readonly rsvpService: RsvpService,
     private readonly scancodeService: ScancodeService,
-    @Inject(CACHE_MANAGER) private cacheManager: RedisCache,
   ) {}
 
   /**

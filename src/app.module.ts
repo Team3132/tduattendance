@@ -32,41 +32,41 @@ import { BotModule } from './bot/bot.module';
     AuthModule,
     PrismaModule,
     ConfigModule.forRoot({ isGlobal: true, cache: true }),
-    CacheModule.registerAsync<RedisClientOptions>({
-      isGlobal: true,
-      imports: [ConfigModule],
-
-      useFactory: async (configService: ConfigService) => {
-        const store = await redisStore({
-          socket: {
-            host: configService.getOrThrow<string>('REDIS_HOST'),
-            port: 6379,
-          },
-          database: 1,
-        });
-
-        return {
-          store: {
-            create: (opts) => store,
-          },
-          ttl: 60 * 60 * 24 * 7 * 1000,
-        };
-      },
-
-      //   //   // return {
-      //   //   //   store: redisStore({
-      //   //   //     socket: {
-      //   //   //       host: configService.getOrThrow<string>('REDIS_HOST'),
-      //   //   //       port: 6379,
-      //   //   //     },
-      //   //   //     database: 1,
-      //   //   //   }),
-      //   //   // };
-      inject: [ConfigService],
-    }),
-    // CacheModule.register({
+    // CacheModule.registerAsync<RedisClientOptions>({
     //   isGlobal: true,
+    //   imports: [ConfigModule],
+
+    //   useFactory: async (configService: ConfigService) => {
+    //     const store = await redisStore({
+    //       socket: {
+    //         host: configService.getOrThrow<string>('REDIS_HOST'),
+    //         port: 6379,
+    //       },
+    //       database: 1,
+    //     });
+
+    //     return {
+    //       store: {
+    //         create: (opts) => store,
+    //       },
+    //       ttl: 60 * 60 * 24 * 7 * 1000,
+    //     };
+    //   },
+
+    //   //   //   // return {
+    //   //   //   //   store: redisStore({
+    //   //   //   //     socket: {
+    //   //   //   //       host: configService.getOrThrow<string>('REDIS_HOST'),
+    //   //   //   //       port: 6379,
+    //   //   //   //     },
+    //   //   //   //     database: 1,
+    //   //   //   //   }),
+    //   //   //   // };
+    //   inject: [ConfigService],
     // }),
+    CacheModule.register({
+      isGlobal: true,
+    }),
     PrismaModule,
     UserModule,
     EventModule,

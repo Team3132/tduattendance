@@ -7,7 +7,7 @@ import { RedisCache } from 'cache-manager-redis-yet';
 export class CalendarService {
   constructor(
     private readonly prismaService: PrismaService,
-    @Inject(CACHE_MANAGER) private cacheManager: RedisCache,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
   private readonly logger = new Logger(CalendarService.name);
   async generateCalendar() {
