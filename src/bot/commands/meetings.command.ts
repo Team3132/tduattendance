@@ -60,15 +60,15 @@ export class MeetingsCommand implements DiscordCommand {
         };
       },
     ) =>
-      new EmbedBuilder()
-        .setDescription(meeting.description)
+      new EmbedBuilder({ description: meeting.description ?? undefined })
+        // .setDescription(meeting.description)
         .setTimestamp(meeting.startDate)
         .setTitle(meeting.title)
-        .addFields(
+        .addFields([
           { value: meeting.allDay ? 'Yes' : 'No', name: 'All Day' },
           { value: meeting.type, name: 'Meeting Type' },
           { value: meeting._count.RSVP.toString(), name: 'RSVPs' },
-        )
+        ])
         .setURL(
           `${this.configService.getOrThrow('FRONTEND_URL')}/event/${
             meeting.id
