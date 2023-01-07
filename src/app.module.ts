@@ -72,6 +72,7 @@ import { GcalModule } from './gcal/gcal.module';
     // }),
     CacheModule.register({
       isGlobal: true,
+      ttl: 60 * 60 * 24 * 7 * 1000,
     }),
     PrismaModule,
     UserModule,
