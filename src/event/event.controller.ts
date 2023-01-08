@@ -42,6 +42,8 @@ import { ApiResponseTypeNotFound } from '@/standard-error.entity';
 import { AuthenticatorService } from '@authenticator/authenticator.service';
 import { ConfigService } from '@nestjs/config';
 import TokenCheckinDto from './dto/checkin-dto';
+import { PrismaService } from '@/prisma/prisma.service';
+import { RsvpUser } from './dto/rsvp-user.dto';
 
 @ApiTags('Event')
 @ApiCookieAuth()
@@ -55,6 +57,7 @@ export class EventController {
     private readonly scancodeService: ScancodeService,
     private readonly authenticatorService: AuthenticatorService,
     private readonly configService: ConfigService,
+    private readonly db: PrismaService,
   ) {}
 
   /**
@@ -365,12 +368,21 @@ export class EventController {
     description: "Get an event's asociated RSVPs",
     operationId: 'getEventRsvps',
   })
-  @ApiOkResponse({ type: [Rsvp] })
+  @ApiOkResponse({ type: [RsvpUser] })
   @Get(':eventId/rsvps')
   getEventRsvps(@Param('eventId') eventId: string) {
-    return this.rsvpService.rsvps({
+    return this.db.rSVP.findMany({
       where: {
         eventId,
+      },
+      include: {
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            id: true,
+          },
+        },
       },
     });
   }
