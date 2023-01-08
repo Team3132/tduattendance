@@ -23,11 +23,9 @@ import { PrismaService } from '@/prisma/prisma.service';
 @Command({
   name: 'meetings',
   description: 'Get the next 5 meetings',
-  defaultMemberPermissions: [PermissionFlagsBits.SendMessages],
 })
 export class MeetingsCommand implements DiscordCommand {
   constructor(
-    private readonly eventService: EventService,
     private readonly configService: ConfigService,
     private readonly db: PrismaService,
   ) {}

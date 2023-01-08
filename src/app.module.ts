@@ -24,7 +24,6 @@ import { redisStore } from 'cache-manager-redis-yet';
 import { RedisClientOptions } from 'redis';
 import { AuthenticatorModule } from './authenticator/authenticator.module';
 import { GatewayIntentBits, Snowflake } from 'discord.js';
-import { BotSlashCommands } from './bot/bot-slash-commands.module';
 import { BotModule } from './bot/bot.module';
 import { GcalService } from './gcal/gcal.service';
 import { TaskService } from './task/task.service';
@@ -82,7 +81,6 @@ import { GcalModule } from './gcal/gcal.module';
     DiscordModule,
     ScancodeModule,
     AuthenticatorModule,
-    BotModule,
     DiscordBotModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -93,15 +91,17 @@ import { GcalModule } from './gcal/gcal.module';
         },
         registerCommandOptions: [
           {
-            forGuilds: configService.getOrThrow<Snowflake>('GUILD_ID'),
+            forGuild: configService.getOrThrow<Snowflake>('GUILD_ID'),
             removeCommandsBefore: true,
+
             /** Remove to deploy commands */
             // allowFactory: () => true,
           },
         ],
+        failOnLogin: true,
       }),
     }),
-    BotSlashCommands,
+    BotModule,
     TaskModule,
     GcalModule,
   ],
