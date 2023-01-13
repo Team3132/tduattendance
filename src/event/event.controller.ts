@@ -181,7 +181,7 @@ export class EventController {
   ) {
     await this.eventService.verifyUserEventToken(eventId, userId, code);
     return {
-      url: `${this.configService.getOrThrow('FRONTEND_URL')}/calendar`,
+      url: `${this.configService.getOrThrow('FRONTEND_URL')}/event/${eventId}`,
     };
   }
 
