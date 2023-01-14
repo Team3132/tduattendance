@@ -24,7 +24,6 @@ export class BotService {
 
   async getGuild() {
     const guildId = this.config.getOrThrow<string>('GUILD_ID');
-    console.log(guildId);
     const cachedGuild = this.client.guilds.cache.get(guildId);
 
     if (!cachedGuild || !cachedGuild.available) {
@@ -41,7 +40,7 @@ export class BotService {
 
   @SlashCommand({
     name: 'meetings',
-    description: 'Get the next few meetings (guild)',
+    description: 'Get the next few meetings',
     guilds: [process.env['GUILD_ID']],
   })
   public async onMeetings(@Context() [interaction]: SlashCommandContext) {
@@ -65,6 +64,7 @@ export class BotService {
         description: event.description,
         title: event.title,
         timestamp: event.startDate.toISOString(),
+        url: `${this.config.get('FRONTEND_URL')}/event/${event.id}`,
       });
 
     const embededEvents = nextFive.map(eventEmbed);
