@@ -3,14 +3,30 @@ import { EventService } from '@/event/event.service';
 import { PrismaService } from '@/prisma/prisma.service';
 import {
   bold,
+  ComponentBuilder,
   EmbedBuilder,
   hyperlink,
+  time,
   userMention,
 } from '@discordjs/builders';
 import { Injectable, UseInterceptors } from '@nestjs/common';
 import { Event, RSVPStatus } from '@prisma/client';
-import { Embed } from 'discord.js';
-import { Context, Options, SlashCommand, SlashCommandContext } from 'necord';
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  Embed,
+  PermissionFlagsBits,
+} from 'discord.js';
+import {
+  Button,
+  ButtonContext,
+  ComponentParam,
+  Context,
+  Options,
+  SlashCommand,
+  SlashCommandContext,
+} from 'necord';
 import { Client } from 'discord.js';
 import { ConfigService } from '@nestjs/config';
 import { LengthDto } from './dto/length.dto';
@@ -19,6 +35,7 @@ import { AttendanceDto } from './dto/attendance.dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { DateTime } from 'luxon';
 import { RsvpDto } from './dto/rsvp.dto';
+import { RequestRSVPDto } from './dto/requestRSVP.dto';
 
 @Injectable()
 export class BotService {
@@ -253,6 +270,134 @@ export class BotService {
           connect: { id: userId },
         },
         status,
+      },
+    });
+
+    const embed = new EmbedBuilder()
+      .setDescription(rsvpToDescription(rsvp))
+      .setTitle('Successfully Updated')
+      .setColor([0, 255, 0]);
+
+    return interaction.reply({
+      ephemeral: true,
+      embeds: [embed],
+    });
+  }
+
+  @UseInterceptors(EventAutocompleteInterceptor)
+  @SlashCommand({
+    name: 'requestrsvp',
+    description: 'Send a message for people to RSVP to a specific event.',
+    defaultMemberPermissions: PermissionFlagsBits.ManageRoles,
+    guilds: [process.env['GUILD_ID']],
+  })
+  public async onRequestRSVP(
+    @Context() [interaction]: SlashCommandContext,
+    @Options() { meeting }: RequestRSVPDto,
+  ) {
+    const event = await this.db.event.findUnique({
+      where: {
+        id: meeting,
+      },
+    });
+
+    if (!event)
+      return interaction.reply({
+        ephemeral: true,
+        content: 'No meeting with that Id',
+      });
+
+    const meetingEmbed = new EmbedBuilder()
+      .setTitle(event.title)
+      .setDescription(event.description)
+      .addFields(
+        { name: 'Type', value: event.type },
+        { name: 'All Day', value: event.allDay ? 'Yes' : 'No' },
+        { name: 'Start Time', value: time(event.startDate) },
+        { name: 'End Time', value: time(event.endDate) },
+      )
+      .setURL(`${this.config.get('FRONTEND_URL')}/event/${event.id}`);
+
+    const messageComponent =
+      new ActionRowBuilder<ButtonBuilder>().addComponents(
+        new ButtonBuilder()
+          .setCustomId(`event/${event.id}/rsvp/${RSVPStatus.YES}`)
+          .setStyle(ButtonStyle.Success)
+          .setLabel('Coming'),
+        new ButtonBuilder()
+          .setCustomId(`event/${event.id}/rsvp/${RSVPStatus.MAYBE}`)
+          .setStyle(ButtonStyle.Secondary)
+          .setLabel('Maybe'),
+        new ButtonBuilder()
+          .setCustomId(`event/${event.id}/rsvp/${RSVPStatus.NO}`)
+          .setStyle(ButtonStyle.Danger)
+          .setLabel('Not Coming'),
+      );
+
+    return interaction.reply({
+      embeds: [meetingEmbed],
+      components: [messageComponent],
+    });
+  }
+
+  @Button('event/:eventId/rsvp/:rsvpStatus')
+  public async onRsvpButton(
+    @Context() [interaction]: ButtonContext,
+    @ComponentParam('eventId') eventId: string,
+    @ComponentParam('rsvpStatus') rsvpStatus: RSVPStatus,
+  ) {
+    const fetchedEvent = this.db.event.findUnique({
+      where: {
+        id: eventId,
+      },
+    });
+
+    if (!fetchedEvent)
+      return interaction.reply({
+        ephemeral: true,
+        content: "This meeting doesn't exist.",
+      });
+
+    const userId = interaction.user.id;
+
+    const user = await this.db.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user)
+      return interaction.reply({
+        content: `Please register ${hyperlink(
+          'here',
+          this.config.get('FRONTEND_URL'),
+        )} before RSVPing to any events.`,
+      });
+
+    const rsvp = await this.db.rSVP.upsert({
+      where: {
+        eventId_userId: {
+          eventId,
+          userId,
+        },
+      },
+      create: {
+        event: {
+          connect: { id: eventId },
+        },
+        user: {
+          connect: { id: userId },
+        },
+        status: rsvpStatus,
+      },
+      update: {
+        event: {
+          connect: { id: eventId },
+        },
+        user: {
+          connect: { id: userId },
+        },
+        status: rsvpStatus,
       },
     });
 
