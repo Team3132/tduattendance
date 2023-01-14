@@ -194,6 +194,7 @@ export class BotService {
   @SlashCommand({
     name: 'rsvp',
     description: 'RSVP to an event',
+    guilds: [process.env['GUILD_ID']],
   })
   public async onRSVP(
     @Context() [interaction]: SlashCommandContext,
