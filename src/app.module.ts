@@ -18,8 +18,7 @@ import { AppService } from './app.service';
 import { CalendarModule } from './calendar/calendar.module';
 import { DiscordModule } from './discord/discord.module';
 import { ScancodeModule } from './scancode/scancode.module';
-// import { RedisStore, redisStore } from 'cache-manager-redis-store';
-import { DiscordModule as DiscordBotModule } from '@discord-nestjs/core';
+// import { RedisStore, redisStore } from 'cache-manager-redis-store'
 import { redisStore } from 'cache-manager-redis-yet';
 import { RedisClientOptions } from 'redis';
 import { AuthenticatorModule } from './authenticator/authenticator.module';
@@ -30,12 +29,22 @@ import { TaskService } from './task/task.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TaskModule } from './task/task.module';
 import { GcalModule } from './gcal/gcal.module';
+import { NecordModule } from 'necord';
+import { BotService } from './bot/bot.service';
 
 @Module({
   imports: [
     AuthModule,
     PrismaModule,
     ConfigModule.forRoot({ isGlobal: true, cache: true }),
+    NecordModule.forRootAsync({
+      useFactory: async (configService: ConfigService) => ({
+        token: configService.getOrThrow('DISCORD_TOKEN'),
+        intents: [GatewayIntentBits.GuildMembers, GatewayIntentBits.Guilds],
+        development: configService.getOrThrow('GUILD_ID'),
+      }),
+      inject: [ConfigService],
+    }),
     ScheduleModule.forRoot(),
     // CacheModule.registerAsync<RedisClientOptions>({
     //   isGlobal: true,
@@ -81,26 +90,6 @@ import { GcalModule } from './gcal/gcal.module';
     DiscordModule,
     ScancodeModule,
     AuthenticatorModule,
-    DiscordBotModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        token: configService.getOrThrow<string>('DISCORD_TOKEN'),
-        discordClientOptions: {
-          intents: [GatewayIntentBits.GuildMembers, GatewayIntentBits.Guilds],
-        },
-        registerCommandOptions: [
-          {
-            forGuild: configService.getOrThrow<Snowflake>('GUILD_ID'),
-            removeCommandsBefore: true,
-
-            /** Remove to deploy commands */
-            // allowFactory: () => true,
-          },
-        ],
-        failOnLogin: true,
-      }),
-    }),
     BotModule,
     TaskModule,
     GcalModule,
@@ -108,6 +97,7 @@ import { GcalModule } from './gcal/gcal.module';
   controllers: [AppController],
   providers: [
     AppService,
+    BotService,
     {
       provide: APP_GUARD,
       useClass: RolesGuard,

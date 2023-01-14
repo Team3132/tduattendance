@@ -4,7 +4,7 @@ export default defineConfig(({ watch }) => ({
   entryPoints: ['src/main.ts'],
   splitting: true,
   format: ['cjs'],
-  dts: true,
+  dts: false,
   bundle: true,
   clean: true,
   sourcemap: true,

@@ -1,5 +1,4 @@
 import { SessionGuard } from '@auth/guard/session.guard';
-import { InjectDiscordClient } from '@discord-nestjs/core';
 import {
   ClassSerializerInterceptor,
   Controller,
@@ -11,7 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Client } from 'discord.js';
 import { BotService } from './bot.service';
-import { DiscordRole } from './entities/DiscordRole.entity';
+import { DiscordRole } from './dto/DiscordRole.dto';
 
 @Controller('bot')
 @UseGuards(SessionGuard)
@@ -19,7 +18,7 @@ import { DiscordRole } from './entities/DiscordRole.entity';
 @ApiTags('Bot')
 export class BotController {
   constructor(
-    @InjectDiscordClient() private readonly client: Client,
+    private readonly client: Client,
     private readonly botService: BotService,
   ) {}
 
