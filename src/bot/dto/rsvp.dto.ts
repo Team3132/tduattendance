@@ -24,7 +24,7 @@ export class RsvpDto {
       },
       {
         name: 'Not Coming',
-        value: RSVPStatus.MAYBE,
+        value: RSVPStatus.NO,
       },
     ],
   })

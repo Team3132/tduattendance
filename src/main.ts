@@ -17,6 +17,10 @@ import fs from 'fs';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import tracer from './tracer';
 import { WsAdapter } from '@nestjs/platform-ws';
+import { Settings } from 'luxon';
+
+Settings.defaultLocale = 'en-au';
+Settings.defaultZone = 'Australia/Sydney';
 
 async function bootstrap() {
   // const server = express();
