@@ -117,7 +117,7 @@ export class BotService {
       return interaction.reply({ content: 'No RSVPs', ephemeral: true });
 
     const rsvpToDescription = (rsvp: { status: RSVPStatus; userId: string }) =>
-      `${userMention(rsvp.userId)} - ${bold(rsvp.status)}`;
+      `${userMention(rsvp.userId)} - ${bold(readableStatus(rsvp.status))}`;
 
     const description = fetchedMeeting.RSVP.map(rsvpToDescription).join(`\n`);
 
@@ -186,5 +186,15 @@ export class BotService {
     return interaction.reply({
       embeds: [attendanceEmbed],
     });
+  }
+}
+
+function readableStatus(status: RSVPStatus) {
+  if (status === 'YES') {
+    return 'Coming';
+  } else if (status === 'MAYBE') {
+    return 'Maybe';
+  } else {
+    return 'Not Coming';
   }
 }
