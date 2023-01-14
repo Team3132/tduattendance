@@ -1,7 +1,12 @@
 import { EventModule } from '@/event/event.module';
 import { EventService } from '@/event/event.service';
 import { PrismaService } from '@/prisma/prisma.service';
-import { bold, EmbedBuilder, userMention } from '@discordjs/builders';
+import {
+  bold,
+  EmbedBuilder,
+  hyperlink,
+  userMention,
+} from '@discordjs/builders';
 import { Injectable, UseInterceptors } from '@nestjs/common';
 import { Event, RSVPStatus } from '@prisma/client';
 import { Embed } from 'discord.js';
@@ -13,6 +18,7 @@ import { EventAutocompleteInterceptor } from './interceptors/event.interceptor';
 import { AttendanceDto } from './dto/attendance.dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { DateTime } from 'luxon';
+import { RsvpDto } from './dto/rsvp.dto';
 
 @Injectable()
 export class BotService {
@@ -116,9 +122,6 @@ export class BotService {
     if (!fetchedMeeting.RSVP.length)
       return interaction.reply({ content: 'No RSVPs', ephemeral: true });
 
-    const rsvpToDescription = (rsvp: { status: RSVPStatus; userId: string }) =>
-      `${userMention(rsvp.userId)} - ${bold(readableStatus(rsvp.status))}`;
-
     const description = fetchedMeeting.RSVP.map(rsvpToDescription).join(`\n`);
 
     const rsvpEmbed = new EmbedBuilder()
@@ -187,7 +190,84 @@ export class BotService {
       embeds: [attendanceEmbed],
     });
   }
+
+  @SlashCommand({
+    name: 'rsvp',
+    description: 'RSVP to an event',
+  })
+  public async onRSVP(
+    @Context() [interaction]: SlashCommandContext,
+    @Options() { meeting, status }: RsvpDto,
+  ) {
+    const fetchedEvent = this.db.event.findUnique({
+      where: {
+        id: meeting,
+      },
+    });
+
+    if (!fetchedEvent)
+      return interaction.reply({
+        ephemeral: true,
+        content: "This meeting doesn't exist.",
+      });
+
+    const userId = interaction.user.id;
+
+    const user = await this.db.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user)
+      return interaction.reply({
+        content: `Please register ${hyperlink(
+          'here',
+          this.config.get('FRONTEND_URL'),
+        )} before RSVPing to any events.`,
+      });
+
+    const rsvp = await this.db.rSVP.upsert({
+      where: {
+        eventId_userId: {
+          eventId: meeting,
+          userId,
+        },
+      },
+      create: {
+        event: {
+          connect: { id: meeting },
+        },
+        user: {
+          connect: { id: userId },
+        },
+        status,
+      },
+      update: {
+        event: {
+          connect: { id: meeting },
+        },
+        user: {
+          connect: { id: userId },
+        },
+        status,
+      },
+    });
+
+    const embed = new EmbedBuilder()
+      .setDescription(rsvpToDescription(rsvp))
+      .setTitle('Successfully Updated')
+      .setColor([0, 255, 0]);
+
+    return interaction.reply({
+      ephemeral: true,
+      embeds: [embed],
+    });
+  }
 }
+
+const rsvpToDescription = (rsvp: { status: RSVPStatus; userId: string }) =>
+  `${userMention(rsvp.userId)} - ${bold(readableStatus(rsvp.status))}`;
 
 function readableStatus(status: RSVPStatus) {
   if (status === 'YES') {
