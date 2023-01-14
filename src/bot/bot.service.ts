@@ -83,7 +83,7 @@ export class BotService {
 
   @UseInterceptors(EventAutocompleteInterceptor)
   @SlashCommand({
-    name: 'rsvp',
+    name: 'rsvps',
     description: 'Get the rsvps for a meeting.',
     guilds: [process.env['GUILD_ID']],
   })
@@ -128,7 +128,8 @@ export class BotService {
         ).toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)}`,
       )
       .setDescription(description)
-      .setTimestamp(new Date());
+      .setTimestamp(new Date())
+      .setURL(`${this.config.get('FRONTEND_URL')}/event/${fetchedMeeting.id}`);
 
     return interaction.reply({
       embeds: [rsvpEmbed],
@@ -179,7 +180,8 @@ export class BotService {
         ).toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)}`,
       )
       .setDescription(description)
-      .setTimestamp(new Date());
+      .setTimestamp(new Date())
+      .setURL(`${this.config.get('FRONTEND_URL')}/event/${fetchedMeeting.id}`);
 
     return interaction.reply({
       embeds: [attendanceEmbed],
