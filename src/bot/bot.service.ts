@@ -191,6 +191,7 @@ export class BotService {
     });
   }
 
+  @UseInterceptors(EventAutocompleteInterceptor)
   @SlashCommand({
     name: 'rsvp',
     description: 'RSVP to an event',
