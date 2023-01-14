@@ -13,7 +13,7 @@ import { BotService } from './bot.service';
 
 @Module({
   controllers: [BotController],
-  imports: [EventModule, AuthenticatorModule, RsvpModule],
+  imports: [],
   providers: [
     BotService,
     // CommandsService,

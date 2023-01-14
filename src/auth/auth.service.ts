@@ -10,12 +10,13 @@ import { ConfigService } from '@nestjs/config';
 import { Profile as DiscordProfile } from 'passport-discord';
 import { DiscordService } from '@discord/discord.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { BotService } from '@/bot/bot.service';
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,
-    private readonly discordService: DiscordService,
+    private readonly botService: BotService,
   ) {}
   private readonly logger = new Logger(AuthService.name);
 
@@ -33,10 +34,7 @@ export class AuthService {
       throw new UnauthorizedException('You are not in the TDU Discord Server');
 
     this.logger.debug(`${user.username}#${user.discriminator} logged in!`);
-    const discordUser = await this.discordService.getDiscordMemberDetails(
-      user.id,
-      access_token,
-    );
+    const discordUser = await this.botService.getGuildMember(user.id);
 
     const getName = (
       nick: string,
@@ -60,12 +58,12 @@ export class AuthService {
       create: {
         id: user.id,
         discordRefreshToken: refreshToken,
-        ...getName(discordUser?.nick ?? discordUser.user.username),
-        roles: discordUser.roles,
+        ...getName(discordUser.nickname ?? discordUser.user.username),
+        roles: [...discordUser.roles.cache.mapValues((v) => v.id).values()],
       },
       update: {
         discordRefreshToken: refreshToken,
-        roles: discordUser.roles,
+        roles: [...discordUser.roles.cache.mapValues((v) => v.id).values()],
       },
     });
   }

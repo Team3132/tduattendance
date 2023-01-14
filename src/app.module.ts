@@ -16,7 +16,6 @@ import { RolesGuard } from './auth/guard/role.guard';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CalendarModule } from './calendar/calendar.module';
-import { DiscordModule } from './discord/discord.module';
 import { ScancodeModule } from './scancode/scancode.module';
 // import { RedisStore, redisStore } from 'cache-manager-redis-store'
 import { redisStore } from 'cache-manager-redis-yet';
@@ -87,7 +86,6 @@ import { BotService } from './bot/bot.service';
     EventModule,
     RsvpModule,
     CalendarModule,
-    DiscordModule,
     ScancodeModule,
     AuthenticatorModule,
     BotModule,

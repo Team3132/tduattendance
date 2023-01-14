@@ -13,13 +13,15 @@ import { v4 as uuid } from 'uuid';
 import { AuthService } from '@auth/auth.service';
 import { DiscordService } from '@discord/discord.service';
 import { ROLES } from '@/constants';
+import { BotService } from '../bot/bot.service';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly discordService: DiscordService,
+    // private readonly discordService: DiscordService,
     private readonly authService: AuthService,
+    private readonly botService: BotService,
   ) {}
   private readonly logger = new Logger(UserService.name);
 
@@ -82,8 +84,8 @@ export class UserService {
     return this.prismaService.user.delete({ where });
   }
 
-  async discordProfile(userId: string): Promise<APIGuildMember> {
-    return this.discordService.getDiscordMemberDetails(userId);
+  async discordProfile(userId: string) {
+    return this.botService.getGuildMember(userId);
   }
 
   async outreachReport(userId: string, from?: string, to?: string) {

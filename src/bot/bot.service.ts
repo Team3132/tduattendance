@@ -61,6 +61,14 @@ export class BotService {
     return guild.roles.cache.size ? guild.roles.cache : guild.roles.fetch();
   }
 
+  async getGuildMember(userId: string) {
+    const guild = await this.getGuild();
+    const guildMember =
+      guild.members.cache.get(userId) ?? guild.members.fetch(userId);
+
+    return guildMember;
+  }
+
   @SlashCommand({
     name: 'meetings',
     description: 'Get the next few meetings',
