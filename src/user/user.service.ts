@@ -11,7 +11,6 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { v4 as uuid } from 'uuid';
 import { AuthService } from '@auth/auth.service';
-import { DiscordService } from '@discord/discord.service';
 import { ROLES } from '@/constants';
 import { BotService } from '../bot/bot.service';
 
@@ -19,7 +18,6 @@ import { BotService } from '../bot/bot.service';
 export class UserService {
   constructor(
     private readonly prismaService: PrismaService,
-    // private readonly discordService: DiscordService,
     private readonly authService: AuthService,
     private readonly botService: BotService,
   ) {}

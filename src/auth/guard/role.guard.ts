@@ -14,7 +14,6 @@ import { ConfigService } from '@nestjs/config';
 import { ROLE, ROLES } from '@/constants';
 import { Cache } from 'cache-manager';
 import { AuthService } from '@auth/auth.service';
-import { DiscordService } from '@discord/discord.service';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -22,7 +21,6 @@ export class RolesGuard implements CanActivate {
     private reflector: Reflector,
 
     private readonly authService: AuthService,
-    private readonly discordService: DiscordService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

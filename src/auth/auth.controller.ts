@@ -16,18 +16,18 @@ import {
 } from '@nestjs/swagger';
 import type { Response } from 'express';
 import { ROLES } from '@/constants';
-import { DiscordService } from '@discord/discord.service';
 import { GetUser } from './decorators/GetUserDecorator.decorator';
 import { AuthStatusDto } from './dto/AuthStatus.dto';
 import { DiscordAuthGuard } from './guard/discord.guard';
 import { SessionGuard } from './guard/session.guard';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { BotService } from '../bot/bot.service';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly discordService: DiscordService,
+    private readonly botService: BotService,
     private readonly configService: ConfigService,
   ) {}
 

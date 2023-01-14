@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Profile as DiscordProfile } from 'passport-discord';
-import { DiscordService } from '@discord/discord.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { BotService } from '@/bot/bot.service';
 @Injectable()
