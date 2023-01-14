@@ -307,9 +307,10 @@ export class BotService {
         content: 'No meeting with that Id',
       });
 
-    const meetingEmbed = new EmbedBuilder()
+    const meetingEmbed = new EmbedBuilder({
+      description: event.description ?? undefined,
+    })
       .setTitle(event.title)
-      .setDescription(event.description)
       .addFields(
         { name: 'Type', value: event.type },
         { name: 'All Day', value: event.allDay ? 'Yes' : 'No' },
