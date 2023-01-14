@@ -9,7 +9,7 @@ import {
   time,
   userMention,
 } from '@discordjs/builders';
-import { Injectable, UseInterceptors } from '@nestjs/common';
+import { Injectable, Logger, UseInterceptors } from '@nestjs/common';
 import { Event, RSVPStatus } from '@prisma/client';
 import {
   ActionRowBuilder,
@@ -23,6 +23,8 @@ import {
   ButtonContext,
   ComponentParam,
   Context,
+  ContextOf,
+  On,
   Options,
   SlashCommand,
   SlashCommandContext,
@@ -44,6 +46,8 @@ export class BotService {
     private readonly client: Client,
     private readonly config: ConfigService,
   ) {}
+
+  private readonly logger = new Logger(BotService.name);
 
   async getGuild() {
     const guildId = this.config.getOrThrow<string>('GUILD_ID');
@@ -67,6 +71,16 @@ export class BotService {
       guild.members.cache.get(userId) ?? guild.members.fetch(userId);
 
     return guildMember;
+  }
+
+  @On('warn')
+  public onWarn(@Context() [message]: ContextOf<'warn'>) {
+    this.logger.warn(message);
+  }
+
+  @On('error')
+  public onError(@Context() [message]: ContextOf<'error'>) {
+    this.logger.error(message);
   }
 
   @SlashCommand({
