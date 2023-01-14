@@ -240,10 +240,11 @@ export class BotService {
 
     if (!user)
       return interaction.reply({
-        content: `Please register ${hyperlink(
+        content: `Hey ${userMention(userId)}, Please register ${hyperlink(
           'here',
           this.config.get('FRONTEND_URL'),
         )} before RSVPing to any events.`,
+        ephemeral: true,
       });
 
     const rsvp = await this.db.rSVP.upsert({
@@ -369,10 +370,11 @@ export class BotService {
 
     if (!user)
       return interaction.reply({
-        content: `Please register ${hyperlink(
+        content: `Hey ${userMention(userId)}, Please register ${hyperlink(
           'here',
           this.config.get('FRONTEND_URL'),
         )} before RSVPing to any events.`,
+        ephemeral: true,
       });
 
     const rsvp = await this.db.rSVP.upsert({
