@@ -35,7 +35,6 @@ export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
     done,
   ): Promise<any> {
     const user = await this.authService.validateDiscordUser(
-      refreshToken,
       accessToken,
       profile,
     );

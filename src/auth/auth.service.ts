@@ -19,11 +19,7 @@ export class AuthService {
   ) {}
   private readonly logger = new Logger(AuthService.name);
 
-  async validateDiscordUser(
-    refreshToken: string,
-    access_token: string,
-    user: DiscordProfile,
-  ) {
+  async validateDiscordUser(access_token: string, user: DiscordProfile) {
     const { guilds } = user;
     if (
       !guilds
@@ -56,12 +52,10 @@ export class AuthService {
       },
       create: {
         id: user.id,
-        discordRefreshToken: refreshToken,
         ...getName(discordUser.nickname ?? discordUser.user.username),
         roles: [...discordUser.roles.cache.mapValues((v) => v.id).values()],
       },
       update: {
-        discordRefreshToken: refreshToken,
         roles: [...discordUser.roles.cache.mapValues((v) => v.id).values()],
       },
     });
