@@ -32,8 +32,9 @@ export class CalendarService {
         events: events.map((event) => {
           return {
             start: event.startDate,
+            summary: event.title,
             end: event.endDate,
-            description: event.title,
+            description: event.description,
             allDay: event.allDay,
             attendees: event.RSVP.map((rsvp) => {
               const status: ICalAttendeeStatus =
