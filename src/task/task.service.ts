@@ -62,7 +62,7 @@ export class TaskService {
     this.logger.log(`${databaseEvents.length} events updated/created`);
   }
 
-  @Cron('00 11 * * *')
+  @Cron('15 22 * * *')
   async handleAttendanceReminder() {
     const enabled = this.config.get('REMINDER_ENABLED');
     if (!enabled) return;
