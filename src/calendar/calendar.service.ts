@@ -54,7 +54,7 @@ export class CalendarService {
           };
         }),
       });
-      await this.cacheManager.set('calendar', calendar.toJSON(), 7200);
+      await this.cacheManager.set('calendar', calendar.toJSON(), 7200 * 1000);
       return calendar;
     }
   }
