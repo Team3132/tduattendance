@@ -326,7 +326,9 @@ export class BotService {
         content: 'No meeting with that Id',
       });
 
-    return rsvpReminderMessage(event, this.config.get('FRONTEND_URL'));
+    return interaction.reply(
+      rsvpReminderMessage(event, this.config.get('FRONTEND_URL')),
+    );
   }
 
   @Button('event/:eventId/rsvp/:rsvpStatus')
