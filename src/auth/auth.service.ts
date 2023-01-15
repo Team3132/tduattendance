@@ -1,11 +1,4 @@
-import {
-  CACHE_MANAGER,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Profile as DiscordProfile } from 'passport-discord';
 import { PrismaService } from '../prisma/prisma.service';

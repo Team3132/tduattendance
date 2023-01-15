@@ -1,10 +1,4 @@
-import {
-  CacheModule,
-  CacheModuleAsyncOptions,
-  CacheModuleOptions,
-  CacheStore,
-  Module,
-} from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -17,14 +11,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CalendarModule } from './calendar/calendar.module';
 import { ScancodeModule } from './scancode/scancode.module';
-// import { RedisStore, redisStore } from 'cache-manager-redis-store'
-import { redisStore } from 'cache-manager-redis-yet';
-import { RedisClientOptions } from 'redis';
 import { AuthenticatorModule } from './authenticator/authenticator.module';
-import { GatewayIntentBits, Snowflake } from 'discord.js';
+import { GatewayIntentBits } from 'discord.js';
 import { BotModule } from './bot/bot.module';
-import { GcalService } from './gcal/gcal.service';
-import { TaskService } from './task/task.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TaskModule } from './task/task.module';
 import { GcalModule } from './gcal/gcal.module';

@@ -1,9 +1,6 @@
-import { EventModule } from '@/event/event.module';
-import { EventService } from '@/event/event.service';
 import { PrismaService } from '@/prisma/prisma.service';
 import {
   bold,
-  ComponentBuilder,
   EmbedBuilder,
   hyperlink,
   time,
@@ -15,7 +12,6 @@ import {
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
-  Embed,
   PermissionFlagsBits,
 } from 'discord.js';
 import {
@@ -31,10 +27,8 @@ import {
 } from 'necord';
 import { Client } from 'discord.js';
 import { ConfigService } from '@nestjs/config';
-import { LengthDto } from './dto/length.dto';
 import { EventAutocompleteInterceptor } from './interceptors/event.interceptor';
 import { AttendanceDto } from './dto/attendance.dto';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { DateTime } from 'luxon';
 import { RsvpDto } from './dto/rsvp.dto';
 import { RequestRSVPDto } from './dto/requestRSVP.dto';

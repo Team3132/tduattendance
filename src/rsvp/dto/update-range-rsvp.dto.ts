@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { RSVPStatus } from '@prisma/client';
-import { IsOptional, IsDateString, IsNumber, IsEnum } from 'class-validator';
+import { IsDateString, IsEnum } from 'class-validator';
 
 export class UpdateRangeRSVP {
   @ApiProperty()

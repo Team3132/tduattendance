@@ -1,9 +1,5 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import path from 'path';
+import { Injectable } from '@nestjs/common';
 import { google, calendar_v3 } from 'googleapis';
-import fs from 'fs/promises';
-import { authenticate } from '@google-cloud/local-auth';
-import { OAuth2Client } from 'google-auth-library';
 import { ConfigService } from '@nestjs/config';
 import { DateTime } from 'luxon';
 
@@ -19,9 +15,7 @@ export class GcalService {
     );
     const googlePrivateKey =
       this.config.getOrThrow<string>('GOOGLE_PRIVATE_KEY');
-    const googleProjectNumber = this.config.getOrThrow<string>(
-      'GOOGLE_PROJECT_NUMBER',
-    );
+
     const calendarId = this.config.getOrThrow<string>('GOOGLE_CALENDAR_ID');
 
     const client = new google.auth.JWT(

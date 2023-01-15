@@ -1,10 +1,8 @@
 import { AuthenticatorService } from '@/authenticator/authenticator.service';
-import { EventService } from '@/event/event.service';
 import { GcalService } from '@/gcal/gcal.service';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { DateTime } from 'luxon';
 
 @Injectable()

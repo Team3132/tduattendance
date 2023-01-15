@@ -1,12 +1,4 @@
-import {
-  CacheInterceptor,
-  Controller,
-  Get,
-  Header,
-  Res,
-  UseGuards,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Controller, Get, Res, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { Response } from 'express';
 import { CalendarGuard } from '@auth/guard/calendar.guard';

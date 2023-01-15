@@ -1,15 +1,10 @@
 import {
   Profile,
   Strategy,
-  StrategyOptions,
   StrategyOptionsWithRequest,
 } from 'passport-discord';
 import { PassportStrategy } from '@nestjs/passport';
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '@auth/auth.service.js';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
@@ -32,7 +27,6 @@ export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
     accessToken: string,
     refreshToken: string,
     profile: Profile,
-    done,
   ): Promise<any> {
     const user = await this.authService.validateDiscordUser(
       accessToken,

@@ -10,13 +10,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
 import * as swStats from 'swagger-stats';
-import express from 'express';
-import http from 'http';
-import https from 'https';
-import fs from 'fs';
-import { ExpressAdapter } from '@nestjs/platform-express';
 import tracer from './tracer';
-import { WsAdapter } from '@nestjs/platform-ws';
 import { Settings } from 'luxon';
 
 Settings.defaultLocale = 'en-au';

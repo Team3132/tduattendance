@@ -1,26 +1,11 @@
-import {
-  Controller,
-  ForbiddenException,
-  Get,
-  Redirect,
-  Res,
-  Session,
-  UseGuards,
-} from '@nestjs/common';
-import {
-  ApiBadRequestResponse,
-  ApiForbiddenResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
-import type { Response } from 'express';
+import { Controller, Get, Redirect, Session, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ROLES } from '@/constants';
 import { GetUser } from './decorators/GetUserDecorator.decorator';
 import { AuthStatusDto } from './dto/AuthStatus.dto';
 import { DiscordAuthGuard } from './guard/discord.guard';
 import { SessionGuard } from './guard/session.guard';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { BotService } from '../bot/bot.service';
 
 @ApiTags('Auth')

@@ -1,8 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { PrismaService } from '@prisma/prisma.service';
-import { AuthService } from '@auth/auth.service';
 
 @Injectable()
 export class CalendarGuard implements CanActivate {

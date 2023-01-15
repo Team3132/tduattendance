@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Event as PrismaEvent, EventTypes } from '@prisma/client';
-import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
 
 /**
  * The event object.

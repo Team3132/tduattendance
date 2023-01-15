@@ -1,7 +1,5 @@
-import { PartialType, PickType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsOptional, IsString } from 'class-validator';
-import { User } from '../entities/user.entity';
+import { IsOptional, IsString } from 'class-validator';
 
 /**
  * The data used to update a user

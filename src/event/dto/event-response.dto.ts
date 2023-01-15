@@ -1,6 +1,5 @@
-import { OmitType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
-import { Event, EventTypes, Prisma } from '@prisma/client';
+import { Event, EventTypes } from '@prisma/client';
 import { Exclude } from 'class-transformer';
 // import { Event } from '../entities/event.entity';
 

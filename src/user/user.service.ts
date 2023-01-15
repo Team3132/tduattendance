@@ -1,24 +1,13 @@
-import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Prisma } from '@prisma/client';
-import { Cache } from 'cache-manager';
-import { randomUUID } from 'crypto';
-import {
-  APIGuildMember,
-  RESTGetAPIGuildMemberResult,
-} from 'discord-api-types/v10';
 import { PrismaService } from '../prisma/prisma.service';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { v4 as uuid } from 'uuid';
-import { AuthService } from '@auth/auth.service';
-import { ROLES } from '@/constants';
 import { BotService } from '../bot/bot.service';
+import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly authService: AuthService,
     private readonly botService: BotService,
   ) {}
   private readonly logger = new Logger(UserService.name);

@@ -1,7 +1,6 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { ApiProperty, ApiQuery } from '@nestjs/swagger';
-import { RSVP, RSVPStatus } from '@prisma/client';
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { RSVPStatus } from '@prisma/client';
+import { IsEnum, IsString } from 'class-validator';
 
 /**
  * The data used to create an RSVP

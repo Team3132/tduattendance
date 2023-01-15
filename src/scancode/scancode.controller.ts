@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,
@@ -22,7 +21,6 @@ import {
 } from '@nestjs/swagger';
 import { SessionGuard } from '@auth/guard/session.guard';
 import { Scancode } from './entities/scancode.entity';
-import { Prisma } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
 import { ROLES } from '../constants';
 

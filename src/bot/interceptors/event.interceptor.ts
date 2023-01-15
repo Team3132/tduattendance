@@ -1,13 +1,9 @@
 import { PrismaService } from '@/prisma/prisma.service';
-import { Injectable, UseInterceptors } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Event } from '@prisma/client';
-import {
-  AutocompleteInteraction,
-  CacheType,
-  CommandInteraction,
-} from 'discord.js';
+import { AutocompleteInteraction, CacheType } from 'discord.js';
 import { DateTime } from 'luxon';
-import { AutocompleteInterceptor, Ctx, Opts, SlashCommand } from 'necord';
+import { AutocompleteInterceptor } from 'necord';
 
 @Injectable()
 export class EventAutocompleteInterceptor extends AutocompleteInterceptor {

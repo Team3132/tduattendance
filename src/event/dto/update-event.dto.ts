@@ -1,4 +1,3 @@
-import { PartialType, PickType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
 import { EventTypes } from '@prisma/client';
 import {
@@ -8,7 +7,6 @@ import {
   IsBoolean,
   IsEnum,
 } from 'class-validator';
-import { CreateEventDto } from './create-event.dto';
 
 /**
  * The data used to update an event

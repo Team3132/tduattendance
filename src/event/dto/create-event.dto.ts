@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Event, EventTypes } from '@prisma/client';
+import { EventTypes } from '@prisma/client';
 import {
   IsBoolean,
   IsDateString,

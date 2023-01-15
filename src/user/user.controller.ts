@@ -8,8 +8,6 @@ import {
   Delete,
   UseGuards,
   Session,
-  CACHE_MANAGER,
-  Inject,
   BadRequestException,
   Query,
   ForbiddenException,
@@ -26,18 +24,15 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Roles } from '@auth/decorators/DiscordRoleDecorator.decorator';
-import { ROLES } from '@/constants';
 import { User } from './entities/user.entity';
 import { RsvpService } from '@rsvp/rsvp.service';
 import { Rsvp } from '@rsvp/entities/rsvp.entity';
-import type { Cache } from 'cache-manager';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
 import { OutreachReport } from './dto/outreach-report.dto';
 import { GetOutreachReport } from './dto/outreach-report-get.dto';
 import { Scancode } from '@scancode/entities/scancode.entity';
 import { ScancodeService } from '@scancode/scancode.service';
 import { CreateScancodeDto } from '@scancode/dto/create-scancode.dto';
-import { RedisCache } from 'cache-manager-redis-yet';
 
 /** The user controller for controlling the user status */
 @ApiTags('User')

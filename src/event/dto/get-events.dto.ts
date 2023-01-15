@@ -1,11 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsDateString,
-  IsNegative,
-  IsNumber,
-  IsNumberString,
-  IsOptional,
-} from 'class-validator';
+import { IsDateString, IsNumber, IsOptional } from 'class-validator';
 
 export class GetEventsDto {
   @ApiProperty({ required: false })

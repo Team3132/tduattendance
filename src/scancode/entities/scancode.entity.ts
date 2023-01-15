@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Prisma, Scancode as PrismaScan } from '@prisma/client';
+import { Scancode as PrismaScan } from '@prisma/client';
 
 export class Scancode implements PrismaScan {
   @ApiProperty()

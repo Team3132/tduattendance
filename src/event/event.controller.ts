@@ -18,7 +18,6 @@ import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { SessionGuard } from '@auth/guard/session.guard';
 import { Roles } from '@auth/decorators/DiscordRoleDecorator.decorator';
-import { ROLES } from '@/constants';
 import {
   ApiBadRequestResponse,
   ApiCookieAuth,

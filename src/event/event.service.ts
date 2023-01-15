@@ -4,8 +4,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Event, Prisma, RSVPStatus } from '@prisma/client';
+import { Event, Prisma } from '@prisma/client';
 import { AuthenticatorService } from '@authenticator/authenticator.service';
 import { RsvpService } from '@rsvp/rsvp.service';
 import { PrismaService } from '../prisma/prisma.service';
