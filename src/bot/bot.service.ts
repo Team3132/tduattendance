@@ -10,8 +10,10 @@ import { Injectable, Logger, UseInterceptors } from '@nestjs/common';
 import { Event, RSVPStatus } from '@prisma/client';
 import {
   ActionRowBuilder,
+  BaseMessageOptions,
   ButtonBuilder,
   ButtonStyle,
+  MessagePayload,
   PermissionFlagsBits,
 } from 'discord.js';
 import {
@@ -294,7 +296,7 @@ export class BotService {
       .setDescription(rsvpToDescription(rsvp))
       .setTitle('Successfully Updated')
       .setColor([0, 255, 0]);
-
+    // interaction.channel.send()
     return interaction.reply({
       ephemeral: true,
       embeds: [embed],
@@ -324,38 +326,7 @@ export class BotService {
         content: 'No meeting with that Id',
       });
 
-    const meetingEmbed = new EmbedBuilder({
-      description: event.description ?? undefined,
-    })
-      .setTitle(event.title)
-      .addFields(
-        { name: 'Type', value: event.type },
-        { name: 'All Day', value: event.allDay ? 'Yes' : 'No' },
-        { name: 'Start Time', value: time(event.startDate) },
-        { name: 'End Time', value: time(event.endDate) },
-      )
-      .setURL(`${this.config.get('FRONTEND_URL')}/event/${event.id}`);
-
-    const messageComponent =
-      new ActionRowBuilder<ButtonBuilder>().addComponents(
-        new ButtonBuilder()
-          .setCustomId(`event/${event.id}/rsvp/${RSVPStatus.YES}`)
-          .setStyle(ButtonStyle.Success)
-          .setLabel('Coming'),
-        new ButtonBuilder()
-          .setCustomId(`event/${event.id}/rsvp/${RSVPStatus.MAYBE}`)
-          .setStyle(ButtonStyle.Secondary)
-          .setLabel('Maybe'),
-        new ButtonBuilder()
-          .setCustomId(`event/${event.id}/rsvp/${RSVPStatus.NO}`)
-          .setStyle(ButtonStyle.Danger)
-          .setLabel('Not Coming'),
-      );
-
-    return interaction.reply({
-      embeds: [meetingEmbed],
-      components: [messageComponent],
-    });
+    return rsvpReminderMessage(event, this.config.get('FRONTEND_URL'));
   }
 
   @Button('event/:eventId/rsvp/:rsvpStatus')
@@ -444,3 +415,40 @@ function readableStatus(status: RSVPStatus) {
     return 'Not Coming';
   }
 }
+
+export const rsvpReminderMessage = (
+  event: Event,
+  frontendUrl: string,
+): BaseMessageOptions => {
+  const meetingEmbed = new EmbedBuilder({
+    description: event.description ?? undefined,
+  })
+    .setTitle(event.title)
+    .addFields(
+      { name: 'Type', value: event.type },
+      { name: 'All Day', value: event.allDay ? 'Yes' : 'No' },
+      { name: 'Start Time', value: time(event.startDate) },
+      { name: 'End Time', value: time(event.endDate) },
+    )
+    .setURL(`${frontendUrl}/event/${event.id}`);
+
+  const messageComponent = new ActionRowBuilder<ButtonBuilder>().addComponents(
+    new ButtonBuilder()
+      .setCustomId(`event/${event.id}/rsvp/${RSVPStatus.YES}`)
+      .setStyle(ButtonStyle.Success)
+      .setLabel('Coming'),
+    new ButtonBuilder()
+      .setCustomId(`event/${event.id}/rsvp/${RSVPStatus.MAYBE}`)
+      .setStyle(ButtonStyle.Secondary)
+      .setLabel('Maybe'),
+    new ButtonBuilder()
+      .setCustomId(`event/${event.id}/rsvp/${RSVPStatus.NO}`)
+      .setStyle(ButtonStyle.Danger)
+      .setLabel('Not Coming'),
+  );
+
+  return {
+    embeds: [meetingEmbed],
+    components: [messageComponent],
+  };
+};

@@ -1,8 +1,11 @@
 import { AuthenticatorService } from '@/authenticator/authenticator.service';
+import { rsvpReminderMessage } from '@/bot/bot.service';
 import { GcalService } from '@/gcal/gcal.service';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Cron } from '@nestjs/schedule';
+import { Client } from 'discord.js';
 import { DateTime } from 'luxon';
 
 @Injectable()
@@ -11,6 +14,8 @@ export class TaskService {
     private readonly gcal: GcalService,
     private readonly db: PrismaService,
     private readonly authenticatorService: AuthenticatorService,
+    private readonly config: ConfigService,
+    private readonly discordClient: Client,
   ) {}
 
   private readonly logger = new Logger(TaskService.name);
@@ -55,5 +60,54 @@ export class TaskService {
       }),
     );
     this.logger.log(`${databaseEvents.length} events updated/created`);
+  }
+
+  @Cron('00 11 * * *')
+  async handleAttendanceReminder() {
+    const enabled = this.config.get('REMINDER_ENABLED');
+    if (!enabled) return;
+
+    const startNextDay = DateTime.now().plus({ day: 1 }).startOf('day');
+
+    const endNextDay = startNextDay.endOf('day');
+
+    const nextEvents = await this.db.event.findMany({
+      where: {
+        AND: [
+          {
+            startDate: { gte: startNextDay.toJSDate() },
+          },
+          {
+            startDate: {
+              lte: endNextDay.toJSDate(),
+            },
+          },
+        ],
+      },
+    });
+
+    const messages = nextEvents.map((event) =>
+      rsvpReminderMessage(event, this.config.get('FRONTEND_URL')),
+    );
+
+    const attendanceChannelId = this.config.getOrThrow('ATTENDANCE_CHANNEL');
+
+    const attendanceChannel =
+      this.discordClient.channels.cache.get(attendanceChannelId) ??
+      this.discordClient.channels.fetch(attendanceChannelId);
+
+    const fetchedChannel = await attendanceChannel;
+
+    if (!fetchedChannel.isTextBased())
+      throw new Error('Attendance channel is not text based.');
+
+    if (fetchedChannel.isDMBased())
+      throw new Error('This channel is not in a server');
+
+    const sentMessages = await Promise.all(
+      messages.map((message) => fetchedChannel.send(message)),
+    );
+
+    this.logger.debug(`${sentMessages.length} reminder messages sent`);
   }
 }
