@@ -204,12 +204,9 @@ export class BotService {
     if (!fetchedMeeting.RSVP.length)
       return interaction.reply({ content: 'No responses', ephemeral: true });
 
-    const rsvpToDescription = (rsvp: { attended: boolean; userId: string }) =>
-      `${userMention(rsvp.userId)} - ${bold(
-        rsvp.attended ? 'Attended' : 'Not Attended',
-      )}`;
-
-    const description = fetchedMeeting.RSVP.map(rsvpToDescription).join(`\n`);
+    const description = fetchedMeeting.RSVP.map(attendanceToDescription).join(
+      `\n`,
+    );
 
     const attendanceEmbed = new EmbedBuilder()
       .setTitle(
@@ -331,6 +328,54 @@ export class BotService {
     );
   }
 
+  @Button('event/:eventId/rsvps')
+  public async onRsvpsButton(
+    @Context() [interaction]: ButtonContext,
+    @ComponentParam('eventId') eventId: string,
+  ) {
+    const fetchedMeeting = await this.db.event.findUnique({
+      where: {
+        id: eventId,
+      },
+      include: {
+        RSVP: {
+          where: {
+            status: {
+              not: null,
+            },
+          },
+          select: {
+            userId: true,
+            status: true,
+          },
+        },
+      },
+    });
+
+    if (!fetchedMeeting)
+      return interaction.reply({ content: 'Unknown event', ephemeral: true });
+
+    if (!fetchedMeeting.RSVP.length)
+      return interaction.reply({ content: 'No RSVPs', ephemeral: true });
+
+    const description = fetchedMeeting.RSVP.map(rsvpToDescription).join(`\n`);
+
+    const rsvpEmbed = new EmbedBuilder()
+      .setTitle(
+        `RSVPs for ${fetchedMeeting.title} at ${DateTime.fromJSDate(
+          fetchedMeeting.startDate,
+        ).toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)}`,
+      )
+      .setDescription(description)
+      .setTimestamp(new Date())
+      .setURL(`${this.config.get('FRONTEND_URL')}/event/${fetchedMeeting.id}`);
+
+    return interaction.reply({
+      ephemeral: true,
+      embeds: [rsvpEmbed],
+    });
+  }
+
   @Button('event/:eventId/rsvp/:rsvpStatus')
   public async onRsvpButton(
     @Context() [interaction]: ButtonContext,
@@ -408,6 +453,11 @@ export class BotService {
 const rsvpToDescription = (rsvp: { status: RSVPStatus; userId: string }) =>
   `${userMention(rsvp.userId)} - ${bold(readableStatus(rsvp.status))}`;
 
+const attendanceToDescription = (rsvp: { attended: boolean; userId: string }) =>
+  `${userMention(rsvp.userId)} - ${bold(
+    rsvp.attended ? 'Attended' : 'Not Attended',
+  )}`;
+
 function readableStatus(status: RSVPStatus) {
   if (status === 'YES') {
     return 'Coming';
@@ -447,6 +497,10 @@ export const rsvpReminderMessage = (
       .setCustomId(`event/${event.id}/rsvp/${RSVPStatus.NO}`)
       .setStyle(ButtonStyle.Danger)
       .setLabel('Not Coming'),
+    new ButtonBuilder()
+      .setCustomId(`event/${event.id}/rsvps`)
+      .setStyle(ButtonStyle.Primary)
+      .setLabel('RSVPs'),
   );
 
   return {
