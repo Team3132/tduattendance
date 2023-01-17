@@ -195,9 +195,13 @@ export class BotService {
       },
       include: {
         RSVP: {
-          select: {
-            userId: true,
-            attended: true,
+          include: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+              },
+            },
           },
         },
       },
@@ -491,12 +495,16 @@ const rsvpToDescription = (rsvp: {
   userId: string;
   user: { firstName?: string; lastName?: string };
 }) =>
-  `${rsvp.user.firstName ?? ''} ${rsvp.user.lastName ?? ''} - ${userMention(
-    rsvp.userId,
-  )} - ${bold(readableStatus(rsvp.status))}`;
+  `${rsvp.user.firstName ?? ''} ${rsvp.user.lastName ?? ''} - ${bold(
+    readableStatus(rsvp.status),
+  )}`;
 
-const attendanceToDescription = (rsvp: { attended: boolean; userId: string }) =>
-  `${userMention(rsvp.userId)} - ${bold(
+const attendanceToDescription = (rsvp: {
+  attended: boolean;
+  userId: string;
+  user: { firstName?: string; lastName?: string };
+}) =>
+  `${rsvp.user.firstName ?? ''} ${rsvp.user.lastName ?? ''} - ${bold(
     rsvp.attended ? 'Attended' : 'Not Attended',
   )}`;
 
