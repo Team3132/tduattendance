@@ -85,7 +85,16 @@ export class TaskService {
         ],
       },
       include: {
-        RSVP: true,
+        RSVP: {
+          include: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+              },
+            },
+          },
+        },
       },
     });
 

@@ -279,6 +279,14 @@ export class BotService {
         },
         status,
       },
+      include: {
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
     });
 
     const embed = new EmbedBuilder()
@@ -308,7 +316,16 @@ export class BotService {
         id: meeting,
       },
       include: {
-        RSVP: true,
+        RSVP: {
+          include: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -425,7 +442,16 @@ export class BotService {
       include: {
         event: {
           include: {
-            RSVP: true,
+            RSVP: {
+              include: {
+                user: {
+                  select: {
+                    firstName: true,
+                    lastName: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -452,8 +478,14 @@ const connectOrCreateGuildMember = (guildMember: GuildMember) => {
   };
 };
 
-const rsvpToDescription = (rsvp: { status: RSVPStatus; userId: string }) =>
-  `${userMention(rsvp.userId)} - ${bold(readableStatus(rsvp.status))}`;
+const rsvpToDescription = (rsvp: {
+  status: RSVPStatus;
+  userId: string;
+  user: { firstName?: string; lastName?: string };
+}) =>
+  `${rsvp.user.firstName ?? ''} ${rsvp.user.lastName ?? ''} - ${userMention(
+    rsvp.userId,
+  )} - ${bold(readableStatus(rsvp.status))}`;
 
 const attendanceToDescription = (rsvp: { attended: boolean; userId: string }) =>
   `${userMention(rsvp.userId)} - ${bold(
@@ -487,7 +519,12 @@ function readableStatus(status: RSVPStatus) {
 
 export const rsvpReminderMessage = (
   event: Event,
-  rsvp: RSVP[],
+  rsvp: (RSVP & {
+    user: {
+      firstName?: string;
+      lastName?: string;
+    };
+  })[],
   frontendUrl: string,
 ): BaseMessageOptions => {
   const description = rsvp.map(rsvpToDescription).join('\n');
