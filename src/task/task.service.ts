@@ -84,10 +84,13 @@ export class TaskService {
           },
         ],
       },
+      include: {
+        RSVP: true,
+      },
     });
 
     const messages = nextEvents.map((event) =>
-      rsvpReminderMessage(event, this.config.get('FRONTEND_URL')),
+      rsvpReminderMessage(event, event.RSVP, this.config.get('FRONTEND_URL')),
     );
 
     const attendanceChannelId = this.config.getOrThrow('ATTENDANCE_CHANNEL');

@@ -7,7 +7,7 @@ import {
   userMention,
 } from '@discordjs/builders';
 import { Injectable, Logger, UseInterceptors } from '@nestjs/common';
-import { Event, RSVPStatus } from '@prisma/client';
+import { Event, RSVP, RSVPStatus } from '@prisma/client';
 import {
   ActionRowBuilder,
   BaseMessageOptions,
@@ -307,6 +307,9 @@ export class BotService {
       where: {
         id: meeting,
       },
+      include: {
+        RSVP: true,
+      },
     });
 
     if (!event)
@@ -316,7 +319,7 @@ export class BotService {
       });
 
     return interaction.reply(
-      rsvpReminderMessage(event, this.config.get('FRONTEND_URL')),
+      rsvpReminderMessage(event, event.RSVP, this.config.get('FRONTEND_URL')),
     );
   }
 
@@ -419,16 +422,21 @@ export class BotService {
         },
         status: rsvpStatus,
       },
+      include: {
+        event: {
+          include: {
+            RSVP: true,
+          },
+        },
+      },
     });
 
-    const embed = new EmbedBuilder()
-      .setDescription(rsvpToDescription(rsvp))
-      .setTitle('Successfully Updated')
-      .setColor([0, 255, 0]);
+    const event = rsvp.event;
+    const rsvps = event.RSVP;
+    const frontendUrl = this.config.getOrThrow('FRONTEND_URL');
 
-    return interaction.reply({
-      ephemeral: true,
-      embeds: [embed],
+    return interaction.update({
+      ...rsvpReminderMessage(rsvp.event, rsvps, frontendUrl),
     });
   }
 }
@@ -479,8 +487,11 @@ function readableStatus(status: RSVPStatus) {
 
 export const rsvpReminderMessage = (
   event: Event,
+  rsvp: RSVP[],
   frontendUrl: string,
 ): BaseMessageOptions => {
+  const description = rsvp.map(rsvpToDescription).join('\n');
+
   const meetingEmbed = new EmbedBuilder({
     description: event.description ?? undefined,
   })
@@ -491,6 +502,7 @@ export const rsvpReminderMessage = (
       { name: 'Start Time', value: time(event.startDate) },
       { name: 'End Time', value: time(event.endDate) },
     )
+    .setDescription(description)
     .setURL(`${frontendUrl}/event/${event.id}`);
 
   const messageComponent = new ActionRowBuilder<ButtonBuilder>().addComponents(
@@ -506,10 +518,10 @@ export const rsvpReminderMessage = (
       .setCustomId(`event/${event.id}/rsvp/${RSVPStatus.NO}`)
       .setStyle(ButtonStyle.Danger)
       .setLabel('Not Coming'),
-    new ButtonBuilder()
-      .setCustomId(`event/${event.id}/rsvps`)
-      .setStyle(ButtonStyle.Primary)
-      .setLabel('RSVPs'),
+    // new ButtonBuilder()
+    //   .setCustomId(`event/${event.id}/rsvps`)
+    //   .setStyle(ButtonStyle.Primary)
+    //   .setLabel('RSVPs'),
   );
 
   return {
