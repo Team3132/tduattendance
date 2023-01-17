@@ -144,10 +144,6 @@ export class BotService {
               not: null,
             },
           },
-          select: {
-            userId: true,
-            status: true,
-          },
           include: {
             user: {
               select: {
@@ -363,10 +359,6 @@ export class BotService {
             status: {
               not: null,
             },
-          },
-          select: {
-            userId: true,
-            status: true,
           },
           include: {
             user: {
