@@ -13,6 +13,7 @@ import {
   BaseMessageOptions,
   ButtonBuilder,
   ButtonStyle,
+  GuildMember,
   MessagePayload,
   PermissionFlagsBits,
 } from 'discord.js';
@@ -245,22 +246,13 @@ export class BotService {
         content: "This meeting doesn't exist.",
       });
 
-    const userId = interaction.user.id;
+    const user = interaction.member;
 
-    const user = await this.db.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
+    if (!(user instanceof GuildMember)) {
+      return interaction.reply('Not a guild member');
+    }
 
-    if (!user)
-      return interaction.reply({
-        content: `Hey ${userMention(userId)}, Please register ${hyperlink(
-          'here',
-          this.config.get('FRONTEND_URL'),
-        )} before RSVPing to any events.`,
-        ephemeral: true,
-      });
+    const userId = user.id;
 
     const rsvp = await this.db.rSVP.upsert({
       where: {
@@ -274,7 +266,7 @@ export class BotService {
           connect: { id: meeting },
         },
         user: {
-          connect: { id: userId },
+          connectOrCreate: connectOrCreateGuildMember(user),
         },
         status,
       },
@@ -283,7 +275,7 @@ export class BotService {
           connect: { id: meeting },
         },
         user: {
-          connect: { id: userId },
+          connectOrCreate: connectOrCreateGuildMember(user),
         },
         status,
       },
@@ -396,20 +388,11 @@ export class BotService {
 
     const userId = interaction.user.id;
 
-    const user = await this.db.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
+    const user = interaction.member;
 
-    if (!user)
-      return interaction.reply({
-        content: `Hey ${userMention(userId)}, Please register ${hyperlink(
-          'here',
-          this.config.get('FRONTEND_URL'),
-        )} before RSVPing to any events.`,
-        ephemeral: true,
-      });
+    if (!(user instanceof GuildMember)) {
+      return interaction.reply('Not a guild member');
+    }
 
     const rsvp = await this.db.rSVP.upsert({
       where: {
@@ -423,7 +406,7 @@ export class BotService {
           connect: { id: eventId },
         },
         user: {
-          connect: { id: userId },
+          connectOrCreate: connectOrCreateGuildMember(user),
         },
         status: rsvpStatus,
       },
@@ -432,7 +415,7 @@ export class BotService {
           connect: { id: eventId },
         },
         user: {
-          connect: { id: userId },
+          connectOrCreate: connectOrCreateGuildMember(user),
         },
         status: rsvpStatus,
       },
@@ -450,6 +433,17 @@ export class BotService {
   }
 }
 
+const connectOrCreateGuildMember = (guildMember: GuildMember) => {
+  return {
+    where: { id: guildMember.id },
+    create: {
+      id: guildMember.id,
+      ...getName(guildMember.nickname ?? guildMember.user.username),
+      roles: [...guildMember.roles.cache.mapValues((role) => role.id).values()],
+    },
+  };
+};
+
 const rsvpToDescription = (rsvp: { status: RSVPStatus; userId: string }) =>
   `${userMention(rsvp.userId)} - ${bold(readableStatus(rsvp.status))}`;
 
@@ -457,6 +451,21 @@ const attendanceToDescription = (rsvp: { attended: boolean; userId: string }) =>
   `${userMention(rsvp.userId)} - ${bold(
     rsvp.attended ? 'Attended' : 'Not Attended',
   )}`;
+
+const getName = (
+  nick: string,
+): { firstName: string; lastName: string | undefined } => {
+  const fullSplitName = nick.split(/(?=[A-Z])/);
+
+  return {
+    firstName: nick ? fullSplitName[0] : undefined,
+    lastName: nick
+      ? fullSplitName.length > 1
+        ? fullSplitName[1]
+        : undefined
+      : undefined,
+  };
+};
 
 function readableStatus(status: RSVPStatus) {
   if (status === 'YES') {
