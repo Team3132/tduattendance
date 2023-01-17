@@ -360,6 +360,14 @@ export class BotService {
             userId: true,
             status: true,
           },
+          include: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+              },
+            },
+          },
         },
       },
     });
