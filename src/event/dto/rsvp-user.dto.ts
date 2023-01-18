@@ -8,6 +8,8 @@ class MinimalUser {
   firstName: string;
   @ApiProperty()
   lastName: string;
+  @ApiProperty()
+  roles: string[];
 }
 
 export class RsvpUser extends Rsvp {

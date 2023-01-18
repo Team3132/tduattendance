@@ -380,6 +380,7 @@ export class EventController {
             firstName: true,
             lastName: true,
             id: true,
+            roles: true,
           },
         },
       },
