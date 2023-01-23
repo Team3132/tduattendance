@@ -61,7 +61,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.6.0",
-    "swagger-stats": "^0.99.2",
+    "swagger-stats": "^0.99.5",
     "swagger-ui-express": "^4.4.0",
     "uuid": "^9.0.0"
   },
