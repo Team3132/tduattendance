@@ -546,7 +546,7 @@ export const rsvpReminderMessage = (
   const description = rsvp.map(rsvpToDescription).join('\n');
 
   const meetingEmbed = new EmbedBuilder({
-    description: event.description ?? undefined,
+    description: description ?? undefined,
   })
     .setTitle(event.title)
     .addFields(
@@ -555,7 +555,6 @@ export const rsvpReminderMessage = (
       { name: 'Start Time', value: time(event.startDate) },
       { name: 'End Time', value: time(event.endDate) },
     )
-    .setDescription(description)
     .setURL(`${frontendUrl}/event/${event.id}`);
 
   const messageComponent = new ActionRowBuilder<ButtonBuilder>().addComponents(
