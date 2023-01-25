@@ -24,31 +24,17 @@ export class AuthService {
     this.logger.debug(`${user.username}#${user.discriminator} logged in!`);
     const discordUser = await this.botService.getGuildMember(user.id);
 
-    const getName = (
-      nick: string,
-    ): { firstName: string; lastName: string | undefined } => {
-      const fullSplitName = nick.split(/(?=[A-Z])/);
-
-      return {
-        firstName: nick ? fullSplitName[0] : undefined,
-        lastName: nick
-          ? fullSplitName.length > 1
-            ? fullSplitName[1]
-            : undefined
-          : undefined,
-      };
-    };
-
     return this.prismaService.user.upsert({
       where: {
         id: user.id,
       },
       create: {
         id: user.id,
-        ...getName(discordUser.nickname ?? discordUser.user.username),
+        username: discordUser.nickname ?? discordUser.user.username,
         roles: [...discordUser.roles.cache.mapValues((v) => v.id).values()],
       },
       update: {
+        username: discordUser.nickname ?? discordUser.user.username,
         roles: [...discordUser.roles.cache.mapValues((v) => v.id).values()],
       },
     });

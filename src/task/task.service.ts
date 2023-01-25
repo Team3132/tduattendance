@@ -89,8 +89,7 @@ export class TaskService {
           include: {
             user: {
               select: {
-                firstName: true,
-                lastName: true,
+                username: true,
               },
             },
           },
