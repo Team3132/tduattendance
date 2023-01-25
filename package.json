@@ -54,7 +54,7 @@
     "qrcode": "^1.5.1",
     "redis": "^4.5.1",
     "reflect-metadata": "^0.1.13",
-    "rimraf": "^3.0.2",
+    "rimraf": "^4.1.1",
     "rxjs": "^7.6.0",
     "swagger-stats": "^0.99.2",
     "swagger-ui-express": "^4.4.0",
