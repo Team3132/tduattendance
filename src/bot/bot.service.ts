@@ -147,8 +147,7 @@ export class BotService {
           include: {
             user: {
               select: {
-                firstName: true,
-                lastName: true,
+                username: true,
               },
             },
           },
@@ -198,8 +197,7 @@ export class BotService {
           include: {
             user: {
               select: {
-                firstName: true,
-                lastName: true,
+                username: true,
               },
             },
           },
@@ -290,8 +288,7 @@ export class BotService {
       include: {
         user: {
           select: {
-            firstName: true,
-            lastName: true,
+            username: true,
           },
         },
       },
@@ -328,8 +325,7 @@ export class BotService {
           include: {
             user: {
               select: {
-                firstName: true,
-                lastName: true,
+                username: true,
               },
             },
           },
@@ -367,8 +363,7 @@ export class BotService {
           include: {
             user: {
               select: {
-                firstName: true,
-                lastName: true,
+                username: true,
               },
             },
           },
@@ -458,8 +453,7 @@ export class BotService {
               include: {
                 user: {
                   select: {
-                    firstName: true,
-                    lastName: true,
+                    username: true,
                   },
                 },
               },
@@ -484,7 +478,7 @@ const connectOrCreateGuildMember = (guildMember: GuildMember) => {
     where: { id: guildMember.id },
     create: {
       id: guildMember.id,
-      ...getName(guildMember.nickname ?? guildMember.user.username),
+      username: guildMember.nickname ?? guildMember.user.username,
       roles: [...guildMember.roles.cache.mapValues((role) => role.id).values()],
     },
   };
@@ -493,35 +487,17 @@ const connectOrCreateGuildMember = (guildMember: GuildMember) => {
 const rsvpToDescription = (rsvp: {
   status: RSVPStatus;
   userId: string;
-  user: { firstName?: string; lastName?: string };
-}) =>
-  `${rsvp.user.firstName ?? ''} ${rsvp.user.lastName ?? ''} - ${bold(
-    readableStatus(rsvp.status),
-  )}`;
+  user: { username?: string };
+}) => `${rsvp.user.username ?? ''} - ${bold(readableStatus(rsvp.status))}`;
 
 const attendanceToDescription = (rsvp: {
   attended: boolean;
   userId: string;
-  user: { firstName?: string; lastName?: string };
+  user: { username?: string };
 }) =>
-  `${rsvp.user.firstName ?? ''} ${rsvp.user.lastName ?? ''} - ${bold(
+  `${rsvp.user.username ?? ''} - ${bold(
     rsvp.attended ? 'Attended' : 'Not Attended',
   )}`;
-
-const getName = (
-  nick: string,
-): { firstName: string; lastName: string | undefined } => {
-  const fullSplitName = nick.split(/(?=[A-Z])/);
-
-  return {
-    firstName: nick ? fullSplitName[0] : undefined,
-    lastName: nick
-      ? fullSplitName.length > 1
-        ? fullSplitName[1]
-        : undefined
-      : undefined,
-  };
-};
 
 function readableStatus(status: RSVPStatus) {
   if (status === 'YES') {
@@ -537,8 +513,7 @@ export const rsvpReminderMessage = (
   event: Event,
   rsvp: (RSVP & {
     user: {
-      firstName?: string;
-      lastName?: string;
+      username?: string;
     };
   })[],
   frontendUrl: string,

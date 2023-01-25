@@ -10,15 +10,12 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
 import * as swStats from 'swagger-stats';
-import tracer from './tracer';
 import { Settings } from 'luxon';
 
 Settings.defaultLocale = 'en-au';
 Settings.defaultZone = 'Australia/Sydney';
 
 async function bootstrap() {
-  // const server = express();
-  await tracer.start();
 
   console.log('Node Env:', process.env.NODE_ENV);
 

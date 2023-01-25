@@ -47,7 +47,7 @@ export class CalendarService {
                   : ICalAttendeeStatus.NEEDSACTION;
 
               return {
-                name: `${rsvp.user.firstName} ${rsvp.user.lastName}`,
+                name: `${rsvp.user.username}`,
                 status,
                 email: rsvp.user.id,
               };
