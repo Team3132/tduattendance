@@ -6,5 +6,5 @@
 
 */
 -- AlterTable
-ALTER TABLE "User" RENAME COLUMN "firstName" TO "username",
-DROP COLUMN "lastName",
+ALTER TABLE "User" RENAME COLUMN "firstName" TO "username";
+ALTER TABLE "User" DROP COLUMN "lastName";
