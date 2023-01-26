@@ -5,9 +5,7 @@ class MinimalUser {
   @ApiProperty()
   id: string;
   @ApiProperty()
-  firstName: string;
-  @ApiProperty()
-  lastName: string;
+  username: string;
   @ApiProperty()
   roles: string[];
 }

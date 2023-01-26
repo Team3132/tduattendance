@@ -6,8 +6,7 @@ declare global {
   namespace Express {
     interface User extends PrismaUser {
       id: string;
-      firstName: string | null;
-      lastName: string | null;
+      username: string | null;
       createdAt: Date;
       updatedAt: Date;
       calendarSecret: string;
