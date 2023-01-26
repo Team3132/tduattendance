@@ -16,7 +16,6 @@ Settings.defaultLocale = 'en-au';
 Settings.defaultZone = 'Australia/Sydney';
 
 async function bootstrap() {
-
   console.log('Node Env:', process.env.NODE_ENV);
 
   const app = await NestFactory.create(AppModule);
@@ -46,7 +45,7 @@ async function bootstrap() {
       cookie: {
         domain: config.get('COOKIE_DOMAIN') ?? 'team3132.com',
       },
-      saveUninitialized: false,
+      saveUninitialized: true,
       store: new redisStore({
         client: redisClient,
       }),

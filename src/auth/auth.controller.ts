@@ -1,4 +1,12 @@
-import { Controller, Get, Redirect, Session, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Redirect,
+  Req,
+  Res,
+  Session,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ROLES } from '@/constants';
 import { GetUser } from './decorators/GetUserDecorator.decorator';
@@ -7,6 +15,7 @@ import { DiscordAuthGuard } from './guard/discord.guard';
 import { SessionGuard } from './guard/session.guard';
 import { ConfigService } from '@nestjs/config';
 import { BotService } from '../bot/bot.service';
+import { Request, Response } from 'express';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -45,7 +54,7 @@ export class AuthController {
     // Operation handled by the discord auth guard
   }
 
-  /**
+  /**pstr
    * Sign in using discord (callback)
    * @returns close window script
    */
@@ -56,10 +65,11 @@ export class AuthController {
   @Redirect()
   @UseGuards(DiscordAuthGuard)
   @Get('discord/callback')
-  discordSigninCallback() {
-    return {
-      url: `${this.configService.getOrThrow('FRONTEND_URL')}/calendar`,
-    };
+  discordSigninCallback(@Req() req: Request, @Res() res: Response) {
+    const url =
+      req.cookies['redirectTo'] ??
+      `${this.configService.getOrThrow('FRONTEND_URL')}/calendar`;
+    return res.status(302).clearCookie('redirectTo').redirect(url);
     // res.redirect('back');
   }
 

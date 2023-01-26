@@ -12,6 +12,9 @@ import {
   UseInterceptors,
   NotFoundException,
   Redirect,
+  BadRequestException,
+  Req,
+  Res,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -43,10 +46,9 @@ import { ConfigService } from '@nestjs/config';
 import TokenCheckinDto from './dto/checkin-dto';
 import { PrismaService } from '@/prisma/prisma.service';
 import { RsvpUser } from './dto/rsvp-user.dto';
+import { Request, Response } from 'express';
 
 @ApiTags('Event')
-@ApiCookieAuth()
-@UseGuards(SessionGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('event')
 export class EventController {
@@ -63,6 +65,8 @@ export class EventController {
    * Get all events
    * @returns {Event[]}
    */
+  @ApiCookieAuth()
+  @UseGuards(SessionGuard)
   @ApiOkResponse({ type: [EventResponseType] })
   @ApiOperation({ description: 'Get all events', operationId: 'getEvents' })
   @Get()
@@ -112,6 +116,8 @@ export class EventController {
    * @param createEventDto The event creation data
    * @returns {Event}
    */
+  @ApiCookieAuth()
+  @UseGuards(SessionGuard)
   @ApiOperation({
     description: 'Create a new event',
     operationId: 'createEvent',
@@ -128,6 +134,8 @@ export class EventController {
    * Get a specific event
    * @returns {Event}
    */
+  @ApiCookieAuth()
+  @UseGuards(SessionGuard)
   @ApiOperation({
     description: 'Get a specific event',
     operationId: 'getEvent',
@@ -147,6 +155,8 @@ export class EventController {
    * Get a specific event secret
    * @returns {EventSecret}
    */
+  @ApiCookieAuth()
+  @UseGuards(SessionGuard)
   @ApiOperation({
     description: 'Get a specific event secret',
     operationId: 'getEventSecret',
@@ -172,18 +182,32 @@ export class EventController {
     operationId: 'getEventSecretCallback',
   })
   @Get(':eventId/token/callback')
-  @Redirect()
   async eventTokenCallback(
+    @Req() req: Request,
+    @Res() res: Response,
     @Query('code') code: string,
     @Param('eventId') eventId: string,
-    @GetUser('id') userId: string,
+    @GetUser('id') userId?: string,
   ) {
-    await this.eventService.verifyUserEventToken(eventId, userId, code);
-    return {
-      url: `${this.configService.getOrThrow('FRONTEND_URL')}/event/${eventId}`,
-    };
+    if (!code) throw new BadRequestException('Code is required');
+    if (!userId) {
+      return res
+        .status(302)
+        .cookie('redirectTo', req.originalUrl)
+        .redirect(`/auth/discord`);
+    } else {
+      await this.eventService.verifyUserEventToken(eventId, userId, code);
+
+      return res
+        .status(302)
+        .redirect(
+          `${this.configService.getOrThrow('FRONTEND_URL')}/event/${eventId}`,
+        );
+    }
   }
 
+  @ApiCookieAuth()
+  @UseGuards(SessionGuard)
   @ApiOperation({
     description: 'Callback for a valid code (client input)',
     operationId: 'scanintoEvent',
@@ -209,6 +233,8 @@ export class EventController {
    * @param updateEventDto Event Update Data
    * @returns {EventResponseType}
    */
+  @ApiCookieAuth()
+  @UseGuards(SessionGuard)
   @ApiOperation({ description: 'Update an event', operationId: 'updateEvent' })
   @ApiOkResponse({ type: EventResponseType })
   @Roles(['MENTOR'])
@@ -228,6 +254,8 @@ export class EventController {
    * Delete an event
    * @returns {EventResponseType}
    */
+  @ApiCookieAuth()
+  @UseGuards(SessionGuard)
   @ApiOperation({ description: 'Delete an event', operationId: 'deleteEvent' })
   @ApiOkResponse({ type: EventResponseType })
   @Roles(['MENTOR'])
@@ -241,6 +269,8 @@ export class EventController {
    * Get a user's rsvp status for an event.
    * @returns {Rsvp}
    */
+  @ApiCookieAuth()
+  @UseGuards(SessionGuard)
   @ApiOperation({
     description: "Get a user's rsvp status for an event",
     operationId: 'getEventRsvp',
@@ -264,6 +294,8 @@ export class EventController {
    * @param setRSVPDto RSVP status
    * @returns {Rsvp}
    */
+  @ApiCookieAuth()
+  @UseGuards(SessionGuard)
   @ApiOperation({
     description: "Set a logged in user's RSVP status for an event",
     operationId: 'setEventRsvp',
@@ -307,6 +339,8 @@ export class EventController {
    * Update RSVP Status of Events in range
    * @returns {Rsvp[]}
    */
+  @ApiCookieAuth()
+  @UseGuards(SessionGuard)
   @ApiOperation({
     description: 'Update RSVP Status of Events in range',
     operationId: 'updateEventRsvpRange',
@@ -363,6 +397,8 @@ export class EventController {
    * Get an event's asociated RSVPs
    * @returns {Rsvp[]}
    */
+  @ApiCookieAuth()
+  @UseGuards(SessionGuard)
   @ApiOperation({
     description: "Get an event's asociated RSVPs",
     operationId: 'getEventRsvps',
@@ -392,6 +428,8 @@ export class EventController {
    * @param scanin The scanin data (code)
    * @returns {Rsvp}
    */
+  @ApiCookieAuth()
+  @UseGuards(SessionGuard)
   @ApiOperation({
     description: 'RSVP to an event by using a scancode',
     operationId: 'scaninEvent',
