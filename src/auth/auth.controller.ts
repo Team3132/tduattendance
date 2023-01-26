@@ -62,7 +62,6 @@ export class AuthController {
     description: 'Sign in using discord (callback)',
     operationId: 'discordSigninCallback',
   })
-  @Redirect()
   @UseGuards(DiscordAuthGuard)
   @Get('discord/callback')
   discordSigninCallback(@Req() req: Request, @Res() res: Response) {
