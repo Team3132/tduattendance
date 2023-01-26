@@ -37,6 +37,7 @@ export class UserService {
         username: true,
         calendarSecret: true,
         createdAt: true,
+        defaultStatus: true,
         updatedAt: true,
         roles: true,
       },
