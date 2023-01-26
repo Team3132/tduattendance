@@ -574,7 +574,14 @@ const rsvpToDescription = (rsvp: {
   status: RSVPStatus;
   userId: string;
   user: { username?: string };
-}) => `${rsvp.user.username ?? ''} - ${rsvp.status === "YES" ? `:white_check_mark:` : rsvp.status === "MAYBE" ? ':grey_question:' : ':x:'}`;
+}) =>
+  `${rsvp.user.username ?? ''} - ${
+    rsvp.status === 'YES'
+      ? `:white_check_mark:`
+      : rsvp.status === 'MAYBE'
+      ? ':grey_question:'
+      : ':x:'
+  }`;
 
 const attendanceToDescription = (rsvp: {
   attended: boolean;
