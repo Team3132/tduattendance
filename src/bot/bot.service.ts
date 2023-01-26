@@ -51,6 +51,7 @@ export class BotService {
     private readonly db: PrismaService,
     private readonly client: Client,
     private readonly config: ConfigService,
+    private readonly authenticatorService: AuthenticatorService,
   ) {}
 
   private readonly logger = new Logger(BotService.name);
