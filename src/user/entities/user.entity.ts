@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { User as PrismaUser } from '@prisma/client';
+import { RSVPStatus, User as PrismaUser } from '@prisma/client';
 import { Exclude } from 'class-transformer';
 
 /**
@@ -9,13 +9,13 @@ export class User implements Partial<PrismaUser> {
   @ApiProperty()
   id: string;
   @ApiProperty()
-  firstName: string | null;
-  @ApiProperty()
-  lastName: string | null;
+  username?: string | null;
   @ApiProperty()
   createdAt: Date;
   @ApiProperty()
   updatedAt: Date;
+  @ApiProperty({ enum: RSVPStatus })
+  defaultStatus: RSVPStatus;
   @ApiProperty()
   @Exclude()
   calendarSecret: string;
