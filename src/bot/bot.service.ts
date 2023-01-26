@@ -7,12 +7,13 @@ import {
   userMention,
 } from '@discordjs/builders';
 import { Injectable, Logger, UseInterceptors } from '@nestjs/common';
-import { Event, RSVPStatus } from '@prisma/client';
+import { Event, RSVP, RSVPStatus } from '@prisma/client';
 import {
   ActionRowBuilder,
   BaseMessageOptions,
   ButtonBuilder,
   ButtonStyle,
+  GuildMember,
   MessagePayload,
   PermissionFlagsBits,
 } from 'discord.js';
@@ -143,9 +144,12 @@ export class BotService {
               not: null,
             },
           },
-          select: {
-            userId: true,
-            status: true,
+          include: {
+            user: {
+              select: {
+                username: true,
+              },
+            },
           },
         },
       },
@@ -190,9 +194,12 @@ export class BotService {
       },
       include: {
         RSVP: {
-          select: {
-            userId: true,
-            attended: true,
+          include: {
+            user: {
+              select: {
+                username: true,
+              },
+            },
           },
         },
       },
@@ -204,12 +211,9 @@ export class BotService {
     if (!fetchedMeeting.RSVP.length)
       return interaction.reply({ content: 'No responses', ephemeral: true });
 
-    const rsvpToDescription = (rsvp: { attended: boolean; userId: string }) =>
-      `${userMention(rsvp.userId)} - ${bold(
-        rsvp.attended ? 'Attended' : 'Not Attended',
-      )}`;
-
-    const description = fetchedMeeting.RSVP.map(rsvpToDescription).join(`\n`);
+    const description = fetchedMeeting.RSVP.map(attendanceToDescription).join(
+      `\n`,
+    );
 
     const attendanceEmbed = new EmbedBuilder()
       .setTitle(
@@ -248,22 +252,13 @@ export class BotService {
         content: "This meeting doesn't exist.",
       });
 
-    const userId = interaction.user.id;
+    const user = interaction.member;
 
-    const user = await this.db.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
+    if (!(user instanceof GuildMember)) {
+      return interaction.reply('Not a guild member');
+    }
 
-    if (!user)
-      return interaction.reply({
-        content: `Hey ${userMention(userId)}, Please register ${hyperlink(
-          'here',
-          this.config.get('FRONTEND_URL'),
-        )} before RSVPing to any events.`,
-        ephemeral: true,
-      });
+    const userId = user.id;
 
     const rsvp = await this.db.rSVP.upsert({
       where: {
@@ -277,7 +272,7 @@ export class BotService {
           connect: { id: meeting },
         },
         user: {
-          connect: { id: userId },
+          connectOrCreate: connectOrCreateGuildMember(user),
         },
         status,
       },
@@ -286,9 +281,16 @@ export class BotService {
           connect: { id: meeting },
         },
         user: {
-          connect: { id: userId },
+          connectOrCreate: connectOrCreateGuildMember(user),
         },
         status,
+      },
+      include: {
+        user: {
+          select: {
+            username: true,
+          },
+        },
       },
     });
 
@@ -318,6 +320,17 @@ export class BotService {
       where: {
         id: meeting,
       },
+      include: {
+        RSVP: {
+          include: {
+            user: {
+              select: {
+                username: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!event)
@@ -327,8 +340,59 @@ export class BotService {
       });
 
     return interaction.reply(
-      rsvpReminderMessage(event, this.config.get('FRONTEND_URL')),
+      rsvpReminderMessage(event, event.RSVP, this.config.get('FRONTEND_URL')),
     );
+  }
+
+  @Button('event/:eventId/rsvps')
+  public async onRsvpsButton(
+    @Context() [interaction]: ButtonContext,
+    @ComponentParam('eventId') eventId: string,
+  ) {
+    const fetchedMeeting = await this.db.event.findUnique({
+      where: {
+        id: eventId,
+      },
+      include: {
+        RSVP: {
+          where: {
+            status: {
+              not: null,
+            },
+          },
+          include: {
+            user: {
+              select: {
+                username: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!fetchedMeeting)
+      return interaction.reply({ content: 'Unknown event', ephemeral: true });
+
+    if (!fetchedMeeting.RSVP.length)
+      return interaction.reply({ content: 'No RSVPs', ephemeral: true });
+
+    const description = fetchedMeeting.RSVP.map(rsvpToDescription).join(`\n`);
+
+    const rsvpEmbed = new EmbedBuilder()
+      .setTitle(
+        `RSVPs for ${fetchedMeeting.title} at ${DateTime.fromJSDate(
+          fetchedMeeting.startDate,
+        ).toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)}`,
+      )
+      .setDescription(description)
+      .setTimestamp(new Date())
+      .setURL(`${this.config.get('FRONTEND_URL')}/event/${fetchedMeeting.id}`);
+
+    return interaction.reply({
+      ephemeral: true,
+      embeds: [rsvpEmbed],
+    });
   }
 
   @Button('event/:eventId/rsvp/:rsvpStatus')
@@ -351,20 +415,11 @@ export class BotService {
 
     const userId = interaction.user.id;
 
-    const user = await this.db.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
+    const user = interaction.member;
 
-    if (!user)
-      return interaction.reply({
-        content: `Hey ${userMention(userId)}, Please register ${hyperlink(
-          'here',
-          this.config.get('FRONTEND_URL'),
-        )} before RSVPing to any events.`,
-        ephemeral: true,
-      });
+    if (!(user instanceof GuildMember)) {
+      return interaction.reply('Not a guild member');
+    }
 
     const rsvp = await this.db.rSVP.upsert({
       where: {
@@ -378,7 +433,7 @@ export class BotService {
           connect: { id: eventId },
         },
         user: {
-          connect: { id: userId },
+          connectOrCreate: connectOrCreateGuildMember(user),
         },
         status: rsvpStatus,
       },
@@ -387,26 +442,62 @@ export class BotService {
           connect: { id: eventId },
         },
         user: {
-          connect: { id: userId },
+          connectOrCreate: connectOrCreateGuildMember(user),
         },
         status: rsvpStatus,
       },
+      include: {
+        event: {
+          include: {
+            RSVP: {
+              include: {
+                user: {
+                  select: {
+                    username: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
 
-    const embed = new EmbedBuilder()
-      .setDescription(rsvpToDescription(rsvp))
-      .setTitle('Successfully Updated')
-      .setColor([0, 255, 0]);
+    const event = rsvp.event;
+    const rsvps = event.RSVP;
+    const frontendUrl = this.config.getOrThrow('FRONTEND_URL');
 
-    return interaction.reply({
-      ephemeral: true,
-      embeds: [embed],
+    return interaction.update({
+      ...rsvpReminderMessage(rsvp.event, rsvps, frontendUrl),
     });
   }
 }
 
-const rsvpToDescription = (rsvp: { status: RSVPStatus; userId: string }) =>
-  `${userMention(rsvp.userId)} - ${bold(readableStatus(rsvp.status))}`;
+const connectOrCreateGuildMember = (guildMember: GuildMember) => {
+  return {
+    where: { id: guildMember.id },
+    create: {
+      id: guildMember.id,
+      username: guildMember.nickname ?? guildMember.user.username,
+      roles: [...guildMember.roles.cache.mapValues((role) => role.id).values()],
+    },
+  };
+};
+
+const rsvpToDescription = (rsvp: {
+  status: RSVPStatus;
+  userId: string;
+  user: { username?: string };
+}) => `${rsvp.user.username ?? ''} - ${bold(readableStatus(rsvp.status))}`;
+
+const attendanceToDescription = (rsvp: {
+  attended: boolean;
+  userId: string;
+  user: { username?: string };
+}) =>
+  `${rsvp.user.username ?? ''} - ${bold(
+    rsvp.attended ? 'Attended' : 'Not Attended',
+  )}`;
 
 function readableStatus(status: RSVPStatus) {
   if (status === 'YES') {
@@ -420,10 +511,17 @@ function readableStatus(status: RSVPStatus) {
 
 export const rsvpReminderMessage = (
   event: Event,
+  rsvp: (RSVP & {
+    user: {
+      username?: string;
+    };
+  })[],
   frontendUrl: string,
 ): BaseMessageOptions => {
+  const description = rsvp.map(rsvpToDescription).join('\n');
+
   const meetingEmbed = new EmbedBuilder({
-    description: event.description ?? undefined,
+    description: description ?? undefined,
   })
     .setTitle(event.title)
     .addFields(
@@ -447,6 +545,10 @@ export const rsvpReminderMessage = (
       .setCustomId(`event/${event.id}/rsvp/${RSVPStatus.NO}`)
       .setStyle(ButtonStyle.Danger)
       .setLabel('Not Coming'),
+    // new ButtonBuilder()
+    //   .setCustomId(`event/${event.id}/rsvps`)
+    //   .setStyle(ButtonStyle.Primary)
+    //   .setLabel('RSVPs'),
   );
 
   return {

@@ -21,7 +21,7 @@ export class TaskService {
   private readonly logger = new Logger(TaskService.name);
 
   // @Cron('45 * * * * *')
-  @Cron('45 10 * * *')
+  @Cron('00 23 * * *')
   async handleCron() {
     this.logger.debug('Updating events');
     const events = await this.gcal.events();
@@ -62,7 +62,7 @@ export class TaskService {
     this.logger.log(`${databaseEvents.length} events updated/created`);
   }
 
-  @Cron('00 11 * * *')
+  @Cron('00 22 * * *')
   async handleAttendanceReminder() {
     const enabled = this.config.get('REMINDER_ENABLED');
     if (!enabled) return;
@@ -84,10 +84,21 @@ export class TaskService {
           },
         ],
       },
+      include: {
+        RSVP: {
+          include: {
+            user: {
+              select: {
+                username: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     const messages = nextEvents.map((event) =>
-      rsvpReminderMessage(event, this.config.get('FRONTEND_URL')),
+      rsvpReminderMessage(event, event.RSVP, this.config.get('FRONTEND_URL')),
     );
 
     const attendanceChannelId = this.config.getOrThrow('ATTENDANCE_CHANNEL');
@@ -105,7 +116,13 @@ export class TaskService {
       throw new Error('This channel is not in a server');
 
     const sentMessages = await Promise.all(
-      messages.map((message) => fetchedChannel.send(message)),
+      messages.map((message) =>
+        fetchedChannel.send({
+          content:
+            '10pm reminder: This channel should be used to let us know any last minute attendance changes on the day of the meeting.',
+          ...message,
+        }),
+      ),
     );
 
     this.logger.debug(`${sentMessages.length} reminder messages sent`);

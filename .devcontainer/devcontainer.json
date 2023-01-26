@@ -4,7 +4,7 @@
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-	"extensions": ["Prisma.prisma", "esbenp.prettier-vscode"],
+	"extensions": ["Prisma.prisma", "esbenp.prettier-vscode", "GitHub.vscode-pull-request-github"],
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 

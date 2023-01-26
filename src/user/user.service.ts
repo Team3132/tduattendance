@@ -34,8 +34,7 @@ export class UserService {
       where: userWhereUniqueInput,
       select: {
         id: true,
-        firstName: true,
-        lastName: true,
+        username: true,
         calendarSecret: true,
         createdAt: true,
         updatedAt: true,

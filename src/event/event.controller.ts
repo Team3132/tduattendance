@@ -377,9 +377,9 @@ export class EventController {
       include: {
         user: {
           select: {
-            firstName: true,
-            lastName: true,
+            username: true,
             id: true,
+            roles: true,
           },
         },
       },

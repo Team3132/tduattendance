@@ -32,8 +32,9 @@ export class CalendarService {
         events: events.map((event) => {
           return {
             start: event.startDate,
+            summary: event.title,
             end: event.endDate,
-            description: event.title,
+            description: event.description,
             allDay: event.allDay,
             attendees: event.RSVP.map((rsvp) => {
               const status: ICalAttendeeStatus =
@@ -46,7 +47,7 @@ export class CalendarService {
                   : ICalAttendeeStatus.NEEDSACTION;
 
               return {
-                name: `${rsvp.user.firstName} ${rsvp.user.lastName}`,
+                name: `${rsvp.user.username}`,
                 status,
                 email: rsvp.user.id,
               };
@@ -54,7 +55,7 @@ export class CalendarService {
           };
         }),
       });
-      await this.cacheManager.set('calendar', calendar.toJSON(), 7200);
+      await this.cacheManager.set('calendar', calendar.toJSON(), 7200 * 1000);
       return calendar;
     }
   }

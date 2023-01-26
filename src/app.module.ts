@@ -19,6 +19,7 @@ import { TaskModule } from './task/task.module';
 import { GcalModule } from './gcal/gcal.module';
 import { NecordModule } from 'necord';
 import { BotService } from './bot/bot.service';
+import { redisStore } from 'cache-manager-ioredis-yet';
 
 @Module({
   imports: [
@@ -34,41 +35,21 @@ import { BotService } from './bot/bot.service';
       inject: [ConfigService],
     }),
     ScheduleModule.forRoot(),
-    // CacheModule.registerAsync<RedisClientOptions>({
-    //   isGlobal: true,
-    //   imports: [ConfigModule],
-
-    //   useFactory: async (configService: ConfigService) => {
-    //     const store = await redisStore({
-    //       socket: {
-    //         host: configService.getOrThrow<string>('REDIS_HOST'),
-    //         port: 6379,
-    //       },
-    //       database: 1,
-    //     });
-
-    //     return {
-    //       store: {
-    //         create: (opts) => store,
-    //       },
-    //       ttl: 60 * 60 * 24 * 7 * 1000,
-    //     };
-    //   },
-
-    //   //   //   // return {
-    //   //   //   //   store: redisStore({
-    //   //   //   //     socket: {
-    //   //   //   //       host: configService.getOrThrow<string>('REDIS_HOST'),
-    //   //   //   //       port: 6379,
-    //   //   //   //     },
-    //   //   //   //     database: 1,
-    //   //   //   //   }),
-    //   //   //   // };
-    //   inject: [ConfigService],
-    // }),
-    CacheModule.register({
+    CacheModule.registerAsync({
       isGlobal: true,
-      ttl: 60 * 60 * 24 * 7 * 1000,
+      useFactory: async (config: ConfigService) => {
+        const store = await redisStore({
+          ttl: 60 * 60 * 24 * 7 * 1000,
+          host: config.getOrThrow('REDIS_HOST'),
+          port: config.getOrThrow('REDIS_PORT'),
+          db: 1,
+        });
+
+        return {
+          store,
+        };
+      },
+      inject: [ConfigService],
     }),
     PrismaModule,
     UserModule,
