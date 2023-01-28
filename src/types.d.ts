@@ -10,7 +10,7 @@ declare global {
       createdAt: Date;
       updatedAt: Date;
       calendarSecret: string;
-      defaultStatus?: RSVPStatus | null;
+      defaultStatus: RSVPStatus | null;
       roles: string[];
     }
   }

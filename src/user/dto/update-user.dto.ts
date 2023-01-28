@@ -9,5 +9,5 @@ export class UpdateUserDto {
   @IsOptional()
   @IsEnum(RSVPStatus)
   @ApiProperty({ required: false, enum: RSVPStatus, nullable: true })
-  defaultStatus?: RSVPStatus | null;
+  defaultStatus: RSVPStatus | null;
 }
