@@ -5,7 +5,7 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cron } from '@nestjs/schedule';
-import { Client } from 'discord.js';
+import { bold, Client } from 'discord.js';
 import { DateTime } from 'luxon';
 
 @Injectable()
@@ -118,8 +118,9 @@ export class TaskService {
     const sentMessages = await Promise.all(
       messages.map((message) =>
         fetchedChannel.send({
-          content:
-            '10pm reminder: This channel should be used to let us know any last minute attendance changes on the day of the meeting.',
+          content: `${fetchedChannel.guild.roles.everyone.toString()} ${bold(
+            `10pm reminder`,
+          )}: This channel should be used to let us know any last minute attendance changes on the day of the meeting.`,
           ...message,
         }),
       ),
