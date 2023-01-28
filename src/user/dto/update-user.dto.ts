@@ -1,6 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Prisma, RSVPStatus, User } from '@prisma/client';
-import { IsEmpty, IsEnum, IsOptional, IsString } from 'class-validator';
+import {
+  IsEmpty,
+  IsEnum,
+  isNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateIf,
+} from 'class-validator';
 
 /**
  * The data used to update a user
@@ -8,7 +15,7 @@ import { IsEmpty, IsEnum, IsOptional, IsString } from 'class-validator';
 export class UpdateUserDto {
   @IsOptional()
   @IsEnum(RSVPStatus)
-  @IsEmpty()
+  @ValidateIf((v) => v !== null)
   @ApiProperty({ required: false, enum: RSVPStatus, nullable: true })
   defaultStatus: RSVPStatus | null;
 }
