@@ -8,7 +8,7 @@ import { IsEnum, IsOptional, ValidateIf } from 'class-validator';
 export class UpdateUserDto {
   @IsOptional()
   @IsEnum(RSVPStatus)
-  @ValidateIf((v) => v !== null)
+  @ValidateIf((v) => v !== null || v !== '')
   @ApiProperty({ required: false, enum: RSVPStatus, nullable: true })
   defaultStatus: RSVPStatus | null;
 }
