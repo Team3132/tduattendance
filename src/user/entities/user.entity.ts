@@ -14,8 +14,8 @@ export class User implements Partial<PrismaUser> {
   createdAt: Date;
   @ApiProperty()
   updatedAt: Date;
-  @ApiProperty({ enum: RSVPStatus })
-  defaultStatus: RSVPStatus;
+  @ApiProperty({ enum: RSVPStatus, required: false, nullable: true })
+  defaultStatus?: RSVPStatus | null;
   @ApiProperty()
   @Exclude()
   calendarSecret: string;
