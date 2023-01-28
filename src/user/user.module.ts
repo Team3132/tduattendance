@@ -8,7 +8,6 @@ import { ScancodeModule } from '@scancode/scancode.module';
 import { ScancodeService } from '@scancode/scancode.service';
 import { BotModule } from '@/bot/bot.module';
 import { BotService } from '@/bot/bot.service';
-import { AuthenticatorService } from '@/authenticator/authenticator.service';
 import { AuthenticatorModule } from '@/authenticator/authenticator.module';
 
 @Module({

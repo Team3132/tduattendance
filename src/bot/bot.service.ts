@@ -1,11 +1,5 @@
 import { PrismaService } from '@/prisma/prisma.service';
-import {
-  bold,
-  EmbedBuilder,
-  hyperlink,
-  time,
-  userMention,
-} from '@discordjs/builders';
+import { bold, EmbedBuilder, time } from '@discordjs/builders';
 import {
   BadRequestException,
   Injectable,
@@ -20,7 +14,6 @@ import {
   ButtonBuilder,
   ButtonStyle,
   GuildMember,
-  MessagePayload,
   PermissionFlagsBits,
 } from 'discord.js';
 import {
@@ -41,7 +34,6 @@ import { AttendanceDto } from './dto/attendance.dto';
 import { DateTime } from 'luxon';
 import { RsvpDto } from './dto/rsvp.dto';
 import { RequestRSVPDto } from './dto/requestRSVP.dto';
-import { EventService } from '@/event/event.service';
 import { CheckinDto } from './dto/checkin.dto';
 import { AuthenticatorService } from '@/authenticator/authenticator.service';
 
@@ -592,15 +584,15 @@ const attendanceToDescription = (rsvp: {
     rsvp.attended ? 'Attended' : 'Not Attended',
   )}`;
 
-function readableStatus(status: RSVPStatus) {
-  if (status === 'YES') {
-    return 'Coming';
-  } else if (status === 'MAYBE') {
-    return 'Maybe';
-  } else {
-    return 'Not Coming';
-  }
-}
+// function readableStatus(status: RSVPStatus) {
+//   if (status === 'YES') {
+//     return 'Coming';
+//   } else if (status === 'MAYBE') {
+//     return 'Maybe';
+//   } else {
+//     return 'Not Coming';
+//   }
+// }
 
 export const rsvpReminderMessage = (
   event: Event,

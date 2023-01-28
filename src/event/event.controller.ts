@@ -11,7 +11,6 @@ import {
   ClassSerializerInterceptor,
   UseInterceptors,
   NotFoundException,
-  Redirect,
   BadRequestException,
   Req,
   Res,

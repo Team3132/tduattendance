@@ -1,13 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Prisma, RSVPStatus, User } from '@prisma/client';
-import {
-  IsEmpty,
-  IsEnum,
-  isNotEmpty,
-  IsOptional,
-  IsString,
-  ValidateIf,
-} from 'class-validator';
+import { RSVPStatus } from '@prisma/client';
+import { IsEnum, IsOptional, ValidateIf } from 'class-validator';
 
 /**
  * The data used to update a user

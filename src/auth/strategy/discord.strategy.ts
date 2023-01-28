@@ -8,7 +8,6 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '@auth/auth.service.js';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
-import * as oauth2 from 'passport-oauth2';
 
 @Injectable()
 export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
@@ -28,7 +27,6 @@ export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
     accessToken: string,
     refreshToken: string,
     profile: Profile,
-    done: oauth2.VerifyCallback,
   ): Promise<any> {
     const user = await this.authService.validateDiscordUser(
       accessToken,
