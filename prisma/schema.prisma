@@ -18,11 +18,11 @@ enum RSVPStatus {
 
 model User {
   id                  String     @id
-  username            String?
+  username            String
   createdAt           DateTime   @default(now())
   updatedAt           DateTime   @default(now()) @updatedAt
   calendarSecret      String     @unique @default(uuid())
-  defaultStatus       RSVPStatus @default(NO)
+  defaultStatus       RSVPStatus?
   roles               String[]
   RSVP                RSVP[]
   Scancode            Scancode[]
