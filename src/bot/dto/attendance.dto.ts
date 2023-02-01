@@ -1,4 +1,5 @@
-import { StringOption } from 'necord';
+import { Role } from 'discord.js';
+import { RoleOption, StringOption } from 'necord';
 
 export class AttendanceDto {
   @StringOption({
@@ -8,4 +9,10 @@ export class AttendanceDto {
     autocomplete: true,
   })
   meeting: string;
+  @RoleOption({
+    name: 'role',
+    description: 'The role to show the RSVPs',
+    required: false,
+  })
+  role?: Role | undefined;
 }

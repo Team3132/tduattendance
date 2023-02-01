@@ -209,37 +209,42 @@ export class BotService {
   })
   public async onRSVPs(
     @Context() [interaction]: SlashCommandContext,
-    @Options() { meeting }: AttendanceDto,
+    @Options() { meeting, role }: AttendanceDto,
   ) {
     const fetchedMeeting = await this.db.event.findUnique({
       where: {
         id: meeting,
-      },
-      include: {
-        RSVP: {
-          where: {
-            status: {
-              not: null,
-            },
-          },
-          include: {
-            user: {
-              select: {
-                username: true,
-              },
-            },
-          },
-        },
       },
     });
 
     if (!fetchedMeeting)
       return interaction.reply({ content: 'Unknown event', ephemeral: true });
 
-    if (!fetchedMeeting.RSVP.length)
+    const fetchedRSVPs = await this.db.rSVP.findMany({
+      where: {
+        eventId: meeting,
+        user: {
+          roles: {
+            has: role?.id,
+          },
+        },
+        status: {
+          not: null,
+        },
+      },
+      include: {
+        user: {
+          select: {
+            username: true,
+          },
+        },
+      },
+    });
+
+    if (!fetchedRSVPs.length)
       return interaction.reply({ content: 'No RSVPs', ephemeral: true });
 
-    const description = fetchedMeeting.RSVP.map(rsvpToDescription).join(`\n`);
+    const description = fetchedRSVPs.map(rsvpToDescription).join(`\n`);
 
     const rsvpEmbed = new EmbedBuilder()
       .setTitle(
@@ -264,34 +269,39 @@ export class BotService {
   })
   public async onAttendance(
     @Context() [interaction]: SlashCommandContext,
-    @Options() { meeting }: AttendanceDto,
+    @Options() { meeting, role }: AttendanceDto,
   ) {
     const fetchedMeeting = await this.db.event.findUnique({
       where: {
         id: meeting,
-      },
-      include: {
-        RSVP: {
-          include: {
-            user: {
-              select: {
-                username: true,
-              },
-            },
-          },
-        },
       },
     });
 
     if (!fetchedMeeting)
       return interaction.reply({ content: 'Unknown event', ephemeral: true });
 
-    if (!fetchedMeeting.RSVP.length)
+    const fetchedRSVPs = await this.db.rSVP.findMany({
+      where: {
+        eventId: meeting,
+        user: {
+          roles: {
+            has: role?.id,
+          },
+        },
+      },
+      include: {
+        user: {
+          select: {
+            username: true,
+          },
+        },
+      },
+    });
+
+    if (!fetchedRSVPs.length)
       return interaction.reply({ content: 'No responses', ephemeral: true });
 
-    const description = fetchedMeeting.RSVP.map(attendanceToDescription).join(
-      `\n`,
-    );
+    const description = fetchedRSVPs.map(attendanceToDescription).join(`\n`);
 
     const attendanceEmbed = new EmbedBuilder()
       .setTitle(
