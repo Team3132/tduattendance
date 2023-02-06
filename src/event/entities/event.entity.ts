@@ -21,4 +21,6 @@ export class Event implements PrismaEvent {
   type: EventTypes;
   @ApiProperty()
   secret: string;
+  @ApiProperty()
+  roles: string[];
 }

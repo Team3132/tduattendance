@@ -1,5 +1,5 @@
 import { PrismaService } from '@/prisma/prisma.service';
-import { bold, EmbedBuilder, time } from '@discordjs/builders';
+import { bold, EmbedBuilder, roleMention, time } from '@discordjs/builders';
 import {
   BadRequestException,
   Injectable,
@@ -328,7 +328,7 @@ export class BotService {
     @Context() [interaction]: SlashCommandContext,
     @Options() { meeting, status }: RsvpDto,
   ) {
-    const fetchedEvent = this.db.event.findUnique({
+    const fetchedEvent = await this.db.event.findUnique({
       where: {
         id: meeting,
       },
@@ -345,6 +345,20 @@ export class BotService {
     if (!(user instanceof GuildMember)) {
       return interaction.reply('Not a guild member');
     }
+
+    if (!(user instanceof GuildMember)) {
+      return interaction.reply('Not a guild member');
+    }
+
+    const roles = fetchedEvent.roles.length
+      ? fetchedEvent.roles
+      : [interaction.guild.roles.everyone.id];
+
+    if (!user.roles.cache.some((role) => roles.includes(role.id)))
+      return interaction.reply({
+        ephemeral: true,
+        content: "You don't have permission to reply to this event",
+      });
 
     const userId = user.id;
 
@@ -428,7 +442,12 @@ export class BotService {
       });
 
     return interaction.reply(
-      rsvpReminderMessage(event, event.RSVP, this.config.get('FRONTEND_URL')),
+      rsvpReminderMessage(
+        event,
+        event.RSVP,
+        this.config.get('FRONTEND_URL'),
+        interaction.guild.roles.everyone.id,
+      ),
     );
   }
 
@@ -489,7 +508,7 @@ export class BotService {
     @ComponentParam('eventId') eventId: string,
     @ComponentParam('rsvpStatus') rsvpStatus: RSVPStatus,
   ) {
-    const fetchedEvent = this.db.event.findUnique({
+    const fetchedEvent = await this.db.event.findUnique({
       where: {
         id: eventId,
       },
@@ -508,6 +527,16 @@ export class BotService {
     if (!(user instanceof GuildMember)) {
       return interaction.reply('Not a guild member');
     }
+
+    const roles = fetchedEvent.roles.length
+      ? fetchedEvent.roles
+      : [interaction.guild.roles.everyone.id];
+
+    if (!user.roles.cache.some((role) => roles.includes(role.id)))
+      return interaction.reply({
+        ephemeral: true,
+        content: "You don't have permission to reply to this event",
+      });
 
     const rsvp = await this.db.rSVP.upsert({
       where: {
@@ -556,7 +585,12 @@ export class BotService {
     const frontendUrl = this.config.getOrThrow('FRONTEND_URL');
 
     return interaction.update({
-      ...rsvpReminderMessage(rsvp.event, rsvps, frontendUrl),
+      ...rsvpReminderMessage(
+        rsvp.event,
+        rsvps,
+        frontendUrl,
+        interaction.guild.roles.everyone.id,
+      ),
     });
   }
 }
@@ -612,6 +646,7 @@ export const rsvpReminderMessage = (
     };
   })[],
   frontendUrl: string,
+  everyoneRole: string,
 ): BaseMessageOptions => {
   const description = rsvp.map(rsvpToDescription).join('\n');
 
@@ -620,7 +655,12 @@ export const rsvpReminderMessage = (
   })
     .setTitle(event.title)
     .addFields(
-      { name: 'Type', value: event.type },
+      {
+        name: 'Roles',
+        value: event.roles.length
+          ? event.roles.map((role) => roleMention(role)).join()
+          : roleMention(everyoneRole),
+      },
       { name: 'All Day', value: event.allDay ? 'Yes' : 'No' },
       { name: 'Start Time', value: time(event.startDate) },
       { name: 'End Time', value: time(event.endDate) },

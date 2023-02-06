@@ -36,4 +36,8 @@ export class UpdateEventDto {
   @IsEnum(EventTypes)
   @ApiProperty({ enum: EventTypes })
   type?: EventTypes;
+  @IsOptional()
+  @IsString({ each: true })
+  @ApiProperty()
+  roles?: string[];
 }
