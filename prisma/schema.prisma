@@ -48,6 +48,7 @@ model Event {
   title       String
   allDay      Boolean    @default(false)
   startDate   DateTime
+  roles       String[]
   endDate     DateTime
   type        EventTypes @default(Regular)
   secret      String     @unique @default(uuid())

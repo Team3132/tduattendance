@@ -18,6 +18,8 @@ export class EventResponse implements Event {
   allDay: boolean;
   @ApiProperty({ enum: EventTypes })
   type: EventTypes;
+  @ApiProperty()
+  roles: string[];
 
   @Exclude()
   secret: string;
@@ -42,4 +44,6 @@ export class EventResponseType implements Partial<Event> {
   allDay: boolean;
   @ApiProperty({ enum: EventTypes })
   type: EventTypes;
+  @ApiProperty()
+  roles: string[];
 }

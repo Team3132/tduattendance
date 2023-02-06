@@ -1,5 +1,6 @@
 import { AuthenticatorService } from '@/authenticator/authenticator.service';
 import { rsvpReminderMessage } from '@/bot/bot.service';
+import { ROLES } from '@/constants';
 import { GcalService } from '@/gcal/gcal.service';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable, Logger } from '@nestjs/common';
@@ -28,6 +29,7 @@ export class TaskService {
     const databaseEvents = await Promise.all(
       events.items.map((event) => {
         const secret = this.authenticatorService.generateSecret();
+        const isMentorEvent = event.summary.toLowerCase().includes('mentor');
         return this.db.event.upsert({
           where: {
             id: event.id,
@@ -35,6 +37,7 @@ export class TaskService {
           update: {
             title: event.summary,
             allDay: !event.start.dateTime && !event.end.dateTime,
+            roles: isMentorEvent ? [ROLES.MENTOR] : [],
             startDate:
               event.start.dateTime ??
               DateTime.fromISO(event.start.date).startOf('day').toJSDate(),
@@ -46,6 +49,7 @@ export class TaskService {
           create: {
             id: event.id,
             title: event.summary,
+            roles: isMentorEvent ? [ROLES.MENTOR] : [],
             allDay: !event.start.dateTime && !event.end.dateTime,
             startDate:
               event.start.dateTime ??
@@ -97,10 +101,6 @@ export class TaskService {
       },
     });
 
-    const messages = nextEvents.map((event) =>
-      rsvpReminderMessage(event, event.RSVP, this.config.get('FRONTEND_URL')),
-    );
-
     const attendanceChannelId = this.config.getOrThrow('ATTENDANCE_CHANNEL');
 
     const attendanceChannel =
@@ -114,6 +114,15 @@ export class TaskService {
 
     if (fetchedChannel.isDMBased())
       throw new Error('This channel is not in a server');
+
+    const messages = nextEvents.map((event) =>
+      rsvpReminderMessage(
+        event,
+        event.RSVP,
+        this.config.get('FRONTEND_URL'),
+        fetchedChannel.guild.roles.everyone.id,
+      ),
+    );
 
     const sentMessages = await Promise.all(
       messages.map((message) =>

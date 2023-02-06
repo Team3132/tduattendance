@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { EventTypes } from '@prisma/client';
 import {
+  IsArray,
   IsBoolean,
   IsDateString,
   IsEnum,
@@ -33,4 +34,9 @@ export class CreateEventDto {
   @IsEnum(EventTypes)
   @ApiProperty({ enum: EventTypes })
   type?: EventTypes;
+  @IsOptional()
+  @IsString({
+    each: true,
+  })
+  roles?: string[];
 }
