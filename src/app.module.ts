@@ -20,6 +20,7 @@ import { GcalModule } from './gcal/gcal.module';
 import { NecordModule } from 'necord';
 import { BotService } from './bot/bot.service';
 import { redisStore } from 'cache-manager-ioredis-yet';
+import { TbaModule } from './tba/tba.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { redisStore } from 'cache-manager-ioredis-yet';
     BotModule,
     TaskModule,
     GcalModule,
+    TbaModule,
   ],
   controllers: [AppController],
   providers: [
