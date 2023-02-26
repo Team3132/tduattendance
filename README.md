@@ -1,3 +1,7 @@
+# Notice: Moved to https://github.com/Team3132/AttendanceSystem
+
+---
+
 # TDU Attendance API/Backend
 
 ## Links
